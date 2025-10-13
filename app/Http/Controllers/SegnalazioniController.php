@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 class SegnalazioniController extends Controller
 {
-    /** Elenco pagine + icone Heroicons **valide** (outline, senza prefisso). */
+    /** Elenco pagine + icone consentite */
     private function pages(): array
     {
         $pages = [
@@ -21,58 +21,40 @@ class SegnalazioniController extends Controller
                 'label'    => 'Sinottico',
                 'category' => 'Generale',
                 'icon'     => 'chart-bar',
-                'view'     => 'placeholder',
+                'view'     => 'sinottico',
             ],
             'apertura-chiusura-sor' => [
                 'label'    => 'Apertura/Chiusura SOR',
                 'category' => 'Generale',
                 'icon'     => 'information-circle',
-                'view'     => 'placeholder',
+                'view'     => 'apertura-chiusura-sor',
             ],
-            'ricerca' => [
-                'label'    => 'Ricerca',
-                'category' => 'Generale',
-                'icon'     => 'magnifying-glass',
-                'view'     => 'placeholder',
-            ],
-            'segnalazione-generica' => [
-                'label'    => 'Segnalazione generica',
-                'category' => 'Generale',
-                'icon'     => 'document-text',
-                'view'     => 'placeholder',
-            ],
-            'eventi-aib' => [
-                'label'    => 'Eventi AIB',
-                'category' => 'Generale',
-                'icon'     => 'fire',
-                'view'     => 'placeholder',
-            ],
+            // 'ricerca' => [
+            //     'label'    => 'Ricerca',
+            //     'category' => 'Generale',
+            //     'icon'     => 'magnifying-glass',
+            //     'view'     => 'ricerca',
+            // ],
             'monitoraggio-coc' => [
                 'label'    => 'Monitoraggio COC',
                 'category' => 'Generale',
                 'icon'     => 'map',
-                'view'     => 'placeholder',
-            ],
-            'telefonata-rep' => [
-                'label'    => 'Telefonata reperibilità',
-                'category' => 'Generale',
-                'icon'     => 'phone',
-                'view'     => 'placeholder',
+                'view'     => 'monitoraggio-coc',
             ],
             'tabella-riassuntiva' => [
                 'label'    => 'Tabella riassuntiva',
                 'category' => 'Generale',
-                'icon'     => 'list-bullet', // <— sicura
-                'view'     => 'placeholder',
-            ],
-            'eventi-in-atto' => [
-                'label'    => 'Eventi in atto',
-                'category' => 'Generale',
-                'icon'     => 'bolt',
-                'view'     => 'placeholder',
+                'icon'     => 'list-bullet',
+                'view'     => 'tabella-riassuntiva',
             ],
 
-            // STORICO
+            // SEZIONI CHE NON HAI ANCORA → placeholder
+            // 'eventi-in-atto' => [
+            //     'label'    => 'Eventi in atto',
+            //     'category' => 'Generale',
+            //     'icon'     => 'bolt',
+            //     'view'     => 'placeholder',
+            // ],
             'storico-chiamate' => [
                 'label'    => 'Storico chiamate',
                 'category' => 'Storico',
@@ -91,12 +73,10 @@ class SegnalazioniController extends Controller
                 'icon'     => 'rectangle-group',
                 'view'     => 'placeholder',
             ],
-
-            // EMERGENZE
             'emergency-scenarios' => [
                 'label'    => 'Emergency scenarios',
                 'category' => 'Emergenze',
-                'icon'     => 'rectangle-stack', // <— al posto di "layers"
+                'icon'     => 'rectangle-stack',
                 'view'     => 'placeholder',
             ],
             'emergency-management' => [
@@ -105,8 +85,6 @@ class SegnalazioniController extends Controller
                 'icon'     => 'clipboard-document-check',
                 'view'     => 'placeholder',
             ],
-
-            // MAPPE
             'mappa-eventi' => [
                 'label'    => 'Mappa eventi',
                 'category' => 'Mappe',
@@ -137,13 +115,11 @@ class SegnalazioniController extends Controller
                 'icon'     => 'users',
                 'view'     => 'placeholder',
             ],
-
-            // ALTRI
             'ricerca-recapiti' => [
                 'label'    => 'Ricerca recapiti',
                 'category' => 'Generale',
                 'icon'     => 'magnifying-glass',
-                'view'     => 'placeholder',
+                'view'     => 'ricerca-recapiti',
             ],
             'reportistica' => [
                 'label'    => 'Reportistica',
@@ -153,7 +129,7 @@ class SegnalazioniController extends Controller
             ],
         ];
 
-        // ulteriore “cintura di sicurezza”: se qualcuno rimette un nome non valido
+        // White-list icone
         $allowed = [
             'squares-2x2',
             'chart-bar',
@@ -180,25 +156,31 @@ class SegnalazioniController extends Controller
                 $pages[$k]['icon'] = 'document-text';
             }
         }
-
         return $pages;
     }
 
-    public function index()
+    private function resolveCurrent(array $pages, string $page): array
     {
-        $pages = $this->pages();
-        $currentKey = 'dashboard';
-        $current = $pages[$currentKey];
+        $key   = array_key_exists($page, $pages) ? $page : 'dashboard';
+        $entry = $pages[$key];
 
-        return view('applicativi.segnalazioni.index', compact('pages', 'currentKey', 'current'));
+        // Fallback se la view non esiste
+        $view = $entry['view'] ?? 'placeholder';
+        if (!view()->exists("applicativi.segnalazioni.sections.$view")) {
+            $entry['view'] = 'placeholder';
+        }
+
+        // utile in blade
+        $entry['_slug'] = $key;
+        return $entry;
     }
 
-    public function section(string $page)
+    public function show(?string $page = 'dashboard')
     {
-        $pages = $this->pages();
-        $currentKey = array_key_exists($page, $pages) ? $page : 'dashboard';
-        $current = $pages[$currentKey];
+        $pages      = $this->pages();
+        $current    = $this->resolveCurrent($pages, $page ?? 'dashboard');
+        $currentKey = $current['_slug'];
 
-        return view('applicativi.segnalazioni.index', compact('pages', 'currentKey', 'current'));
+        return view('applicativi.segnalazioni.index', compact('pages', 'current', 'currentKey'));
     }
 }

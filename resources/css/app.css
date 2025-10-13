@@ -1,6 +1,10 @@
 @import 'tailwindcss';
 @import './style.css';
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
@@ -34,10 +38,6 @@
 
     html {
         @apply font-sans;
-    }
-
-    body {
-        @apply bg-slate-50 text-slate-900;
     }
 }
 

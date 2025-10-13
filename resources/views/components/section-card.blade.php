@@ -52,7 +52,7 @@
     @if($img)
     <div class="mt-5">
         <img src="{{ asset($img) }}" alt="{{ $imgAlt }}"
-            class="rounded-xl border border-slate-200 w-full h-55 object-cover" />
+            class="rounded-xl border border-slate-200 w-full h-85 object-cover" />
     </div>
     @endif
 </a>

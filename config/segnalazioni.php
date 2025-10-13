@@ -26,12 +26,12 @@ return [
         ['label' => 'Sinottico',                 'path' => 'sinottico',                 'icon' => 'chart-bar',                 'category' => 'Generale'],
         ['label' => 'Apertura/chiusura SOR',     'path' => 'apertura-chiusura-sor',     'icon' => 'information-circle',        'category' => 'Generale'],
         ['label' => 'Ricerca',                   'path' => 'ricerca',                   'icon' => 'magnifying-glass',          'category' => 'Generale'],
-        ['label' => 'Segnalazione generica',     'path' => 'segnalazione-generica',     'icon' => 'document-text',             'category' => 'Generale'],
-        ['label' => 'Eventi AIB',                'path' => 'eventi-aib',                'icon' => 'fire',                      'category' => 'Generale'],
+        // ['label' => 'Segnalazione generica',     'path' => 'segnalazione-generica',     'icon' => 'document-text',             'category' => 'Generale'],
+        // ['label' => 'Eventi AIB',                'path' => 'eventi-aib',                'icon' => 'fire',                      'category' => 'Generale'],
         ['label' => 'Monitoraggio COC',          'path' => 'monitoraggio-coc',          'icon' => 'map',                       'category' => 'Generale'],
-        ['label' => 'Telefonata reperibilità',   'path' => 'telefonata-rep',            'icon' => 'phone',                     'category' => 'Generale'],
+        // ['label' => 'Telefonata reperibilità',   'path' => 'telefonata-rep',            'icon' => 'phone',                     'category' => 'Generale'],
         ['label' => 'Tabella riassuntiva',       'path' => 'tabella-riassuntiva',       'icon' => 'table-cells',               'category' => 'Generale'],
-        ['label' => 'Eventi in atto',            'path' => 'eventi-in-atto',            'icon' => 'activity', /* alt: chart-bar */ 'category' => 'Generale'],
+        // ['label' => 'Eventi in atto',            'path' => 'eventi-in-atto',            'icon' => 'activity', /* alt: chart-bar */ 'category' => 'Generale'],
 
         // STORICO
         ['label' => 'Storico Chiamate',          'path' => 'storico-chiamate',          'icon' => 'phone',                     'category' => 'Storico'],
