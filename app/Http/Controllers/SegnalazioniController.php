@@ -17,6 +17,12 @@ class SegnalazioniController extends Controller
                 'icon'     => 'squares-2x2',
                 'view'     => 'dashboard',
             ],
+            'coordinamento' => [
+                'label'    => 'Coordinamento',
+                'category' => 'Generale',
+                'icon'     => 'users',
+                'view'     => 'coordinamento',
+            ],
             'sinottico' => [
                 'label'    => 'Sinottico',
                 'category' => 'Generale',

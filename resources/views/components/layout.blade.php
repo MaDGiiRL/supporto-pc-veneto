@@ -19,6 +19,8 @@
 
     {{-- Carica prima SweetAlert2, così è disponibile quando lo usi --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {{-- SheetJS per esportare gli excel --}}
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('head')
