@@ -12,7 +12,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? 'Titolo di Default' }}</title>
 
-    <link rel="shortcut icon" href="/media/favicon.png" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -27,7 +27,10 @@
 </head>
 
 <body class="h-full antialiased font-[Inter] bg-white text-slate-900">
+    <x-banner-avviso dataLimite="01/01/2026" />
     <x-navbar />
+
+
 
     <main class="min-h-screen">
         {{ $slot }}
@@ -57,6 +60,58 @@
                 });
             });
         })();
+    </script>
+
+    <script src="/js/echo.js"></script> <!-- il tuo bundle -->
+    <script>
+        import Echo from 'laravel-echo';
+        window.Pusher = require('pusher-js'); // se usi Pusher
+
+        window.Echo = new Echo({
+            broadcaster: 'pusher',
+            key: 'PUSHER_KEY',
+            cluster: 'eu',
+            forceTLS: true
+        });
+
+        // 🔔 subscriptions
+        window.Echo.channel('sor')
+            .listen('.segnalazione.saved', async () => {
+                await refreshGEN();
+            })
+            .listen('.segnalazione.deleted', async () => {
+                await refreshGEN();
+            })
+            .listen('.comunicazione.saved', async () => {
+                const id = state.ui.currentEventId;
+                if (id) await openEventModal(id); // ricarica dettaglio
+                await refreshONGOING();
+            })
+            .listen('.comunicazione.deleted', async () => {
+                const id = state.ui.currentEventId;
+                if (id) await openEventModal(id);
+                await refreshONGOING();
+            })
+            .listen('.evento.saved', async () => {
+                await refreshONGOING();
+            })
+            .listen('.evento.toggled', async () => {
+                await refreshONGOING();
+            });
+    </script>
+
+
+    <script>
+        if (!res.ok) {
+            const txt = await res.text().catch(() => "");
+            // 👇 aggiungi un toast chiaro
+            Swal.fire({
+                title: "Errore",
+                text: txt || `HTTP ${res.status}`,
+                icon: "error"
+            });
+            throw new Error(`HTTP ${res.status} ${res.statusText}\n${txt}`);
+        }
     </script>
     @endif
 

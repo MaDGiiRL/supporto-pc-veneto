@@ -1,0 +1,1105 @@
+body {
+    font-family: "Inter";
+}
+
+/*/============SEGNALAZIONI==============/*/
+
+* {
+    box-sizing: border-box
+}
+
+html,
+body {
+    height: 100%
+}
+
+body {
+    margin: 0;
+    font: 14px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    color: #0f172a;
+    background: #f6f8fb
+}
+
+:root {
+    --primary: #2563eb;
+    --primary-50: #eff6ff;
+    --primary-600: #1d4ed8;
+    --primary-700: #1e40af;
+    --muted: #64748b;
+    --muted-50: #f1f5f9;
+    --card: #ffffff;
+    --line: #e2e8f0;
+
+    --ev-sismico: #dc2626;
+    --ev-sismico-50: #fef2f2;
+    --ev-vulcanico: #9a3412;
+    --ev-vulcanico-50: #fff7ed;
+    --ev-idraulico: #0ea5e9;
+    --ev-idraulico-50: #e0f2fe;
+    --ev-idrogeologico: #10b981;
+    --ev-idrogeologico-50: #d1fae5;
+    --ev-maremoto: #0284c7;
+    --ev-maremoto-50: #e0f2fe;
+    --ev-deficit-idrico: #a16207;
+    --ev-deficit-idrico-50: #fefce8;
+    --ev-meteo-avverso: #7c3aed;
+    --ev-meteo-avverso-50: #f3e8ff;
+    --ev-aib: #f97316;
+    --ev-aib-50: #ffedd5;
+    --ev-uomo: #334155;
+    --ev-uomo-50: #e2e8f0;
+
+    --sec-gen: #8b5cf6;
+    --sec-ongoing: #2563eb;
+
+    --prio-alta: #fee2e2;
+    --prio-alta-line: #ef4444;
+    --prio-alta-text: #991b1b;
+    --prio-media: #fff7ed;
+    --prio-media-line: #f59e0b;
+    --prio-media-text: #92400e;
+    --prio-bassa: #ecfdf5;
+    --prio-bassa-line: #10b981;
+    --prio-bassa-text: #065f46;
+    --prio-nessuna: #f1f5f9;
+    --prio-nessuna-line: #94a3b8;
+    --prio-nessuna-text: #334155;
+}
+
+.p-6 {
+    padding: 2rem
+}
+
+.mb-4 {
+    margin-bottom: 1rem
+}
+
+.mb-6 {
+    margin-bottom: 1.5rem
+}
+
+.grid {
+    display: grid
+}
+
+.gap-3 {
+    gap: .75rem
+}
+
+.gap-4 {
+    gap: 1rem
+}
+
+.flex {
+    display: flex
+}
+
+.flex-wrap {
+    flex-wrap: wrap
+}
+
+.items-center {
+    align-items: center
+}
+
+.items-start {
+    align-items: flex-start
+}
+
+.justify-between {
+    justify-content: space-between
+}
+
+.rounded-2xl {
+    border-radius: 1rem
+}
+
+.text-sm {
+    font-size: .875rem
+}
+
+.text-xs {
+    font-size: .75rem
+}
+
+.text-xl {
+    font-size: 1.25rem
+}
+
+.font-semibold {
+    font-weight: 600
+}
+
+.link {
+    color: var(--primary);
+    text-decoration: underline;
+    cursor: pointer
+}
+
+.shadow-card {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .05), 0 8px 24px rgba(15, 23, 42, .06)
+}
+
+.input {
+    height: 2.5rem;
+    border: 1px solid var(--line);
+    border-radius: .75rem;
+    padding: .25rem .75rem;
+    font-size: .875rem;
+    background: #fff;
+    color: #0f172a
+}
+
+textarea.input {
+    min-height: 5.5rem;
+    padding: .5rem .75rem
+}
+
+.label {
+    font-size: .8rem;
+    color: #334155
+}
+
+.btn {
+    border: 1px solid var(--line);
+    border-radius: .75rem;
+    padding: .55rem .8rem;
+    font-size: .875rem;
+    background: #fff;
+    color: #0f172a;
+    cursor: pointer;
+    transition: background .15s, box-shadow .15s, transform .06s
+}
+
+.btn:hover {
+    background: var(--muted-50)
+}
+
+.btn:active {
+    transform: translateY(1px)
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, .04), 0 6px 16px rgba(37, 99, 235, .18)
+}
+
+.btn-primary:hover {
+    background: var(--primary-600);
+    border-color: var(--primary-600);
+    box-shadow: 0 2px 0 rgba(0, 0, 0, .05), 0 10px 24px rgba(29, 78, 216, .22)
+}
+
+.btn-primary:active {
+    background: var(--primary-700);
+    border-color: var(--primary-700)
+}
+
+.btn-xs {
+    border: 1px solid #e5e7eb;
+    border-radius: .5rem;
+    padding: .25rem .5rem;
+    font-size: .75rem;
+    background: #fff;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: .25rem
+}
+
+.btn-ghost {
+    background: transparent;
+    border-color: transparent
+}
+
+.btn-danger {
+    background: #fee2e2;
+    border-color: #fecaca
+}
+
+.actions {
+    display: flex;
+    gap: .25rem
+}
+
+.actions .hi {
+    display: inline-block;
+    vertical-align: middle
+}
+
+.sec {
+    --accent: #64748b;
+    --thead: #f1f5f9;
+    border: 1px solid var(--line);
+    border-left: 8px solid var(--accent);
+    background: var(--card);
+    padding: 1.25rem 1.25rem 1rem;
+}
+
+.sec h3 {
+    color: var(--accent);
+    margin: 0
+}
+
+.sec thead {
+    background: var(--thead)
+}
+
+.sec--gen {
+    --accent: var(--sec-gen);
+    --thead: color-mix(in oklab, var(--sec-gen) 8%, #fff)
+}
+
+.sec--ongoing {
+    --accent: var(--sec-ongoing);
+    --thead: color-mix(in oklab, var(--sec-ongoing) 8%, #fff)
+}
+
+table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%
+}
+
+thead th {
+    border-bottom: 1px solid var(--line);
+    font-weight: 600;
+    padding: .6rem .75rem;
+    text-align: center
+}
+
+tbody td {
+    padding: .55rem .75rem
+}
+
+tbody tr:nth-child(even) {
+    background: #fafbff
+}
+
+.border-slate-200 {
+    border-color: var(--line)
+}
+
+.border-t {
+    border-top: 1px solid var(--line)
+}
+
+.pager {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    justify-content: center;
+    margin-top: .75rem
+}
+
+.pager__label {
+    font-size: .85rem;
+    opacity: .75
+}
+
+.badge {
+    display: inline-block;
+    padding: .2rem .55rem;
+    border-radius: .5rem;
+    font-weight: 600;
+    font-size: .75rem;
+    border: 1px solid transparent;
+    line-height: 1
+}
+
+.badge--in {
+    background: #ecfdf5;
+    border-color: #bbf7d0;
+    color: #166534
+}
+
+.badge--out {
+    background: #fff1f2;
+    border-color: #fecdd3;
+    color: #991b1b
+}
+
+.c-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: none
+}
+
+.c-modal.is-open {
+    display: block
+}
+
+.c-modal.hidden {
+    display: none
+}
+
+.c-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, .65)
+}
+
+/* ===== FIX: scroll per le modali ===== */
+.c-modal__dialog {
+    position: relative;
+    max-width: 72rem;
+    width: min(96vw, 72rem);
+    margin: 4vh auto;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 1rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .2);
+    padding: 1.25rem;
+
+    /* ⬇️ Abilita scroll interno alla modale */
+    max-height: calc(100svh - 8vh);
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+
+    display: flex;
+    flex-direction: column;
+}
+
+/* Mobile: margini e altezza ottimizzati */
+@media (max-width: 640px) {
+    .c-modal__dialog {
+        margin: 2vh auto;
+        max-height: calc(100svh - 4vh);
+    }
+}
+
+.c-modal--overlay {
+    z-index: 1100
+}
+
+/* TOP assoluto per “Tutte le comunicazioni” */
+.c-modal--top {
+    z-index: 1200
+}
+
+.c-modal__close {
+    position: absolute;
+    top: .75rem;
+    right: .75rem;
+    background: transparent;
+    border: none;
+    font-size: 1.25rem;
+    color: #475569;
+    cursor: pointer;
+    line-height: 1
+}
+
+.ev-card {
+    --ev: var(--ev-meteo-avverso);
+    --ev-50: var(--ev-meteo-avverso-50);
+    border: 1px solid var(--line);
+    border-left: 8px solid var(--ev);
+    border-radius: 1rem;
+    background: #fff;
+    padding: 1rem 1rem 0.85rem;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .04);
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    cursor: pointer;
+    transition: transform .06s ease, box-shadow .12s ease, background .12s ease;
+}
+
+.ev-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, .06);
+    background: var(--ev-50)
+}
+
+.ev-card__head {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: .5rem
+}
+
+.ev-card__title {
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 0
+}
+
+.ev-card__chips {
+    display: flex;
+    align-items: center;
+    gap: .4rem
+}
+
+.ev-card__badge {
+    font-size: .7rem;
+    border: 1px solid color-mix(in oklab, var(--ev) 55%, white);
+    background: color-mix(in oklab, var(--ev) 15%, white);
+    color: color-mix(in oklab, var(--ev) 70%, black);
+    border-radius: .5rem;
+    padding: .15rem .5rem
+}
+
+.ev-card__status {
+    font-size: .7rem;
+    border-radius: 999px;
+    padding: .15rem .55rem;
+    border: 1px solid transparent;
+    font-weight: 700
+}
+
+.ev-card__status.is-open {
+    background: #dcfce7;
+    color: #166534;
+    border-color: #bbf7d0
+}
+
+.ev-card__status.is-closed {
+    background: #e5e7eb;
+    color: #374151;
+    border-color: #d1d5db
+}
+
+.ev-card__meta {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: .87rem;
+    color: #334155;
+    display: grid;
+    gap: .15rem
+}
+
+.ev-inline-status {
+    display: inline-block;
+    margin-left: .5rem;
+    padding: .1rem .5rem;
+    font-size: .7rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-weight: 700
+}
+
+.ev-inline-status.is-open {
+    background: #dcfce7;
+    color: #166534;
+    border-color: #bbf7d0
+}
+
+.ev-inline-status.is-closed {
+    background: #e5e7eb;
+    color: #374151;
+    border-color: #d1d5db
+}
+
+/* Colori card per tipo */
+.ev-card[data-type="sismico"] {
+    --ev: var(--ev-sismico);
+    --ev-50: var(--ev-sismico-50)
+}
+
+.ev-card[data-type="vulcanico"] {
+    --ev: var(--ev-vulcanico);
+    --ev-50: var(--ev-vulcanico-50)
+}
+
+.ev-card[data-type="idraulico"] {
+    --ev: var(--ev-idraulico);
+    --ev-50: var(--ev-idraulico-50)
+}
+
+.ev-card[data-type="idrogeologico"] {
+    --ev: var(--ev-idrogeologico);
+    --ev-50: var(--ev-idrogeologico-50)
+}
+
+.ev-card[data-type="maremoto"] {
+    --ev: var(--ev-maremoto);
+    --ev-50: var(--ev-maremoto-50)
+}
+
+.ev-card[data-type="deficit-idrico"] {
+    --ev: var(--ev-deficit-idrico);
+    --ev-50: var(--ev-deficit-idrico-50)
+}
+
+.ev-card[data-type="meteo-avverso"] {
+    --ev: var(--ev-meteo-avverso);
+    --ev-50: var(--ev-meteo-avverso-50)
+}
+
+.ev-card[data-type="aib"] {
+    --ev: var(--ev-aib);
+    --ev-50: var(--ev-aib-50)
+}
+
+.ev-card[data-type="uomo"] {
+    --ev: var(--ev-uomo);
+    --ev-50: var(--ev-uomo-50)
+}
+
+/* Legenda (eventi + priorità con stesso stile) */
+.ongoing-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .6rem .85rem;
+    margin: .25rem 0 .75rem 0;
+    align-items: center
+}
+
+.ol-item {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    font-size: .8rem;
+    color: #334155;
+    border: 1px solid var(--line);
+    border-radius: .75rem;
+    padding: .25rem .6rem;
+    background: #fff
+}
+
+.ol-dot {
+    width: .85rem;
+    height: .85rem;
+    border-radius: 999px;
+    display: inline-block;
+    background: var(--ev);
+    box-shadow: 0 0 0 2px color-mix(in oklab, var(--ev) 25%, white) inset
+}
+
+/* Mappatura colori per legenda EVENTI (questo risolve i "colori non vanno") */
+.ongoing-legend .ol-item[data-type="sismico"] {
+    --ev: var(--ev-sismico)
+}
+
+.ongoing-legend .ol-item[data-type="vulcanico"] {
+    --ev: var(--ev-vulcanico)
+}
+
+.ongoing-legend .ol-item[data-type="idraulico"] {
+    --ev: var(--ev-idraulico)
+}
+
+/***** (continua) *****/
+.ongoing-legend .ol-item[data-type="idrogeologico"] {
+    --ev: var(--ev-idrogeologico)
+}
+
+.ongoing-legend .ol-item[data-type="maremoto"] {
+    --ev: var(--ev-maremoto)
+}
+
+.ongoing-legend .ol-item[data-type="deficit-idrico"] {
+    --ev: var(--ev-deficit-idrico)
+}
+
+.ongoing-legend .ol-item[data-type="meteo-avverso"] {
+    --ev: var(--ev-meteo-avverso)
+}
+
+.ongoing-legend .ol-item[data-type="aib"] {
+    --ev: var(--ev-aib)
+}
+
+.ongoing-legend .ol-item[data-type="uomo"] {
+    --ev: var(--ev-uomo)
+}
+
+.ongoing-legend .ol-item[data-type="altro"] {
+    --ev: #64748b
+}
+
+/* Legenda PRIORITÀ con lo stesso stile della legenda eventi */
+.prio-legend .ol-item[data-prio="alta"] {
+    --ev: var(--prio-alta-line)
+}
+
+.prio-legend .ol-item[data-prio="media"] {
+    --ev: var(--prio-media-line)
+}
+
+.prio-legend .ol-item[data-prio="bassa"] {
+    --ev: var(--prio-bassa-line)
+}
+
+.prio-legend .ol-item[data-prio="nessuna"] {
+    --ev: var(--prio-nessuna-line)
+}
+
+/* Badge priorità + righe evidenziate come prima */
+.prio-badge {
+    display: inline-block;
+    padding: .15rem .5rem;
+    border-radius: .5rem;
+    font-weight: 700;
+    font-size: .75rem;
+    border: 1px solid transparent;
+    line-height: 1
+}
+
+.prio-badge.prio--alta {
+    background: var(--prio-alta);
+    color: var(--prio-alta-text);
+    border-color: var(--prio-alta-line)
+}
+
+.prio-badge.prio--media {
+    background: var(--prio-media);
+    color: var(--prio-media-text);
+    border-color: var(--prio-media-line)
+}
+
+.prio-badge.prio--bassa {
+    background: var(--prio-bassa);
+    color: var(--prio-bassa-text);
+    border-color: var(--prio-bassa-line)
+}
+
+.prio-badge.prio--nessuna {
+    background: var(--prio-nessuna);
+    color: var(--prio-nessuna-text);
+    border-color: var(--prio-nessuna-line)
+}
+
+tbody tr.prio-row {
+    border-left: 6px solid transparent
+}
+
+tbody tr.prio-row.prio--alta {
+    border-left-color: var(--prio-alta-line);
+    background: color-mix(in oklab, var(--prio-alta) 55%, white)
+}
+
+tbody tr.prio-row.prio--media {
+    border-left-color: var(--prio-media-line);
+    background: color-mix(in oklab, var(--prio-media) 55%, white)
+}
+
+tbody tr.prio-row.prio--bassa {
+    border-left-color: var(--prio-bassa-line);
+    background: color-mix(in oklab, var(--prio-bassa) 55%, white)
+}
+
+tbody tr.prio-row.prio--nessuna {
+    border-left-color: var(--prio-nessuna-line);
+    background: color-mix(in oklab, var(--prio-nessuna) 55%, white)
+}
+
+/* Piccole utility */
+#modal-gen-info td.w-44 {
+    width: 11rem
+}
+
+@media print {
+    body {
+        background: #fff
+    }
+
+    .btn,
+    .btn-xs {
+        display: none
+    }
+
+    .c-modal__dialog {
+        box-shadow: none
+    }
+}
+
+/* Modale evento sempre sopra a tutto */
+.c-modal--super {
+    z-index: 1300
+}
+
+/* Mini-card evento usata nella tabella "Tutte le comunicazioni" */
+.ev-chip {
+    display: block;
+    text-align: left;
+    width: 100%;
+    border: 1px solid var(--line);
+    border-left: 8px solid var(--ev);
+    border-radius: .75rem;
+    background: #fff;
+    padding: .5rem .6rem;
+    cursor: pointer;
+    transition: transform .06s ease, box-shadow .12s ease, background .12s ease;
+}
+
+.ev-chip:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, .06);
+    background: var(--ev-50)
+}
+
+.ev-chip__title {
+    display: block;
+    font-weight: 700;
+    font-size: .8rem;
+    line-height: 1.25
+}
+
+.ev-chip__meta {
+    display: block;
+    font-size: .7rem;
+    opacity: .75;
+    margin-top: .15rem
+}
+
+.ev-chip__status {
+    display: inline-block;
+    margin-top: .25rem;
+    font-size: .68rem;
+    font-weight: 700;
+    padding: .1rem .45rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+}
+
+.ev-chip__status.is-open {
+    background: #dcfce7;
+    color: #166534;
+    border-color: #bbf7d0
+}
+
+.ev-chip__status.is-closed {
+    background: #e5e7eb;
+    color: #374151;
+    border-color: #d1d5db
+}
+
+/* Mappatura colori per le mini-card per tipo */
+.ev-chip[data-type="sismico"] {
+    --ev: var(--ev-sismico);
+    --ev-50: var(--ev-sismico-50)
+}
+
+.ev-chip[data-type="vulcanico"] {
+    --ev: var(--ev-vulcanico);
+    --ev-50: var(--ev-vulcanico-50)
+}
+
+.ev-chip[data-type="idraulico"] {
+    --ev: var(--ev-idraulico);
+    --ev-50: var(--ev-idraulico-50)
+}
+
+.ev-chip[data-type="idrogeologico"] {
+    --ev: var(--ev-idrogeologico);
+    --ev-50: var(--ev-idrogeologico-50)
+}
+
+.ev-chip[data-type="maremoto"] {
+    --ev: var(--ev-maremoto);
+    --ev-50: var(--ev-maremoto-50)
+}
+
+.ev-chip[data-type="deficit-idrico"] {
+    --ev: var(--ev-deficit-idrico);
+    --ev-50: var(--ev-deficit-idrico-50)
+}
+
+.ev-chip[data-type="meteo-avverso"] {
+    --ev: var(--ev-meteo-avverso);
+    --ev-50: var(--ev-meteo-avverso-50)
+}
+
+.ev-chip[data-type="aib"] {
+    --ev: var(--ev-aib);
+    --ev-50: var(--ev-aib-50)
+}
+
+.ev-chip[data-type="uomo"] {
+    --ev: var(--ev-uomo);
+    --ev-50: var(--ev-uomo-50)
+}
+
+.ev-chip[data-type="altro"] {
+    --ev: #64748b;
+    --ev-50: #f1f5f9
+}
+
+/* ===== FIX modal evento: spazio per la X + hitbox corretta ===== */
+
+/* lascia spazio interno a destra nel dialog così i bottoni non finiscono sotto la X */
+#modal-event .c-modal__dialog {
+    padding-right: 3.25rem;
+    /* >= larghezza/hitbox della X */
+}
+
+/* restringi l’area cliccabile della X: niente overlay “invisibile” sui bottoni */
+#modal-event .c-modal__close {
+    top: .6rem;
+    right: .6rem;
+    width: 2rem;
+    /* 32px */
+    height: 2rem;
+    /* 32px */
+    padding: 0;
+    display: grid;
+    place-items: center;
+    line-height: 1;
+    border-radius: .5rem;
+    background: #fff;
+    border: 1px solid var(--line);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .06);
+    z-index: 5;
+    /* sopra il contenuto, ma senza coprire oltre i suoi 32px */
+}
+
+#modal-event .c-modal__close * {
+    pointer-events: none;
+}
+
+/* evita “bolle” di click strane */
+
+/* (opzionale) sugli schermi piccoli riduci un filo il padding extra */
+@media (max-width: 640px) {
+    #modal-event .c-modal__dialog {
+        padding-right: 3rem;
+    }
+}
+
+/* assicurati che il gruppo bottoni non venga tagliato/compress o sovrapposto */
+#modal-event header .flex {
+    flex-wrap: wrap;
+    gap: .4rem;
+}
+
+/* migliora il target del pulsante piccolo blu */
+#modal-event .btn.btn-xs {
+    min-height: 2rem;
+    padding: .35rem .6rem;
+}
+
+
+/* ===== FIX colore costante bottone blu ===== */
+
+#modal-event .btn.btn-xs.btn-primary,
+.btn.btn-xs.btn-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04), 0 6px 16px rgba(37, 99, 235, 0.18);
+    transition: background-color .15s, border-color .15s, transform .06s, box-shadow .15s;
+}
+
+/* hover: più scuro ma sempre blu */
+#modal-event .btn.btn-xs.btn-primary:hover,
+.btn.btn-xs.btn-primary:hover {
+    background-color: var(--primary-600);
+    border-color: var(--primary-600);
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.05), 0 10px 24px rgba(29, 78, 216, 0.22);
+    color: #fff;
+}
+
+/* attivo: tono leggermente più profondo */
+#modal-event .btn.btn-xs.btn-primary:active,
+.btn.btn-xs.btn-primary:active {
+    background-color: var(--primary-700);
+    border-color: var(--primary-700);
+    transform: translateY(1px);
+    color: #fff;
+}
+
+/* =========================
+   OVERRIDE: PRIORITÀ MODALE EV-FORM
+   ========================= */
+/* La modale di modifica/nuova comunicazione evento sta sopra a tutto */
+#modal-ev-form {
+    z-index: 2000 !important;
+}
+
+#modal-ev-form .c-modal__backdrop {
+    z-index: 1999 !important;
+    background: rgba(0, 0, 0, .55);
+}
+
+#modal-ev-form .c-modal__dialog {
+    z-index: 2001 !important;
+}
+
+/* (opzionale) assicura che eventuali altre modali non le passino davanti */
+#modal-event {
+    z-index: 1300 !important;
+}
+
+#modal-all-reports {
+    z-index: 1200 !important;
+}
+
+.c-modal.c-modal--overlay {
+    z-index: 1400 !important;
+}
+
+/* SweetAlert resta sotto a ev-form ma sopra il resto */
+.swal2-container {
+    z-index: 1600 !important;
+}
+
+/* =========================
+   OVERRIDE: BADGE AREE INTERESSATE
+   ========================= */
+/* Contenitore generale dei tag/badge */
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem .5rem;
+}
+
+/* Trasforma i .tag in badge compatti */
+#ev-areas .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    padding: .2rem .55rem;
+    border-radius: .5rem;
+    font-weight: 700;
+    font-size: .75rem;
+    line-height: 1;
+    background: #f8fafc;
+    /* bg chiaro */
+    color: #0f172a;
+    /* testo scuro */
+    border: 1px solid var(--line);
+    /* bordo sottile */
+    box-shadow: 0 1px 0 rgba(0, 0, 0, .02);
+}
+
+/* Puntino decorativo (facoltativo) all'inizio del badge */
+#ev-areas .tag::before {
+    content: "";
+    width: .45rem;
+    height: .45rem;
+    border-radius: 999px;
+    background: var(--primary);
+    opacity: .9;
+}
+
+/* I badge qui sono solo display, niente “X” di rimozione */
+#ev-areas .tag .tag__x {
+    display: none !important;
+}
+
+/* =========================
+   (FACOLTATIVO) RIFINITURE TAG-INPUT
+   – utile per i campi dove inserisci/editi le aree
+   ========================= */
+.tag-input--wrap {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .4rem;
+    padding: .4rem .5rem;
+    border: 1px solid var(--line);
+    border-radius: .75rem;
+    background: #fff;
+}
+
+.tag-input__control {
+    flex: 1 1 10rem;
+    min-width: 10rem;
+}
+
+.tag-input__field {
+    display: block;
+    width: 100%;
+    height: 2rem;
+    border: 0;
+    outline: 0;
+    font-size: .875rem;
+    background: transparent;
+    color: #0f172a;
+}
+
+.tag {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    padding: .25rem .55rem;
+    border-radius: .5rem;
+    font-size: .75rem;
+    font-weight: 700;
+    line-height: 1;
+    background: var(--muted-50);
+    color: #0f172a;
+    border: 1px solid var(--line);
+}
+
+.tag__x {
+    display: inline-grid;
+    place-items: center;
+    width: 1rem;
+    height: 1rem;
+    line-height: 1;
+    border-radius: .25rem;
+    background: #fff;
+    border: 1px solid var(--line);
+    cursor: pointer;
+}
+
+.tag__x:hover {
+    background: #f8fafc;
+}
+
+/* ===== Badge Verso (Entrata / Uscita) per tabella “Tutte le comunicazioni” ===== */
+#modal-all-reports table td[data-verso="E"],
+#modal-all-reports table td[data-verso="U"] {
+    text-align: center;
+    padding: .45rem .5rem;
+}
+
+#modal-all-reports .badge--in,
+#modal-all-reports .badge--out {
+    display: inline-block;
+    font-weight: 700;
+    font-size: .75rem;
+    line-height: 1;
+    padding: .25rem .55rem;
+    border-radius: .5rem;
+    border: 1px solid transparent;
+}
+
+/* Entrata = verde */
+#modal-all-reports .badge--in {
+    background: #ecfdf5;
+    border-color: #bbf7d0;
+    color: #166534;
+}
+
+/* Uscita = rosso */
+#modal-all-reports .badge--out {
+    background: #fff1f2;
+    border-color: #fecdd3;
+    color: #991b1b;
+}
+
+/* Box anteprima comunicazioni evento dentro le modali GEN */
+.ev-preview {
+    margin-top: .75rem;
+    border: 1px solid var(--line);
+    border-radius: .75rem;
+    background: #fff;
+    padding: .75rem;
+}
+
+.ev-preview__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: .5rem
+}
+
+.ev-preview__title {
+    margin: 0;
+    font-size: .9rem;
+    font-weight: 700
+}
+
+.ev-preview__empty {
+    font-size: .8rem;
+    opacity: .75;
+    padding: .25rem 0
+}

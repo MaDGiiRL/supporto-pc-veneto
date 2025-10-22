@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import './style.css';
+@import './applicativi_informatici/segnalazioni/dashboard.css';
 
 @tailwind base;
 @tailwind components;

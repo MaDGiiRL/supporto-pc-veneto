@@ -64,7 +64,7 @@ return [
         ],
         [
             'title' => 'Segnalazioni',
-            'desc'  => 'Raccolta delle informazioni in emergenza - Sperimentale',
+            'desc'  => 'Raccolta delle informazioni in emergenza',
             'slug'  => 'segnalazioni',
             'icon'  => 'megaphone',
         ],
@@ -106,7 +106,7 @@ return [
         ],
         [
             'title' => 'Statistiche accreditamenti',
-            'desc'  => "Visualizza le statistiche relative all'accreditamento dei volontari - SPERIMENTALE!!",
+            'desc'  => "Visualizza le statistiche relative all'accreditamento dei volontari",
             'slug'  => 'statistiche-accreditamenti',
             'icon'  => 'chart-bar',
         ],
