@@ -42,4 +42,21 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+
+      public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'role_user');
+    }
+
+    // Helpers ruoli
+    public function hasRole(string $slug): bool
+    {
+        return $this->roles->contains(fn ($r) => $r->slug === $slug);
+    }
+
+    public function hasAnyRole(array $slugs): bool
+    {
+        return $this->roles->contains(fn ($r) => in_array($r->slug, $slugs, true));
+    }
 }

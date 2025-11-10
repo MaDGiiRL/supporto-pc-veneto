@@ -71,7 +71,7 @@ $categoryCounts = $allByCategory->map->count();
 @endphp
 
 <x-layout title="Applicativi informatici">
-    <div x-data="appGrid()" class="container mx-auto px-4 py-10">
+    <div x-data="appGrid()" class="container mx-auto px-4 py-10 p-5">
         {{-- HERO --}}
         <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-10 mb-10 shadow-2xl">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">

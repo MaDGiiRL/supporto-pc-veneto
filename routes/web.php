@@ -4,6 +4,7 @@ use App\Http\Controllers\ApplicativiController;
 use App\Http\Controllers\SegnalazioniController;
 use App\Http\Controllers\Sor\EventoController;
 use App\Http\Controllers\Sor\SegnalazioneController;
+use App\Http\Controllers\Sor\ComunicazioniController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -70,7 +71,7 @@ Route::middleware(['web', 'auth'])
         Route::get('eventi/{evento}',                 [EventoController::class, 'show']);
         Route::post('eventi',                         [EventoController::class, 'store']);
         Route::patch('eventi/{evento}/toggle',        [EventoController::class, 'toggle']);
-        Route::post('eventi/{evento}/comunicazioni',  [EventoController::class, 'addComunicazione']);
+        Route::post('eventi/{evento}/comunicazioni', [ComunicazioniController::class, 'store']);
         Route::get('eventi/export.csv',               [EventoController::class, 'export']);
 
         // (opzionale) chi sono

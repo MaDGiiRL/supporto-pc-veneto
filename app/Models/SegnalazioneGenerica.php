@@ -9,9 +9,7 @@ class SegnalazioneGenerica extends Model
 {
     use HasFactory;
 
-    // *** usa lo schema sor come gli altri modelli ***
-    protected $table = 'sor.segnalazioni_generiche'; // <-- se la tua tabella si chiama diversamente, mettila qui
-
+    protected $table = 'sor.segnalazioni_generiche';
     public $timestamps = false;
 
     protected $fillable = [

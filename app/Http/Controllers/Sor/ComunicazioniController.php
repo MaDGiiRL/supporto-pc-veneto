@@ -10,9 +10,6 @@ use Illuminate\Validation\Rule;
 
 class ComunicazioniController extends Controller
 {
-
-    // app/Http/Controllers/Sor/ComunicazioniController.php
-
     public function index(Request $r)
     {
         $q = Comunicazione::query()
@@ -22,16 +19,29 @@ class ComunicazioniController extends Controller
             $needle = mb_strtolower($r->string('q'));
             $q->where(function ($w) use ($needle) {
                 $w->whereRaw('LOWER(oggetto) LIKE ?', ["%{$needle}%"])
-                    ->orWhereRaw('LOWER(contenuto) LIKE ?', ["%{$needle}%"])
-                    ->orWhereRaw('LOWER(mitt_dest) LIKE ?', ["%{$needle}%"])
-                    ->orWhereRaw('LOWER(tipo) LIKE ?', ["%{$needle}%"])
-                    ->orWhereRaw("EXISTS (SELECT 1 FROM jsonb_array_elements_text(aree) a WHERE LOWER(a.value) LIKE ?)", ["%{$needle}%"]);
+                  ->orWhereRaw('LOWER(contenuto) LIKE ?', ["%{$needle}%"])
+                  ->orWhereRaw('LOWER(mitt_dest) LIKE ?', ["%{$needle}%"])
+                  ->orWhereRaw('LOWER(tipo) LIKE ?', ["%{$needle}%"])
+                  ->orWhereRaw("
+                    EXISTS (
+                      SELECT 1
+                      FROM jsonb_array_elements_text(COALESCE(aree, '[]'::jsonb)) a
+                      WHERE LOWER(a.value) LIKE ?
+                    )
+                  ", ["%{$needle}%"]);
             });
         }
+
         if ($r->filled('comune')) {
             $c = mb_strtolower($r->string('comune'));
-            $q->whereRaw("EXISTS (SELECT 1 FROM jsonb_array_elements_text(aree) a WHERE LOWER(a.value) LIKE ?)", ["%{$c}%"]);
+            $q->whereRaw("
+              EXISTS (
+                SELECT 1
+                FROM jsonb_array_elements_text(COALESCE(aree, '[]'::jsonb)) a
+                WHERE LOWER(a.value) LIKE ?
+              )", ["%{$c}%"]);
         }
+
         if ($r->filled('date')) {
             $q->whereDate('comunicata_il', $r->date('date'));
         }
@@ -40,8 +50,6 @@ class ComunicazioniController extends Controller
         }
         if ($r->filled('dal')) $q->where('comunicata_il', '>=', $r->date('dal') . ' 00:00:00');
         if ($r->filled('al'))  $q->where('comunicata_il', '<=', $r->date('al') . ' 23:59:59');
-
-        // filtro per evento specifico (opzionale)
         if ($r->filled('evento_id')) {
             $q->where('evento_id', (int)$r->integer('evento_id'));
         }
@@ -51,12 +59,11 @@ class ComunicazioniController extends Controller
         $res = $q->paginate((int)$r->integer('per_page', 20));
 
         return response()->json([
-
             'data' => $res->items(),
             'meta' => [
                 'current_page' => $res->currentPage(),
-                'last_page' => $res->lastPage(),
-                'total' => $res->total(),
+                'last_page'    => $res->lastPage(),
+                'total'        => $res->total(),
             ],
         ]);
     }
@@ -81,25 +88,21 @@ class ComunicazioniController extends Controller
             'priorita'      => 'required|in:Nessuna,Alta,Media,Bassa',
         ]);
 
-        // 👉 qui aggiungi l’operatore loggato
-        $data['operatore'] = optional($r->user())->name ?? optional($r->user())->email ?? 'sconosciuto';
-        $data['evento_id'] = $ev->id;
+        $data['operatore']     = optional($r->user())->name ?? optional($r->user())->email ?? 'sconosciuto';
+        $data['evento_id']     = $ev->id;
         $data['comunicata_il'] = $data['comunicata_il'] ?? now();
 
         $com = Comunicazione::create($data);
 
-        // aggiorna evento
         $ev->aggiornato_il = now();
-        $ev->aperto = true;
+        $ev->aperto        = true;
         $ev->save();
 
         return response()->json($com, 201);
     }
 
-
     public function update(Request $r, int $evento, int $id)
     {
-        // garantisco appartenenza all'evento
         $ev  = Evento::findOrFail($evento);
         $com = Comunicazione::where('evento_id', $evento)->findOrFail($id);
 
@@ -119,11 +122,9 @@ class ComunicazioniController extends Controller
             'priorita'      => ['nullable', Rule::in(['Nessuna', 'Alta', 'Media', 'Bassa'])],
         ]);
 
-        // aggiorno solo i campi presenti
         $com->fill(array_filter($data, fn($v) => $v !== null));
         $com->save();
 
-        // touch evento
         $ev->aggiornato_il = now();
         $ev->save();
 
@@ -134,10 +135,8 @@ class ComunicazioniController extends Controller
     {
         $ev  = Evento::findOrFail($evento);
         $com = Comunicazione::where('evento_id', $evento)->findOrFail($id);
-
         $com->delete();
 
-        // touch evento
         $ev->aggiornato_il = now();
         $ev->save();
 

@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class Comunicazione extends Model
 {
     protected $table = 'sor.comunicazioni';
-
-    // Se la tabella non ha created_at/updated_at
     public $timestamps = false;
 
     protected $fillable = [
@@ -25,7 +23,8 @@ class Comunicazione extends Model
         'aree',
         'oggetto',
         'contenuto',
-        'priorita'
+        'priorita',
+        'operatore',
     ];
 
     protected $casts = [

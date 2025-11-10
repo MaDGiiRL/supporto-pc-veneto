@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class Evento extends Model
 {
     protected $table = 'sor.eventi';
-
-    // Se la tabella non ha created_at/updated_at
     public $timestamps = false;
 
     protected $fillable = [
@@ -17,7 +15,7 @@ class Evento extends Model
         'aree',
         'aperto',
         'aggiornato_il',
-        'operatore'
+        'operatore',
     ];
 
     protected $casts = [
@@ -28,11 +26,11 @@ class Evento extends Model
 
     public function comunicazioni()
     {
-        return $this->hasMany(Comunicazione::class, 'evento_id');
+        return $this->hasMany(Comunicazione::class, 'evento_id')->orderByDesc('comunicata_il')->orderByDesc('id');
     }
 
     public function segnalazioni()
     {
-        return $this->hasMany(SegnalazioneGenerica::class, 'evento_id');
+        return $this->hasMany(SegnalazioneGenerica::class, 'evento_id')->orderByDesc('creata_il')->orderByDesc('id');
     }
 }

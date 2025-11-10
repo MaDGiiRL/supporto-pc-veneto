@@ -117,7 +117,7 @@
                         </span>
                         <h3 class="text-base font-semibold text-slate-800">Assistenza e supporto</h3>
                     </div>
-                    <p class="text-sm text-slate-600 flex-1">
+                    <p class="text-sm text-slate-600 flex-1 pt-3">
                         Hai bisogno di aiuto o non riesci ad accedere agli applicativi? Contatta il referente di Protezione Civile della tua struttura.
                     </p>
                 </div>

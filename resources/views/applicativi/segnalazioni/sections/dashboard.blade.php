@@ -4,7 +4,7 @@
         <button class="btn btn-primary" data-open-modal="#modal-gen">📝 Nuova segnalazione generica</button>
     </header>
 
-    <!-- 🔎 Ricerca globale -->
+    <!-- Ricerca globale -->
     <div class="rounded-2xl border border-slate-200 bg-white shadow-card p-4 mb-6">
         <div class="grid md:grid-cols-4 gap-3">
             <label class="grid gap-1">
@@ -27,11 +27,10 @@
         <div class="flex justify-end mt-3">
             <button class="btn btn-xs" id="global-reset" type="button">Reset</button>
         </div>
-
         <div class="text-xs opacity-70 mt-2">La ricerca globale si somma ai filtri per-tabella.</div>
     </div>
 
-    <!-- ========== SEGNALAZIONI GENERICHE ========== -->
+    <!-- SEGNALAZIONI GENERICHE -->
     <section class="sec sec--gen border-slate-200 rounded-2xl bg-white shadow-card p-4 mb-6">
         <div class="flex items-center justify-between gap-3 mb-3">
             <h3 class="text-sm font-semibold">Segnalazioni generiche</h3>
@@ -54,16 +53,10 @@
                 <span class="label">Al</span>
                 <input class="input" id="gen-filter-al" type="date" />
             </label>
-
-            <!-- 🔹 Bottone Reset accanto ai filtri -->
             <button class="btn btn-xs mb-2" id="gen-filters-reset" type="button">Reset</button>
-
-            <!-- info paginazione -->
             <div class="text-sm opacity-70 ml-auto mt-5">10 per pagina</div>
         </div>
 
-
-        <!-- 🔴🟠🟢 Legenda priorità (restyling = come legenda eventi) -->
         <div id="gen-prio-legend" class="ongoing-legend prio-legend" aria-label="Legenda priorità">
             <span class="ol-item" data-prio="alta"><i class="ol-dot" aria-hidden="true"></i>Alta</span>
             <span class="ol-item" data-prio="media"><i class="ol-dot" aria-hidden="true"></i>Media</span>
@@ -96,7 +89,7 @@
         </div>
     </section>
 
-    <!-- ========== EVENTI IN ATTO ========== -->
+    <!-- EVENTI IN ATTO -->
     <section class="sec sec--ongoing rounded-2xl border border-slate-200 bg-white shadow-card p-4 mb-6">
         <div class="flex items-center justify-between gap-3 mb-3">
             <h3 class="text-sm font-semibold">Eventi in atto</h3>
@@ -120,14 +113,9 @@
                 <span class="label">Al</span>
                 <input class="input" id="ongoing-filter-al" type="date" />
             </label>
-
-            <!-- 🔹 Bottone Reset accanto ai filtri -->
             <button class="btn btn-xs mb-2" id="ongoing-filters-reset" type="button">Reset</button>
-
-            <!-- info paginazione -->
             <div class="text-sm opacity-70 ml-auto mt-5">10 per pagina</div>
         </div>
-
 
         <div id="ongoing-cards" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3"></div>
 
@@ -140,6 +128,7 @@
     </section>
 </div>
 
+<!-- ========== MODALI (come le avevi) ========== -->
 <!-- ========== MODALI ========== -->
 
 <!-- GENERICO (CREA) -->
@@ -169,7 +158,6 @@
                     </select>
                 </label>
 
-                <!-- Priorità -->
                 <label class="grid gap-1.5">
                     <span class="label">Priorità</span>
                     <div class="flex flex-wrap items-center gap-4 mt-1">
@@ -187,6 +175,7 @@
                     <span class="text-xs opacity-70">Esempio: “Verona”, “Verona - Avesa”, “Farra di Soligo - Soligo”.</span>
                 </label>
 
+                <!-- Note -->
                 <label class="grid gap-1.5 md:col-span-2">
                     <span class="label">Note descrittive</span>
                     <textarea name="note" class="input" placeholder="Eventuali note descrittive dell'evento. Non utilizzare per aggiornamenti"></textarea>
@@ -203,7 +192,6 @@
                 </label>
             </fieldset>
 
-            <!-- SPECIFICI PER TIPO -->
             <fieldset>
                 <legend class="text-sm font-semibold mb-1">Campi specifici</legend>
                 <div id="gen-specific"></div>
@@ -214,7 +202,6 @@
                 <button type="reset" class="btn">Reset</button>
                 <button type="submit" class="btn btn-primary">Salva</button>
             </div>
-
         </form>
     </div>
 </div>
@@ -240,7 +227,6 @@
                     </select>
                 </label>
 
-                <!-- Priorità -->
                 <label class="grid gap-1">
                     <span class="label">Priorità</span>
                     <select name="priorita" class="input">
@@ -265,7 +251,6 @@
                     <textarea name="sintesi" class="input"></textarea>
                 </label>
 
-                <!-- 🔗 Associazione evento -->
                 <label class="grid gap-1 md:col-span-2">
                     <span class="label">Associa a evento in atto</span>
                     <select name="event_id" id="edit-gen-event" class="input">
@@ -280,12 +265,11 @@
                 <button type="reset" class="btn">Reset</button>
                 <button type="submit" class="btn btn-primary">Salva</button>
             </div>
-
         </form>
     </div>
 </div>
 
-<!-- ========== MODALE EVENTO (dettaglio + segnalazioni) ========== -->
+<!-- MODALE EVENTO -->
 <div class="c-modal hidden" id="modal-event" aria-hidden="true">
     <div class="c-modal__backdrop" data-close-modal></div>
     <div class="c-modal__dialog" role="dialog" aria-modal="true" style="max-width:72rem">
@@ -303,7 +287,6 @@
                 <button class="btn-xs" id="ev-toggle-open" title="Cambia stato evento">Chiudi evento</button>
                 <button class="btn btn-xs btn-primary" id="ev-open-form">➕ Nuova segnalazione</button>
             </div>
-
         </header>
 
         <div id="ev-body" class="grid gap-4 max-h-[70vh] overflow-auto">
@@ -355,7 +338,6 @@
             <input type="hidden" id="ev-edit-index" />
             <input type="hidden" id="f-operatore" />
 
-            <!-- ======== BASE ======== -->
             <label class="grid gap-1.5">
                 <span class="label">Data Comunicazione</span>
                 <input id="f-data" class="input" type="text" />
@@ -420,7 +402,6 @@
                 </div>
             </div>
 
-            <!-- ======== SPECIFICI ======== -->
             <div class="md:col-span-2">
                 <legend class="text-sm font-semibold mb-1">Campi specifici</legend>
                 <div id="ev-specific"></div>
@@ -431,12 +412,11 @@
                 <button type="reset" class="btn">Reset</button>
                 <button type="submit" class="btn btn-primary" id="ev-save">💾 Salva Comunicazione</button>
             </div>
-
         </form>
     </div>
 </div>
 
-<!-- MODALE: Tutte le comunicazioni (tutti gli eventi) — al TOP -->
+<!-- MODALE: Tutte le comunicazioni -->
 <div class="c-modal c-modal--top hidden" id="modal-all-reports" aria-hidden="true">
     <div class="c-modal__backdrop" data-close-modal></div>
     <div class="c-modal__dialog" role="dialog" aria-modal="true" style="max-width:90rem">
@@ -464,15 +444,13 @@
     </div>
 </div>
 
-<!-- ========== MODALE: Dettagli Segnalazione Generica ========== -->
+<!-- MODALE: Dettagli Segnalazione Generica -->
 <div class="c-modal hidden" id="modal-gen-info" aria-hidden="true">
     <div class="c-modal__backdrop" data-close-modal></div>
     <div class="c-modal__dialog" role="dialog" aria-modal="true" style="max-width:48rem">
         <button type="button" class="c-modal__close" data-close-modal>✕</button>
         <h3 class="mb-2 text-lg font-semibold">Dettagli segnalazione</h3>
-
         <div id="gen-info-body" class="grid gap-3"></div>
-
         <div class="flex justify-end mt-3 gap-2">
             <button type="button" class="btn" data-close-modal>Chiudi</button>
             <button type="button" class="btn btn-primary" id="gen-info-copy">Copia JSON</button>
@@ -480,29 +458,21 @@
     </div>
 </div>
 
+
 <!-- Datalist Comuni -->
 <datalist id="comuni-datalist"></datalist>
 
 <script type="module">
     /* ===== Utils ===== */
     const $ = (s) => document.querySelector(s);
-    const fmtDT = (d) =>
-        new Intl.DateTimeFormat("it-IT", {
-            dateStyle: "short",
-            timeStyle: "short"
-        }).format(d);
-    const PREVIEW_MAX = 160;
-    const truncate = (str = "", n = PREVIEW_MAX) =>
-        (str.length > n ? str.slice(0, n).trimEnd() + "…" : str);
+    const fmtDT = (d) => new Intl.DateTimeFormat("it-IT", {
+        dateStyle: "short",
+        timeStyle: "short"
+    }).format(d);
+    const PREVIEW_MAX = 500;
+    const truncate = (str = "", n = PREVIEW_MAX) => (str.length > n ? str.slice(0, n).trimEnd() + "…" : str);
     const nowIT = () => {
         const d = new Date();
-        const pad = (n) => String(n).padStart(2, "0");
-        return {
-            date: `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`,
-            time: `${pad(d.getHours())}:${pad(d.getMinutes())}`
-        };
-    };
-    const toITParts = (d) => {
         const pad = (n) => String(n).padStart(2, "0");
         return {
             date: `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`,
@@ -515,7 +485,7 @@
         return new Date(Number(yyyy), Number(mm) - 1, Number(dd), Number(HH), Number(MM));
     };
 
-    /* ===== SweetAlert helpers ===== */
+    /* ===== Toast & confirm ===== */
     const toast = (title, text = "", icon = "success", timer = 1700) => {
         Swal.fire({
             title,
@@ -528,10 +498,7 @@
             timerProgressBar: true
         });
     };
-    const confirmDelete = (
-            title = "Eliminare la segnalazione?",
-            text = "Questa azione non può essere annullata."
-        ) =>
+    const confirmDelete = (title = "Eliminare la segnalazione?", text = "Questa azione non può essere annullata.") =>
         Swal.fire({
             title,
             text,
@@ -540,7 +507,7 @@
             confirmButtonText: "Sì, elimina",
             cancelButtonText: "Annulla",
             confirmButtonColor: "#d33",
-            cancelButtonColor: "#3085d6",
+            cancelButtonColor: "#3085d6"
         });
 
     function fallbackCopy(text) {
@@ -573,9 +540,8 @@
         }
         render() {
             this.root.classList.add("tag-input--wrap");
-            this.root.innerHTML = `<div class="tags" role="list"></div><div class="tag-input__control"><input class="tag-input__field" ${
-        this.datalistId ? `list="${this.datalistId}"` : ""
-      } placeholder="${this.placeholder}"/></div>`;
+            this.root.innerHTML = `<div class="tags" role="list"></div>
+        <div class="tag-input__control"><input class="tag-input__field" ${this.datalistId?`list="${this.datalistId}"`:""} placeholder="${this.placeholder}"/></div>`;
             this.tagsEl = this.root.querySelector(".tags");
             this.inputEl = this.root.querySelector(".tag-input__field");
             this.inputEl.addEventListener("keydown", (e) => {
@@ -616,10 +582,8 @@
         }
     }
 
-    /* ===== Comuni & Province seed (UI) ===== */
-    const COMUNI = [
-        "Adria", "Affi", "Albignasego", "Bologna", "Bussolengo", "Farra di Soligo", "Milano", "Napoli", "Roma", "Rovigo", "Torino", "Verona", "Vicenza", "Venezia",
-    ];
+    /* ===== Seed di base (puoi sostituire con API meta) ===== */
+    const COMUNI = ["Adria", "Affi", "Albignasego", "Bologna", "Bussolengo", "Farra di Soligo", "Milano", "Napoli", "Roma", "Rovigo", "Torino", "Verona", "Vicenza", "Venezia"];
     COMUNI.forEach((c) => {
         const o = document.createElement("option");
         o.value = c;
@@ -635,13 +599,9 @@
         MI: ["Milano"],
         NA: ["Napoli"],
         RM: ["Roma"],
-        TO: ["Torino"],
+        TO: ["Torino"]
     };
-
-    /* ===== Tipi evento ===== */
-    const TYPES = [
-        "sismico", "vulcanico", "idraulico", "idrogeologico", "maremoto", "deficit-idrico", "meteo-avverso", "aib", "uomo", "altro",
-    ];
+    const TYPES = ["sismico", "vulcanico", "idraulico", "idrogeologico", "maremoto", "deficit-idrico", "meteo-avverso", "aib", "uomo", "altro"];
     const TYPE_LABELS = {
         sismico: "Sismico",
         vulcanico: "Vulcanico",
@@ -652,140 +612,113 @@
         "meteo-avverso": "Meteo Avverso",
         aib: "AIB",
         uomo: "Prodotti dall'uomo",
-        altro: "Altro",
+        altro: "Altro"
     };
 
     /* ===== Schemi specifici (GEN form) ===== */
     const SPEC_SCHEMAS = {
+        /* come prima, identico */
         sismico: [{
-                id: "magnitudo",
-                label: "Magnitudo (se disponibile)"
-            },
-            {
-                id: "intensita",
-                label: "Intensità MCS/EMS"
-            },
-            {
-                id: "coordinate",
-                label: "Coordinate epicentro"
-            },
-            {
-                id: "danni",
-                label: "Danni segnalati (testo)",
-                type: "textarea"
-            },
-        ],
+            id: "magnitudo",
+            label: "Magnitudo (se disponibile)"
+        }, {
+            id: "intensita",
+            label: "Intensità MCS/EMS"
+        }, {
+            id: "coordinate",
+            label: "Coordinate epicentro"
+        }, {
+            id: "danni",
+            label: "Danni segnalati (testo)",
+            type: "textarea"
+        }],
         vulcanico: [{
-                id: "tremore",
-                label: "Tremore vulcanico (trend)"
-            },
-            {
-                id: "cenere",
-                label: "Ricaduta ceneri (aree)"
-            },
-            {
-                id: "dpi",
-                label: "DPI distribuiti (qtà)"
-            },
-        ],
+            id: "tremore",
+            label: "Tremore vulcanico (trend)"
+        }, {
+            id: "cenere",
+            label: "Ricaduta ceneri (aree)"
+        }, {
+            id: "dpi",
+            label: "DPI distribuiti (qtà)"
+        }],
         idraulico: [{
-                id: "livello",
-                label: "Livello idrometrico (m)"
-            },
-            {
-                id: "argine",
-                label: "Criticità arginale (sì/no)"
-            },
-            {
-                id: "sottopassi",
-                label: "Sottopassi allagati (#)"
-            },
-        ],
+            id: "livello",
+            label: "Livello idrometrico (m)"
+        }, {
+            id: "argine",
+            label: "Criticità arginale (sì/no)"
+        }, {
+            id: "sottopassi",
+            label: "Sottopassi allagati (#)"
+        }],
         idrogeologico: [{
-                id: "tipologia_frana",
-                label: "Tipologia frana"
-            },
-            {
-                id: "volume",
-                label: "Volume stimato (mc)"
-            },
-            {
-                id: "viabilita",
-                label: "Interferenza viabilità (testo)",
-                type: "textarea"
-            },
-        ],
+            id: "tipologia_frana",
+            label: "Tipologia frana"
+        }, {
+            id: "volume",
+            label: "Volume stimato (mc)"
+        }, {
+            id: "viabilita",
+            label: "Interferenza viabilità (testo)",
+            type: "textarea"
+        }],
         maremoto: [{
-                id: "allerta",
-                label: "Livello allerta"
-            },
-            {
-                id: "aree_costiere",
-                label: "Aree costiere interessate"
-            },
-        ],
+            id: "allerta",
+            label: "Livello allerta"
+        }, {
+            id: "aree_costiere",
+            label: "Aree costiere interessate"
+        }],
         "deficit-idrico": [{
-                id: "pressione",
-                label: "Riduzione pressione (%)"
-            },
-            {
-                id: "autobotti",
-                label: "Autobotti in servizio (#)"
-            },
-        ],
+            id: "pressione",
+            label: "Riduzione pressione (%)"
+        }, {
+            id: "autobotti",
+            label: "Autobotti in servizio (#)"
+        }],
         "meteo-avverso": [{
-                id: "fenomeno",
-                label: "Fenomeno prevalente (vento, grandine…)"
-            },
-            {
-                id: "intensita",
-                label: "Intensità"
-            },
-            {
-                id: "danni_diffusi",
-                label: "Danni diffusi? (sì/no)"
-            },
-        ],
+            id: "fenomeno",
+            label: "Fenomeno prevalente (vento, grandine…)"
+        }, {
+            id: "intensita",
+            label: "Intensità"
+        }, {
+            id: "danni_diffusi",
+            label: "Danni diffusi? (sì/no)"
+        }],
         aib: [{
-                id: "superficie",
-                label: "Superficie percorsa dal fuoco (ha)"
-            },
-            {
-                id: "combustibile",
-                label: "Tipo combustibile (bosco, sterpaglie…)"
-            },
-            {
-                id: "coordinate",
-                label: "Coordinate/Località puntuale"
-            },
-            {
-                id: "mezzi",
-                label: "Mezzi impiegati (AIB/VVF/CAI…)"
-            },
-            {
-                id: "meteo",
-                label: "Condizioni meteo (vento, umidità…)"
-            },
-        ],
+            id: "superficie",
+            label: "Superficie percorsa dal fuoco (ha)"
+        }, {
+            id: "combustibile",
+            label: "Tipo combustibile (bosco, sterpaglie…)"
+        }, {
+            id: "coordinate",
+            label: "Coordinate/Località puntuale"
+        }, {
+            id: "mezzi",
+            label: "Mezzi impiegati (AIB/VVF/CAI…)"
+        }, {
+            id: "meteo",
+            label: "Condizioni meteo (vento, umidità…)"
+        }],
         uomo: [{
-                id: "tipologia",
-                label: "Tipologia incidente (sversamento, industriale…)"
-            },
-            {
-                id: "ente_coinvolto",
-                label: "Ente/Azienda coinvolta"
-            },
-            {
-                id: "impatti",
-                label: "Impatti su servizi/ambiente",
-                type: "textarea"
-            },
-        ],
+            id: "tipologia",
+            label: "Tipologia incidente (sversamento, industriale…)"
+        }, {
+            id: "ente_coinvolto",
+            label: "Ente/Azienda coinvolta"
+        }, {
+            id: "impatti",
+            label: "Impatti su servizi/ambiente",
+            type: "textarea"
+        }],
         altro: [{
             id: "descrizione",
             label: "Descrizione dettagli (testo)",
             type: "textarea"
-        }],
+        }]
     };
 
     function renderSpecific(container, type, prefix) {
@@ -800,17 +733,13 @@
         schema.forEach((f) => {
             const wrap = document.createElement("label");
             wrap.className = "grid gap-1.5";
-            wrap.innerHTML =
-                `<span class="label">${f.label}</span>` +
-                (f.type === "textarea" ?
-                    `<textarea class="input" id="${prefix}-${f.id}"></textarea>` :
-                    `<input class="input" id="${prefix}-${f.id}"/>`);
+            wrap.innerHTML = `<span class="label">${f.label}</span>` + (f.type === "textarea" ? `<textarea class="input" id="${prefix}-${f.id}"></textarea>` : `<input class="input" id="${prefix}-${f.id}"/>`);
             grid.appendChild(wrap);
         });
         container.appendChild(grid);
     }
 
-    /* ===== Stato (backend only) ===== */
+    /* ===== Stato app ===== */
     const state = {
         gen: [],
         ongoing: [],
@@ -829,19 +758,23 @@
             genInfoJson: null,
             ongoingStatus: "all"
         },
+        _last: {
+            genKey: "",
+            ongoingKey: ""
+        }
     };
 
-    /* ===== Helpers eventi ===== */
+    /* ===== Helpers UI ===== */
     function prioClass(p = "Nessuna") {
         const k = (p || "").toLowerCase();
         return k === "alta" ? "prio--alta" : k === "media" ? "prio--media" : k === "bassa" ? "prio--bassa" : "prio--nessuna";
     }
 
     function makePrioBadge(p = "Nessuna") {
-        const span = document.createElement("span");
-        span.className = "prio-badge " + prioClass(p);
-        span.textContent = p || "Nessuna";
-        return span;
+        const s = document.createElement("span");
+        s.className = "prio-badge " + prioClass(p);
+        s.textContent = p || "Nessuna";
+        return s;
     }
 
     function makeDirBadge(val) {
@@ -866,7 +799,6 @@
         td.append(preview, space, btn);
     }
 
-    /* ===== Build select eventi ===== */
     function populateEventSelect(selectEl, selectedId = "", withCreate = true) {
         if (!selectEl) return;
         selectEl.querySelectorAll("option").forEach((o, i) => {
@@ -889,14 +821,19 @@
         selectEl.value = selectedId ? String(selectedId) : "";
     }
 
-    /* ===== Read-More modal ===== */
     (function ensureReadMoreModal() {
         if ($("#modal-readmore")) return;
         const wrap = document.createElement("div");
         wrap.className = "c-modal hidden";
         wrap.id = "modal-readmore";
         wrap.setAttribute("aria-hidden", "true");
-        wrap.innerHTML = `<div class="c-modal__backdrop" data-close-modal></div><div class="c-modal__dialog" role="dialog" aria-modal="true"><button type="button" class="c-modal__close" data-close-modal>✕</button><h3 id="rm-title" class="mb-2 text-lg font-semibold">Dettagli</h3><div id="rm-body" class="rm-body text-sm"></div><div class="flex justify-end mt-4"><button type="button" class="btn" data-close-modal>Chiudi</button></div></div>`;
+        wrap.innerHTML = `<div class="c-modal__backdrop" data-close-modal></div>
+      <div class="c-modal__dialog" role="dialog" aria-modal="true">
+        <button type="button" class="c-modal__close" data-close-modal>✕</button>
+        <h3 id="rm-title" class="mb-2 text-lg font-semibold">Dettagli</h3>
+        <div id="rm-body" class="rm-body text-sm"></div>
+        <div class="flex justify-end mt-4"><button type="button" class="btn" data-close-modal>Chiudi</button></div>
+      </div>`;
         document.body.appendChild(wrap);
     })();
 
@@ -908,7 +845,6 @@
         openModal("#modal-readmore");
     }
 
-    /* ===== Modal helpers ===== */
     function openModal(sel) {
         const m = document.querySelector(sel);
         if (!m) return;
@@ -920,7 +856,6 @@
         m.classList.add("is-open");
         document.body.style.overflow = "hidden";
     }
-    document.getElementById("modal-event")?.classList.add("c-modal--super");
 
     function closeModal(el) {
         if (!el) return;
@@ -929,7 +864,18 @@
         if (!document.querySelector(".c-modal.is-open")) document.body.style.overflow = "";
     }
 
-    /* ===== API layer (Fortify session + JSON) ===== */
+    function topmostOpenModal() {
+        const opens = Array.from(document.querySelectorAll('.c-modal.is-open'));
+        return opens.length ? opens[opens.length - 1] : null;
+    }
+
+    function closeTopModal() {
+        const m = topmostOpenModal();
+        if (m) closeModal(m);
+    }
+    document.getElementById("modal-event")?.classList.add("c-modal--super");
+
+    /* ===== API ===== */
     const API = {
         base: "/api/sor",
         csrf() {
@@ -960,13 +906,23 @@
             });
             if (!res.ok) {
                 const txt = await res.text().catch(() => "");
+                try {
+                    toast("Errore", `HTTP ${res.status} ${res.statusText}`, "error", 2200);
+                } catch {}
                 throw new Error(`HTTP ${res.status} ${res.statusText}\n${txt}`);
+            }
+            if (method !== "GET") {
+                document.dispatchEvent(new CustomEvent("api:write:success", {
+                    detail: {
+                        path,
+                        method
+                    }
+                }));
             }
             const ctype = res.headers.get("content-type") || "";
             return ctype.includes("application/json") ? res.json() : res;
         },
-
-        // --- Segnalazioni ---
+        // Segnalazioni
         listSegnalazioni(params) {
             return this._req("/segnalazioni", {
                 params
@@ -994,8 +950,7 @@
                 params
             });
         },
-
-        // --- Eventi ---
+        // Eventi
         listEventi(params) {
             return this._req("/eventi", {
                 params
@@ -1028,17 +983,21 @@
         },
     };
 
-    /* ===== Mapper API <-> UI ===== */
+    document.addEventListener("api:write:success", () => {
+        closeTopModal();
+    });
+
+    /* ===== Mappers ===== */
     const mapSegToUI = (s) => ({
         id: s.id,
         created_at: s.creata_il,
-        direzione: s.direzione, // "E" | "U"
+        direzione: s.direzione,
         tipologia: s.tipologia,
         aree: s.aree || [],
         sintesi: s.sintesi || "",
         operatore: s.operatore || "",
         event_id: s.evento_id ? String(s.evento_id) : "",
-        priorita: s.priorita || "Nessuna",
+        priorita: s.priorita || "Nessuna"
     });
     const mapEvToUI = (e) => ({
         id: e.id,
@@ -1047,7 +1006,7 @@
         aggiornamento: e.aggiornato_il,
         operatore: e.operatore || "",
         aree: e.aree || [],
-        open: !!e.aperto,
+        open: !!e.aperto
     });
     const mapComToUI = (c) => {
         const dt = c.comunicata_il ? new Date(c.comunicata_il) : null;
@@ -1070,94 +1029,184 @@
             contenuto: c.contenuto || "",
         };
     };
-
-    /* ===== Caricamento da backend ===== */
-    async function refreshGEN() {
-        const params = {
-            page: state.page.gen,
-            per_page: 10,
-            q: state.global.q || null,
-            comune: state.global.comune || null,
-            date: state.global.date || null,
-            time: state.global.time || null,
-            dal: $("#gen-filter-dal").value || null,
-            al: $("#gen-filter-al").value || null,
+    const mapGenToUI = (s) => {
+        const dt = s.creata_il ? new Date(s.creata_il) : null;
+        const itDate = dt ? dt.toLocaleDateString("it-IT") : "";
+        const itTime = dt ? dt.toTimeString().slice(0, 5) : "";
+        return {
+            id: s.id,
+            data: itDate,
+            ora: itTime,
+            direzione: (s.direzione || "E").toUpperCase(),
+            tipologia: TYPE_LABELS[s.tipologia] || s.tipologia || "",
+            areeText: (s.aree || []).join(", "),
+            sintesi: s.sintesi || "",
+            operatore: s.operatore || "",
+            priorita: s.priorita || "Nessuna",
         };
-        const res = await API.listSegnalazioni(params); // {data, meta}
-        state.gen = (res.data || []).map(mapSegToUI);
-        $("#gen-page").textContent = `Pagina ${res.meta.current_page} di ${res.meta.last_page}`;
-        $("#gen-prev").disabled = res.meta.current_page <= 1;
-        $("#gen-next").disabled = res.meta.current_page >= res.meta.last_page;
-        renderGEN();
+    };
+
+    /* ===== Loaders (con filtri corretti) ===== */
+    async function refreshGEN() {
+        try {
+            const params = {
+                page: state.page.gen,
+                per_page: 10,
+                // global
+                q: state.global.q || null,
+                date: state.global.date || null,
+                time: state.global.time || null,
+                // per-tabella (con fallback al globale per Comune)
+                comune: $("#gen-filter-comune").value || state.global.comune || null,
+                dal: $("#gen-filter-dal").value || null,
+                al: $("#gen-filter-al").value || null,
+            };
+            const res = await API.listSegnalazioni(params);
+            state.gen = (res.data || []).map(mapSegToUI);
+
+            // chiave per evitare re-render inutili
+            state._last.genKey = JSON.stringify({
+                ids: state.gen.map(x => x.id),
+                meta: res.meta
+            });
+            $("#gen-page").textContent = `Pagina ${res.meta?.current_page ?? 1} di ${res.meta?.last_page ?? 1}`;
+            $("#gen-prev").disabled = (res.meta?.current_page ?? 1) <= 1;
+            $("#gen-next").disabled = (res.meta?.current_page ?? 1) >= (res.meta?.last_page ?? 1);
+            renderGEN();
+        } catch (err) {
+            console.error("Errore /segnalazioni:", err);
+            state.gen = [];
+            renderGEN();
+            $("#gen-page").textContent = `Pagina 1 di 1`;
+            $("#gen-prev").disabled = true;
+            $("#gen-next").disabled = true;
+            toast("Errore caricamento segnalazioni", "Il server ha risposto con errore.", "error", 2600);
+        }
     }
 
     async function refreshONGOING() {
-        const params = {
+        const baseParams = {
             page: state.page.ongoing,
             per_page: 10,
+            // global
             q: state.global.q || null,
-            comune: state.global.comune || null,
-            date: state.global.date || null,
-            time: state.global.time || null,
+            // per-tabella (fallback globale)
+            comune: $("#ongoing-filter-comune").value || state.global.comune || null,
             dal: $("#ongoing-filter-dal").value || null,
-            al: $("#ongoing-filter-al").value || null,
-            status: state.ui.ongoingStatus, // "all" | "open" | "closed"
+            al: $("#ongoing-filter-al").value || null
         };
-        const res = await API.listEventi(params); // {data, meta}
-        state.ongoing = (res.data || []).map(mapEvToUI);
-        $("#ongoing-page").textContent = `Pagina ${res.meta.current_page} di ${res.meta.last_page}`;
-        $("#ongoing-prev").disabled = res.meta.current_page <= 1;
-        $("#ongoing-next").disabled = res.meta.current_page >= res.meta.last_page;
-        renderONGOING();
+
+        try {
+            const res = await API.listEventi(baseParams);
+            const rows = Array.isArray(res) ? res : (res.data || []);
+            let items = rows.map(mapEvToUI);
+
+            if (state.ui.ongoingStatus === "open") {
+                items = items.filter(e => e.open);
+            } else if (state.ui.ongoingStatus === "closed") {
+                items = items.filter(e => !e.open);
+            }
+
+            state.ongoing = items;
+            state._last.ongoingKey = JSON.stringify({
+                ids: items.map(x => x.id),
+                meta: res.meta
+            });
+
+            const cur = (res.meta?.current_page ?? 1);
+            const last = (res.meta?.last_page ?? 1);
+            $("#ongoing-page").textContent = `Pagina ${cur} di ${last}`;
+            $("#ongoing-prev").disabled = cur <= 1;
+            $("#ongoing-next").disabled = cur >= last;
+
+            renderONGOING();
+        } catch (err) {
+            console.error("Errore /eventi:", err);
+            state.ongoing = [];
+            $("#ongoing-page").textContent = `Pagina 1 di 1`;
+            $("#ongoing-prev").disabled = true;
+            $("#ongoing-next").disabled = true;
+            renderONGOING();
+            toast("Errore caricamento eventi", "Il server ha risposto con errore.", "error", 2600);
+        }
     }
 
-    // avvio
+    /* ===== Polling “realtime” solo front-end ===== */
+    (function setupPolling() {
+        let timer = null;
+        const INTERVAL = 8000; // 8s
+        const tick = async () => {
+            if (document.hidden) return;
+            try {
+                await Promise.all([refreshGEN(), refreshONGOING()]);
+            } catch {}
+        };
+        const start = () => {
+            if (timer) return;
+            timer = setInterval(tick, INTERVAL);
+        };
+        const stop = () => {
+            if (timer) {
+                clearInterval(timer);
+                timer = null;
+            }
+        };
+
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden) stop();
+            else {
+                tick();
+                start();
+            }
+        });
+        window.addEventListener("focus", () => {
+            tick();
+            start();
+        });
+        window.addEventListener("blur", stop);
+
+        // avvio iniziale
+        start();
+    })();
+
     (async function init() {
         await Promise.all([refreshGEN(), refreshONGOING()]);
         if (window.lucide) lucide.createIcons();
     })();
 
-    /* ===== Render: GENERICHE (usa dati già paginati/filtrati dal backend) ===== */
+    /* ===== Render SEGNALAZIONI ===== */
     function renderGEN() {
         const root = $("#gen-body");
         root.replaceChildren();
-
         state.gen.forEach((r) => {
             const tr = document.createElement("tr");
             tr.className = "border-t border-slate-200";
             tr.dataset.id = r.id;
             tr.classList.add("prio-row", prioClass(r.priorita));
-
             const tdDt = Object.assign(document.createElement("td"), {
                 className: "px-3 py-2",
-                textContent: r.created_at ? fmtDT(new Date(r.created_at)) : "—",
+                textContent: r.created_at ? fmtDT(new Date(r.created_at)) : "—"
             });
-
             const tdDir = Object.assign(document.createElement("td"), {
                 className: "px-3 py-2"
             });
             tdDir.appendChild(makeDirBadge(r.direzione));
-
             const tdTp = Object.assign(document.createElement("td"), {
                 className: "px-3 py-2",
-                textContent: TYPE_LABELS[r.tipologia] || r.tipologia || "",
+                textContent: TYPE_LABELS[r.tipologia] || r.tipologia || ""
             });
-
             const tdAr = Object.assign(document.createElement("td"), {
                 className: "px-3 py-2",
-                textContent: (r.aree || []).join(", "),
+                textContent: (r.aree || []).join(", ")
             });
-
             const tdSy = Object.assign(document.createElement("td"), {
                 className: "px-3 py-2 w-sintesi"
             });
             addReadMoreCell(tdSy, r.sintesi || "", "Segnalazione");
-
             const tdOp = Object.assign(document.createElement("td"), {
                 className: "px-3 py-2",
-                textContent: r.operatore || "",
+                textContent: r.operatore || ""
             });
-
             const tdEv = Object.assign(document.createElement("td"), {
                 className: "px-3 py-2"
             });
@@ -1168,27 +1217,21 @@
                 btn.dataset.openEvent = String(r.event_id);
                 btn.textContent = `Evento #${r.event_id}`;
                 tdEv.appendChild(btn);
-            } else {
-                tdEv.textContent = "—";
-            }
-
+            } else tdEv.textContent = "—";
             const tdAc = document.createElement("td");
             tdAc.className = "px-3 py-2";
-            tdAc.innerHTML = `
-        <div class="actions">
-          <button class="btn-xs btn-ghost" title="Dettagli" data-action="info" data-type="gen" data-id="${r.id}">ℹ️</button>
-          <button class="btn-xs btn-ghost" title="Modifica" data-action="edit" data-type="gen" data-id="${r.id}">✏️</button>
-          <button class="btn-xs btn-danger" title="Elimina" data-action="del" data-type="gen" data-id="${r.id}">🗑️</button>
-        </div>`;
-
+            tdAc.innerHTML = `<div class="actions">
+        <button class="btn-xs btn-ghost" title="Dettagli" data-action="info" data-type="gen" data-id="${r.id}">ℹ️</button>
+        <button class="btn-xs btn-ghost" title="Modifica" data-action="edit" data-type="gen" data-id="${r.id}">✏️</button>
+        <button class="btn-xs btn-danger" title="Elimina" data-action="del" data-type="gen" data-id="${r.id}">🗑️</button>
+      </div>`;
             tr.append(tdDt, tdDir, tdTp, tdAr, tdSy, tdOp, tdEv, tdAc);
             root.appendChild(tr);
         });
-
         if (window.lucide) lucide.createIcons();
     }
 
-    /* ===== Legend + ONGOING ===== */
+    /* ===== Legend + EVENTI ===== */
     function ensureLegend() {
         if ($("#ongoing-legend")) return;
         const legend = document.createElement("div");
@@ -1203,7 +1246,6 @@
         ensureLegend();
         const root = $("#ongoing-cards");
         root.replaceChildren();
-
         if (!state.ongoing.length) {
             const empty = document.createElement("div");
             empty.className = "text-sm opacity-70 px-3 py-2";
@@ -1211,22 +1253,19 @@
             root.appendChild(empty);
             return;
         }
-
         state.ongoing.forEach((ev) => {
             const typeKey = TYPES.includes(ev.tipo) ? ev.tipo : "altro";
             const typeLabel = TYPE_LABELS[typeKey];
             const isOpen = ev.open !== false;
             const quando = ev.aggiornamento ? fmtDT(new Date(ev.aggiornamento)) : "—";
             const aree = (ev.aree || []).join(", ");
-
             const card = document.createElement("article");
             card.className = "ev-card";
             card.dataset.type = typeKey;
             card.tabIndex = 0;
             card.setAttribute("role", "button");
             card.addEventListener("click", () => openEventModal(ev.id));
-            card.innerHTML = `
-        <div class="ev-card__head">
+            card.innerHTML = `<div class="ev-card__head">
           <h4 class="ev-card__title">${ev.descrizione || "Evento"}</h4>
           <div class="ev-card__chips">
             <span class="ev-card__status ${isOpen ? "is-open" : "is-closed"}">${isOpen ? "Aperto" : "Chiuso"}</span>
@@ -1255,23 +1294,24 @@
         }
     }
 
-    /* ===== Evento: open modal + popolamento dal backend ===== */
     async function openEventModal(eventId) {
         state.ui.currentEventId = eventId;
-        const full = await API.getEvento(eventId); // include comunicazioni
+        const full = await API.getEvento(eventId);
         const ev = mapEvToUI(full);
         ev.reports = (full.comunicazioni || []).map(mapComToUI);
+        ev.genericReports = (full.segnalazioni || []).map(mapGenToUI);
 
         $("#ev-title").textContent = ev.descrizione || "—";
         const subtitle = $("#ev-subtitle");
-        subtitle.textContent = `${TYPE_LABELS[ev.tipo] || ev.tipo} • Ultimo agg.: ${fmtDT(new Date(ev.aggiornamento))} `;
+        subtitle.textContent = `${TYPE_LABELS[ev.tipo]||ev.tipo} • Ultimo agg.: ${fmtDT(new Date(ev.aggiornamento))} `;
         const st = document.createElement("span");
-        st.className = `ev-inline-status ${ev.open !== false ? "is-open" : "is-closed"}`;
+        st.className = `ev-inline-status ${ev.open!==false?"is-open":"is-closed"}`;
         st.textContent = ev.open !== false ? "Aperto" : "Chiuso";
         subtitle.appendChild(st);
 
         renderEventAreas(ev);
         renderEventReports(ev);
+        renderGenericReports(ev);
         resetEvForm(ev.tipo, ev.aree);
         updateEventStatusUI(ev);
         $("#ev-id").value = ev.id;
@@ -1292,7 +1332,6 @@
     function renderEventReports(ev) {
         const tbody = $("#ev-reports-tbody");
         tbody.replaceChildren();
-
         const rows = (ev.reports || []).map((r, idx) => ({
             ...r,
             _idx: idx
@@ -1307,34 +1346,28 @@
             tbody.appendChild(tr);
             return;
         }
-
         rows.forEach((r) => {
             const tr = document.createElement("tr");
             tr.className = "border-t border-slate-200 hover:bg-slate-50 cursor-pointer";
             tr.classList.add("prio-row", prioClass(r.priorita));
             tr.dataset.idx = r._idx;
-
             tr.addEventListener("click", () => {
                 loadReportIntoForm(r._idx);
                 openModal("#modal-ev-form");
                 $("#ev-save").textContent = "Salva modifiche";
             });
-
             const tdData = document.createElement("td");
             tdData.className = "px-3 py-2";
             tdData.textContent = r.data || "";
             tr.appendChild(tdData);
-
             const tdOra = document.createElement("td");
             tdOra.className = "px-3 py-2";
             tdOra.textContent = r.ora || "";
             tr.appendChild(tdOra);
-
             const tdTipo = document.createElement("td");
             tdTipo.className = "px-3 py-2";
             tdTipo.textContent = r.tipo || "";
             tr.appendChild(tdTipo);
-
             const tdVerso = document.createElement("td");
             tdVerso.className = "px-3 py-2 text-center";
             tdVerso.dataset.verso = "1";
@@ -1342,25 +1375,89 @@
             const dir = raw.startsWith("U") ? "U" : "E";
             tdVerso.appendChild(makeDirBadge(dir));
             tr.appendChild(tdVerso);
-
-            const cells = [r.mitt, r.tel, r.mail, (r.aree || []).join(", "), r.oggetto];
-            cells.forEach((v) => {
+            [r.mitt, r.tel, r.mail, (r.aree || []).join(", "), r.oggetto].forEach((v) => {
                 const td = document.createElement("td");
                 td.className = "px-3 py-2";
                 td.textContent = v || "";
                 tr.appendChild(td);
             });
-
             const tdPr = document.createElement("td");
             tdPr.className = "px-3 py-2";
             tdPr.appendChild(makePrioBadge(r.priorita || "Nessuna"));
             tr.appendChild(tdPr);
-
             tbody.appendChild(tr);
         });
     }
 
-    /* ===== Dynamic specific forms (EV) ===== */
+    function ensureGenericSection() {
+        let sec = document.getElementById("ev-gen-sec");
+        if (sec) return sec;
+        const parent = $("#ev-body");
+        sec = document.createElement("section");
+        sec.id = "ev-gen-sec";
+        sec.className = "rounded-2xl border border-slate-200 bg-white p-4";
+        sec.innerHTML = `<h4 class="text-sm font-semibold mb-3">Segnalazioni generiche collegate</h4>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm"><thead class="text-left"><tr>
+          <th class="px-3 py-2">Data</th><th class="px-3 py-2">Ora</th><th class="px-3 py-2">E/U</th><th class="px-3 py-2">Tipologia</th>
+          <th class="px-3 py-2">Aree</th><th class="px-3 py-2 w-sintesi">Sintesi</th><th class="px-3 py-2">Operatore</th><th class="px-3 py-2">Priorità</th>
+        </tr></thead><tbody id="ev-gen-tbody"><tr><td colspan="8" class="px-3 py-3 opacity-70">Nessuna segnalazione generica collegata.</td></tr></tbody></table>
+      </div>`;
+        parent.appendChild(sec);
+        return sec;
+    }
+
+    function renderGenericReports(ev) {
+        ensureGenericSection();
+        const tbody = $("#ev-gen-tbody");
+        if (!tbody) return;
+        tbody.replaceChildren();
+        const rows = ev.genericReports || [];
+        if (!rows.length) {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `<td colspan="8" class="px-3 py-3 opacity-70">Nessuna segnalazione generica collegata.</td>`;
+            tbody.appendChild(tr);
+            return;
+        }
+        rows.forEach((r) => {
+            const tr = document.createElement("tr");
+            tr.className = "border-t border-slate-200";
+            tr.classList.add("prio-row", prioClass(r.priorita));
+            const tdData = Object.assign(document.createElement("td"), {
+                className: "px-3 py-2",
+                textContent: r.data || ""
+            });
+            const tdOra = Object.assign(document.createElement("td"), {
+                className: "px-3 py-2",
+                textContent: r.ora || ""
+            });
+            const tdDir = Object.assign(document.createElement("td"), {
+                className: "px-3 py-2"
+            });
+            tdDir.appendChild(makeDirBadge(r.direzione));
+            const tdTp = Object.assign(document.createElement("td"), {
+                className: "px-3 py-2",
+                textContent: r.tipologia || ""
+            });
+            const tdAr = Object.assign(document.createElement("td"), {
+                className: "px-3 py-2",
+                textContent: r.areeText || ""
+            });
+            const tdSy = document.createElement("td");
+            tdSy.className = "px-3 py-2 w-sintesi";
+            addReadMoreCell(tdSy, r.sintesi || "", "Segnalazione");
+            const tdOp = Object.assign(document.createElement("td"), {
+                className: "px-3 py-2",
+                textContent: r.operatore || ""
+            });
+            const tdPr = document.createElement("td");
+            tdPr.className = "px-3 py-2";
+            tdPr.appendChild(makePrioBadge(r.priorita || "Nessuna"));
+            tr.append(tdData, tdOra, tdDir, tdTp, tdAr, tdSy, tdOp, tdPr);
+            tbody.appendChild(tr);
+        });
+    }
+
     function resetEvForm(type, areas) {
         $("#ev-edit-index").value = "";
         $("#ev-form").reset?.();
@@ -1387,25 +1484,16 @@
         container.innerHTML = "";
         const hint = document.createElement("div");
         hint.className = "text-xs opacity-70";
-        hint.textContent = `Tipologia evento: ${TYPE_LABELS[type] || type || "—"}. Aggiungi eventuali dettagli nella comunicazione.`;
+        hint.textContent = `Tipologia evento: ${TYPE_LABELS[type]||type||"—"}. Aggiungi eventuali dettagli nella comunicazione.`;
         container.appendChild(hint);
     }
 
     function loadReportIntoForm(idx) {
-        // Carica dalla tabella già popolata (ev.reports in modale evento)
-        const ev = {
-            reports: []
-        };
         const trs = Array.from($("#ev-reports-tbody")?.querySelectorAll("tr") || []);
-        // usa state.ui.currentEventId + getEvento se vuoi ricaricare; qui usiamo state corrente
         const currentIdx = Number(idx);
         if (Number.isNaN(currentIdx)) return;
-
-        // Non abbiamo i dati grezzi qui: openEventModal ha ev.reports; ricarichiamo dall'ultima fetch:
-        // per semplicità, ripetiamo l'ultima lettura dal DOM mappando le celle (sufficiente per prefill)
         const row = trs.find((r) => String(r.dataset.idx) === String(idx));
         if (!row) return;
-
         const cells = row.querySelectorAll("td");
         $("#ev-edit-index").value = idx;
         $("#f-data").value = cells[0]?.textContent?.trim() || "";
@@ -1418,18 +1506,14 @@
         $("#f-mitt").value = cells[4]?.textContent?.trim() || "";
         $("#f-tel").value = cells[5]?.textContent?.trim() || "";
         $("#f-mail").value = cells[6]?.textContent?.trim() || "";
-        // Aree / Oggetto non si ricostruiscono facilmente dal DOM del dettaglio -> lasciamo vuoti
     }
 
-    /* ===== Province/Comuni selects ===== */
     function populateProvinceSelect(selected = "") {
         const sel = $("#f-provincia");
         sel.innerHTML = "";
         const first = new Option("Tutte le province...", "");
         sel.add(first);
-        Object.keys(PROVINCE)
-            .sort()
-            .forEach((k) => sel.add(new Option(`${k}`, k)));
+        Object.keys(PROVINCE).sort().forEach((k) => sel.add(new Option(`${k}`, k)));
         sel.value = selected || "";
         $("#f-comune").disabled = !sel.value;
     }
@@ -1448,43 +1532,34 @@
     }
     $("#f-provincia").addEventListener("change", (e) => populateComuniSelect(e.target.value));
 
-    /* ===== RESET HANDLERS ===== */
-    document.getElementById("form-gen").addEventListener("reset", (e) => {
+    document.getElementById("form-gen").addEventListener("reset", () => {
         genAree.setValues([]);
-        const tipSel = document.getElementById("gen-tipologia");
+        const tipSel = $("#gen-tipologia");
         if (tipSel) tipSel.value = "";
-        const sp = document.getElementById("gen-specific");
-        if (sp) sp.innerHTML = "";
-        const sel = document.getElementById("gen-event-select");
+        $("#gen-specific").innerHTML = "";
+        const sel = $("#gen-event-select");
         if (sel) {
             sel.value = "";
             renderEvPreview("", sel);
         }
-        const hid = document.getElementById("gen-aree-hidden");
+        const hid = $("#gen-aree-hidden");
         if (hid) hid.value = "[]";
     });
-
     document.getElementById("form-edit-gen").addEventListener("reset", (e) => {
         const form = e.currentTarget;
         try {
             const initial = JSON.parse(form.dataset.initialAree || "[]");
             editAree.setValues(initial);
-            const hid = document.getElementById("edit-aree-hidden");
-            if (hid) hid.value = JSON.stringify(initial);
+            $("#edit-aree-hidden").value = JSON.stringify(initial);
         } catch {
             editAree.setValues([]);
         }
-        const sel = document.getElementById("edit-gen-event");
-        if (sel) renderEvPreview(sel.value, sel);
+        renderEvPreview($("#edit-gen-event").value, $("#edit-gen-event"));
     });
-
     document.getElementById("ev-form").addEventListener("reset", () => {
-        // ripristina il form secondo la tipologia/aree dell’evento corrente (se aperto in modale)
-        // non abbiamo l'oggetto evento qui; lasciamo le aree vuote
         evAreeInput.setValues([]);
     });
 
-    /* ===== Clicks: open event link + azioni gen + copia JSON + close modals ===== */
     document.addEventListener("click", (e) => {
         const evBtn = e.target.closest("[data-open-event]");
         if (evBtn) {
@@ -1492,14 +1567,12 @@
             if (!Number.isNaN(id)) openEventModal(id);
             return;
         }
-
         const opener = e.target.closest("[data-open-modal]");
         if (opener) {
             e.preventDefault();
             openModal(opener.getAttribute("data-open-modal"));
             return;
         }
-
         const btn = e.target.closest("[data-action]");
         if (btn) {
             const {
@@ -1530,42 +1603,33 @@
                 confirmDelete().then(async (res) => {
                     if (!res.isConfirmed) return;
                     await API.deleteSegnalazione(id);
-                    await refreshGEN();
+                    await Promise.all([refreshGEN(), refreshONGOING()]);
                     toast("Eliminata!", "Rimossa dal backend.", "success");
                 });
                 return;
             }
         }
-
         if (e.target.id === "gen-info-copy" || e.target.closest("#gen-info-copy")) {
             const data = state.ui.genInfoJson ?? {};
             const text = JSON.stringify(data, null, 2);
             if (navigator.clipboard?.writeText) {
-                navigator.clipboard
-                    .writeText(text)
-                    .then(() => toast("Copiato negli appunti", "JSON della segnalazione copiato."))
-                    .catch(() => fallbackCopy(text));
+                navigator.clipboard.writeText(text).then(() => toast("Copiato negli appunti", "JSON della segnalazione copiato.")).catch(() => fallbackCopy(text));
             } else {
                 fallbackCopy(text);
             }
             return;
         }
-
         if (e.target.closest("[data-close-modal]") || e.target.classList.contains("c-modal__backdrop")) {
             closeModal(e.target.closest(".c-modal"));
         }
     });
 
-    /* ===== Bottone: nuova comunicazione dall’evento ===== */
     $("#ev-open-form").addEventListener("click", () => {
-        // recupera l’evento corrente dal titolo/subtitle già settati; reset semplice:
         $("#ev-save").textContent = "💾 Salva Comunicazione";
-        const defaultAreas = []; // non conosciamo qui ev.aree; si precompilerà a mano
-        resetEvForm("altro", defaultAreas);
+        resetEvForm("altro", []);
         openModal("#modal-ev-form");
     });
 
-    /* ===== Paginazione (backend) ===== */
     $("#gen-prev").addEventListener("click", async () => {
         state.page.gen = Math.max(1, state.page.gen - 1);
         await refreshGEN();
@@ -1583,7 +1647,6 @@
         await refreshONGOING();
     });
 
-    /* ===== Toggle stato evento (backend) ===== */
     $("#ev-toggle-open")?.addEventListener("click", async () => {
         const id = state.ui.currentEventId;
         if (!id) return;
@@ -1601,7 +1664,6 @@
         renderEvPreview(e.target.value, e.target);
     });
 
-    /* ===== Form helpers ===== */
     function fillForm(form, obj) {
         for (const el of form.elements) {
             if (!el.name) continue;
@@ -1612,7 +1674,7 @@
         }
     }
 
-    /* ===== Submit GENERICO (CREA) -> backend ===== */
+    /* ===== CREATE Segnalazione ===== */
     $("#form-gen").addEventListener("submit", async (e) => {
         e.preventDefault();
         const fd = Object.fromEntries(new FormData(e.currentTarget).entries());
@@ -1625,13 +1687,13 @@
         if (chosenEvent === "__new__") {
             const ev = await API.createEvento({
                 tipologia,
-                descrizione: fd.note || `Evento ${TYPE_LABELS[tipologia] || tipologia}`,
+                descrizione: fd.note || `Evento ${TYPE_LABELS[tipologia]||tipologia}`,
                 aree,
-                aperto: true,
+                aperto: true
             });
             evento_id = ev.id;
         } else if (chosenEvent) {
-            evento_id = chosenEvent;
+            evento_id = Number(chosenEvent);
         }
 
         await API.createSegnalazione({
@@ -1639,28 +1701,15 @@
             tipologia,
             aree,
             sintesi: fd.note || "",
-            operatore: "operatore",
             priorita,
-            evento_id,
+            evento_id
         });
 
-        if (evento_id) {
-            await API.addComunicazione(evento_id, {
-                comunicata_il: new Date().toISOString(),
-                tipo: "—",
-                verso: "Entrata",
-                aree,
-                oggetto: fd.note || `Segnalazione ${TYPE_LABELS[tipologia] || tipologia}`,
-                contenuto: fd.note || "",
-                priorita,
-            });
-        }
-
-        closeModal($("#modal-gen"));
+        // refresh immediato (effetto realtime)
+        await Promise.all([refreshGEN(), refreshONGOING()]);
         e.currentTarget.reset();
         genAree.setValues([]);
         $("#gen-specific").innerHTML = "";
-        await Promise.all([refreshGEN(), refreshONGOING()]);
         toast("Segnalazione aggiunta!", "Salvata su backend.");
     });
 
@@ -1669,7 +1718,7 @@
         renderSpecific($("#gen-specific"), t, "gensp");
     });
 
-    /* ===== Submit GENERICO (EDIT) -> backend ===== */
+    /* ===== EDIT Segnalazione ===== */
     $("#form-edit-gen").addEventListener("submit", async (e) => {
         e.preventDefault();
         const fd = Object.fromEntries(new FormData(e.currentTarget).entries());
@@ -1697,31 +1746,33 @@
             });
         }
 
-        await API.updateSegnalazione(id, {
-            creata_il: fd.created_at ? new Date(fd.created_at).toISOString() : null,
+        const payload = {
             direzione: fd.direzione,
             aree: editAree.values.slice(),
             sintesi: fd.sintesi,
             operatore: fd.operatore,
             priorita: fd.priorita,
-            evento_id,
-        });
+            evento_id: evento_id ? Number(evento_id) : null,
+        };
+        if (fd.created_at) {
+            payload.creata_il = new Date(fd.created_at).toISOString();
+        }
 
-        closeModal($("#modal-edit-gen"));
+        await API.updateSegnalazione(id, payload);
+
+        // refresh immediato
         await Promise.all([refreshGEN(), refreshONGOING()]);
         toast("Modifica salvata!", "Aggiornata su backend.");
     });
 
-    /* ===== Submit EV-FORM -> backend (aggiunge nuova comunicazione) ===== */
+    /* ===== SAVE Comunicazione evento ===== */
     $("#ev-form").addEventListener("submit", async (e) => {
         e.preventDefault();
         const id = state.ui.currentEventId;
         if (!id) return;
-
         const d = $("#f-data").value.trim();
         const t = $("#f-ora").value.trim();
         const iso = d && t ? parseIT(d, t).toISOString() : null;
-
         const payload = {
             comunicata_il: iso,
             tipo: $("#f-tipo").value || "—",
@@ -1737,15 +1788,15 @@
             contenuto: $("#f-contenuto").value.trim(),
             priorita: document.querySelector('input[name="f-priorita"]:checked')?.value || "Nessuna",
         };
-
         await API.addComunicazione(id, payload);
-        closeModal($("#modal-ev-form"));
-        await openEventModal(id); // ricarica dettaglio
+
+        // refresh immediato + aggiorna modale
         await refreshONGOING();
+        await openEventModal(id);
         toast("Comunicazione salvata!", "Registrata su backend.");
     });
 
-    /* ===== Modifica aree evento (solo UI) ===== */
+    /* ===== Aree evento (UI only) ===== */
     $("#ev-areas-edit").addEventListener("click", () => {
         Swal.fire({
             title: "Modifica Aree interessate",
@@ -1755,7 +1806,6 @@
                 const ti = new TagInput(root, {
                     datalistId: "comuni-datalist"
                 });
-                // Non abbiamo il dettaglio ev.aree qui; lasciamo vuoto per edit libero
                 ti.setValues([]);
                 root.addEventListener("change", (e) => {
                     root.dataset.values = JSON.stringify(e.detail || []);
@@ -1767,8 +1817,7 @@
         });
     });
 
-    /* ===== All reports modal (placeholder: non avendo endpoint dedicato) ===== */
-    document.getElementById("ongoing-all-reports").addEventListener("click", () => {
+    $("#ongoing-all-reports").addEventListener("click", () => {
         const tbody = $("#all-reports-tbody");
         tbody.replaceChildren();
         const tr = document.createElement("tr");
@@ -1777,7 +1826,6 @@
         openModal("#modal-all-reports");
     });
 
-    /* ===== Export delegati al backend ===== */
     function appendQuery(url, obj) {
         Object.entries(obj).forEach(([k, v]) => {
             if (v !== null && v !== undefined && v !== "") url.searchParams.set(k, v);
@@ -1789,14 +1837,15 @@
             page: state.page.gen,
             per_page: 10,
             q: state.global.q || null,
-            comune: $("#gen-filter-comune").value || state.global.comune || null,
             date: state.global.date || null,
             time: state.global.time || null,
+            comune: $("#gen-filter-comune").value || state.global.comune || null,
             dal: $("#gen-filter-dal").value || null,
-            al: $("#gen-filter-al").value || null,
+            al: $("#gen-filter-al").value || null
         });
         location.href = url.toString();
     });
+
     $("#ongoing-export").addEventListener("click", () => {
         const url = new URL(API.base + "/eventi/export.csv", location.origin);
         appendQuery(url, {
@@ -1804,21 +1853,18 @@
             per_page: 10,
             q: state.global.q || null,
             comune: $("#ongoing-filter-comune").value || state.global.comune || null,
-            date: state.global.date || null,
-            time: state.global.time || null,
             dal: $("#ongoing-filter-dal").value || null,
-            al: $("#ongoing-filter-al").value || null,
-            status: state.ui.ongoingStatus,
+            al: $("#ongoing-filter-al").value || null
         });
         location.href = url.toString();
     });
+
     $("#ev-export").addEventListener("click", () => {
         const id = state.ui.currentEventId;
         if (!id) return;
         const url = new URL(API.base + `/eventi/${id}/export.csv`, location.origin);
         location.href = url.toString();
     });
-    // Print evento (UI)
     $("#ev-print").addEventListener("click", () => {
         const dlg = document.querySelector("#modal-event .c-modal__dialog");
         if (!dlg) return;
@@ -1831,8 +1877,6 @@
         win.close();
         toast("Pronto per la stampa", "La finestra di stampa è stata aperta.", "info", 1400);
     });
-
-    /* ===== Tag inputs ===== */
 
     let genAree, editAree, evAreeInput;
     genAree = new TagInput($("#gen-aree"), {
@@ -1852,20 +1896,15 @@
         $("#edit-aree-hidden").value = JSON.stringify(e.detail || []);
     });
 
-
-    /* ===== Global & tab filters -> backend ===== */
-    ["#gen-filter-comune", "#gen-filter-dal", "#gen-filter-al"].forEach((s) =>
-        $(s).addEventListener("input", async () => {
-            state.page.gen = 1;
-            await refreshGEN();
-        })
-    );
-    ["#ongoing-filter-comune", "#ongoing-filter-dal", "#ongoing-filter-al"].forEach((s) =>
-        $(s).addEventListener("input", async () => {
-            state.page.ongoing = 1;
-            await refreshONGOING();
-        })
-    );
+    /* ===== Filtri: attiva tutto ===== */
+    ["#gen-filter-comune", "#gen-filter-dal", "#gen-filter-al"].forEach((s) => $(s).addEventListener("input", async () => {
+        state.page.gen = 1;
+        await refreshGEN();
+    }));
+    ["#ongoing-filter-comune", "#ongoing-filter-dal", "#ongoing-filter-al"].forEach((s) => $(s).addEventListener("input", async () => {
+        state.page.ongoing = 1;
+        await refreshONGOING();
+    }));
     ["#global-q", "#global-date", "#global-time", "#global-comune"].forEach((sel) => {
         $(sel).addEventListener("input", async () => {
             state.global.q = $("#global-q").value.trim();
@@ -1881,87 +1920,23 @@
         });
     });
 
-    /* ===== Info modal: righe + open ===== */
-    function genInfoRows(rec) {
-        const typeLabel = TYPE_LABELS[rec.tipologia] || rec.tipologia || "—";
-        const created = new Date(rec.created_at || Date.now());
-        const when = fmtDT(created);
-        const evText = rec.event_id ? `Evento #${rec.event_id}` : "—";
-        return [
-            ["ID", String(rec.id)],
-            ["Data/Ora", when],
-            ["Direzione", (rec.direzione || "E").toUpperCase() === "U" ? "Uscita (U)" : "Entrata (E)"],
-            ["Tipologia", typeLabel],
-            ["Aree interessate", (rec.aree || []).join(", ") || "—"],
-            ["Operatore", rec.operatore || "—"],
-            ["Priorità", rec.priorita || "Nessuna"],
-            ["Evento associato", evText],
-            ["Sintesi", rec.sintesi || "—"],
-        ];
-    }
-
-    function openGenInfoModal(id) {
-        const rec = state.gen.find((x) => String(x.id) === String(id));
-        if (!rec) return;
-        const body = document.querySelector("#gen-info-body");
-        if (!body) return;
-        const rows = genInfoRows(rec);
-        const tbl = document.createElement("table");
-        tbl.className = "w-full text-sm";
-        tbl.innerHTML = `<tbody>${rows
-      .map(([k, v]) => `<tr class="border-t border-slate-200"><td class="px-3 py-2 font-semibold w-44">${k}</td><td class="px-3 py-2">${v}</td></tr>`)
-      .join("")}</tbody>`;
-        body.replaceChildren(tbl);
-        const pr = rec.priorita || "Nessuna";
-        const dir = (rec.direzione || "E").toUpperCase() === "U" ? "U" : "E";
-        const prBadge = makePrioBadge(pr);
-        const dirBadge = makeDirBadge(dir);
-        const tds = body.querySelectorAll("tbody tr td:nth-child(2)");
-        if (tds[2]) {
-            tds[2].textContent = "";
-            tds[2].appendChild(dirBadge.cloneNode(true));
-        }
-        if (tds[6]) {
-            tds[6].textContent = "";
-            tds[6].appendChild(prBadge);
-        }
-        const payload = {
-            id: rec.id,
-            created_at: rec.created_at,
-            direzione: rec.direzione,
-            tipologia: rec.tipologia,
-            tipologia_label: TYPE_LABELS[rec.tipologia] || rec.tipologia || null,
-            aree: rec.aree || [],
-            operatore: rec.operatore || null,
-            priorita: rec.priorita || "Nessuna",
-            event_id: rec.event_id || null,
-            sintesi: rec.sintesi || "",
-        };
-        state.ui.genInfoJson = payload;
-        openModal("#modal-gen-info");
-    }
-
-    /* ===== Pulsante filtro stato (all/open/closed) ===== */
     const toggleBtn = $("#ongoing-toggle-status");
 
     function updateToggleBtn() {
         if (!toggleBtn) return;
-        toggleBtn.textContent =
-            state.ui.ongoingStatus === "all" ? "Tutti" : state.ui.ongoingStatus === "open" ? "Solo aperti" : "Solo chiusi";
+        toggleBtn.textContent = state.ui.ongoingStatus === "all" ? "Tutti" : state.ui.ongoingStatus === "open" ? "Solo aperti" : "Solo chiusi";
         toggleBtn.title = toggleBtn.textContent;
     }
     if (toggleBtn) {
         updateToggleBtn();
         toggleBtn.addEventListener("click", async () => {
-            state.ui.ongoingStatus =
-                state.ui.ongoingStatus === "all" ? "open" : state.ui.ongoingStatus === "open" ? "closed" : "all";
+            state.ui.ongoingStatus = state.ui.ongoingStatus === "all" ? "open" : state.ui.ongoingStatus === "open" ? "closed" : "all";
             state.page.ongoing = 1;
             updateToggleBtn();
             await refreshONGOING();
         });
     }
 
-    /* ===== Anteprima comunicazioni evento nelle modali GEN ===== */
     function ensureEvPreviewBox(afterEl, boxId) {
         let box = document.getElementById(boxId);
         if (!box) {
@@ -1976,38 +1951,26 @@
     function renderEvPreview(evId, mountEl) {
         const box = ensureEvPreviewBox(mountEl, mountEl.id + "-preview");
         box.replaceChildren();
-
         const head = document.createElement("div");
         head.className = "ev-preview__head";
-        head.innerHTML = `<h5 class="ev-preview__title">Comunicazioni evento</h5>
-      <div class="ev-preview__meta text-xs opacity-70"></div>`;
+        head.innerHTML = `<h5 class="ev-preview__title">Comunicazioni evento</h5><div class="ev-preview__meta text-xs opacity-70"></div>`;
         box.appendChild(head);
-
         if (!evId || evId === "__new__") {
-            box.appendChild(document.createElement("div")).outerHTML =
-                `<div class="ev-preview__empty">Nessun evento selezionato.
-         Se scegli “Crea nuovo evento”, questa segnalazione diventerà la prima comunicazione.</div>`;
+            box.appendChild(document.createElement("div")).outerHTML = `<div class="ev-preview__empty">Nessun evento selezionato. Se scegli “Crea nuovo evento”, questa segnalazione diventerà la prima comunicazione.</div>`;
             return;
         }
-
         const ev = state.ongoing.find((e) => String(e.id) === String(evId));
         if (!ev) {
-            box.appendChild(document.createElement("div")).outerHTML =
-                `<div class="ev-preview__empty">Evento #${evId} non presente nella pagina corrente.</div>`;
+            box.appendChild(document.createElement("div")).outerHTML = `<div class="ev-preview__empty">Evento #${evId} non presente nella pagina corrente.</div>`;
             return;
         }
-
-        head.querySelector(".ev-preview__meta").innerHTML =
-            `<strong>${TYPE_LABELS[ev.tipo] || ev.tipo}</strong> — ${(ev.aree || []).join(", ") || "—"}
-       <span class="ev-inline-status ${ev.open !== false ? "is-open" : "is-closed"}" style="margin-left:.35rem">${ev.open !== false ? "Aperto" : "Chiuso"}</span>`;
-
+        head.querySelector(".ev-preview__meta").innerHTML = `<strong>${TYPE_LABELS[ev.tipo]||ev.tipo}</strong> — ${(ev.aree||[]).join(", ")||"—"} <span class="ev-inline-status ${ev.open!==false?"is-open":"is-closed"}" style="margin-left:.35rem">${ev.open!==false?"Aperto":"Chiuso"}</span>`;
         const wrap = document.createElement("div");
         wrap.className = "ev-preview__empty text-xs opacity-70";
         wrap.textContent = "Le comunicazioni complete sono visibili nel dettaglio evento.";
         box.appendChild(wrap);
     }
 
-    /* ===== RESET FILTRI ===== */
     async function resetGlobalFilters() {
         $("#global-q").value = "";
         $("#global-date").value = "";
@@ -2040,4 +2003,62 @@
     document.getElementById("global-reset")?.addEventListener("click", resetGlobalFilters);
     document.getElementById("gen-filters-reset")?.addEventListener("click", resetGenFilters);
     document.getElementById("ongoing-filters-reset")?.addEventListener("click", resetOngoingFilters);
+
+    /* ===== Dettagli segnalazione (modal) ===== */
+    function genInfoRows(rec) {
+        const typeLabel = TYPE_LABELS[rec.tipologia] || rec.tipologia || "—";
+        const created = new Date(rec.created_at || Date.now());
+        const when = fmtDT(created);
+        const evText = rec.event_id ? `Evento #${rec.event_id}` : "—";
+        return [
+            ["ID", String(rec.id)],
+            ["Data/Ora", when],
+            ["Direzione", (rec.direzione || "E").toUpperCase() === "U" ? "Uscita (U)" : "Entrata (E)"],
+            ["Tipologia", typeLabel],
+            ["Aree interessate", (rec.aree || []).join(", ") || "—"],
+            ["Operatore", rec.operatore || "—"],
+            ["Priorità", rec.priorita || "Nessuna"],
+            ["Evento associato", evText],
+            ["Sintesi", rec.sintesi || "—"]
+        ];
+    }
+
+    function openGenInfoModal(id) {
+        const rec = state.gen.find((x) => String(x.id) === String(id));
+        if (!rec) return;
+        const body = document.querySelector("#gen-info-body");
+        if (!body) return;
+        const rows = genInfoRows(rec);
+        const tbl = document.createElement("table");
+        tbl.className = "w-full text-sm";
+        tbl.innerHTML = `<tbody>${rows.map(([k,v])=>`<tr class="border-t border-slate-200"><td class="px-3 py-2 font-semibold w-44">${k}</td><td class="px-3 py-2">${v}</td></tr>`).join("")}</tbody>`;
+        body.replaceChildren(tbl);
+        const pr = rec.priorita || "Nessuna";
+        const dir = (rec.direzione || "E").toUpperCase() === "U" ? "U" : "E";
+        const prBadge = makePrioBadge(pr);
+        const dirBadge = makeDirBadge(dir);
+        const tds = body.querySelectorAll("tbody tr td:nth-child(2)");
+        if (tds[2]) {
+            tds[2].textContent = "";
+            tds[2].appendChild(dirBadge.cloneNode(true));
+        }
+        if (tds[6]) {
+            tds[6].textContent = "";
+            tds[6].appendChild(prBadge);
+        }
+        const payload = {
+            id: rec.id,
+            created_at: rec.created_at,
+            direzione: rec.direzione,
+            tipologia: rec.tipologia,
+            tipologia_label: TYPE_LABELS[rec.tipologia] || rec.tipologia || null,
+            aree: rec.aree || [],
+            operatore: rec.operatore || null,
+            priorita: rec.priorita || "Nessuna",
+            event_id: rec.event_id || null,
+            sintesi: rec.sintesi || "",
+        };
+        state.ui.genInfoJson = payload;
+        openModal("#modal-gen-info");
+    }
 </script>
