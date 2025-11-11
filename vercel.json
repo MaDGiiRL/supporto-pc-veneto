@@ -1,15 +1,22 @@
 {
-    "version": 2,
-    "builds": [
-        {
-            "src": "public/index.php",
-            "use": "@vercel/php"
+    "functions": {
+        "api/index.php": {
+            "runtime": "vercel-php@0.7.4"
         }
-    ],
+    },
     "routes": [
         {
             "src": "/(.*)",
-            "dest": "/public/index.php"
+            "dest": "/api/index.php"
         }
-    ]
+    ],
+    "env": {
+        "APP_ENV": "production",
+        "APP_DEBUG": "false",
+        "APP_STORAGE": "/tmp",
+        "VIEW_COMPILED_PATH": "/tmp",
+        "CACHE_DRIVER": "file",
+        "SESSION_DRIVER": "cookie",
+        "LOG_CHANNEL": "stderr"
+    }
 }
