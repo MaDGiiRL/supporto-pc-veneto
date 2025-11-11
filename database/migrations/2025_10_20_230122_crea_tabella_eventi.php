@@ -9,9 +9,9 @@ return new class extends Migration {
     {
         Schema::create('sor.eventi', function (Blueprint $table) {
             $table->id();
-            $table->string('tipologia', 50);                // sismico, idraulico, ecc.
+            $table->string('tipologia', 50);
             $table->text('descrizione')->nullable();
-            $table->jsonb('aree')->default('[]');           // ["Verona", "Verona - Avesa", ...]
+            $table->jsonb('aree')->default('[]');
             $table->boolean('aperto')->default(true);
             $table->timestampTz('aggiornato_il')->nullable();
             $table->string('operatore', 120)->nullable();
