@@ -665,7 +665,7 @@
                             <th class="px-3 py-2">Azione</th>
                             <th class="px-3 py-2">Segnalazione</th>
                             <th class="px-3 py-2">Da → A</th>
-                            <th class="px-3 py-2">Utente</th>
+                            <th class="px-3 py-2">Operatore</th>
                             <th class="px-3 py-2">Nota</th>
                         </tr>
                     </thead>
@@ -715,7 +715,7 @@
 
     function icon(name, cls = 'hi') {
         const m = {
-            clock: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>',
+            clock: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l3 3m6-3a9 9 0 11-18 0 9 0 0118 0z"/>',
             inbox: '<path stroke-linecap="round" stroke-linejoin="round" d="M20 13V7a2 2 0 00-2-2H6a2 2 0 00-2 2v6m16 0h-3.586a1 1 0 00-.707.293l-1.414 1.414a2 2 0 01-1.414.586h-2a2 2 0 01-1.414-.586L7.293 13.293A1 1 0 006.586 13H3m17 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5"/>',
             check: '<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>',
             tag: '<path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M3 10l7.586-7.586a2 2 0 012.828 0L21 10l-7 7-8-7z"/>',
@@ -725,7 +725,7 @@
         };
         return `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">${m[name]||''}</svg>`;
     }
-    const PAGE_SIZE = 5;
+    const PAGE_SIZE = 10;
     const TYPE_LABELS = {
         sismico: 'Sismico',
         vulcanico: 'Vulcanico',
@@ -743,7 +743,7 @@
         timeStyle: 'short'
     }).format(new Date(iso || Date.now()));
 
-    /* ====== STATI (mappa UI ↔ Backend) ====== */
+    /* ===== STATI (mappa UI ↔ Backend) ===== */
     const BACKEND_STATUS = {
         open: 'aperta',
         work: 'in_lavorazione',
@@ -751,7 +751,7 @@
     };
 
     function normStatus(s) {
-        const v = (s || '').toString().toLowerCase();
+        const v = (s || '').toLowerCase();
         if (['queue', 'aperta', 'aperte', 'open', 'aperto'].includes(v)) return 'queue';
         if (['assigned', 'in_lavorazione', 'working', 'work', 'lavorazione'].includes(v)) return 'assigned';
         if (['closed', 'chiusa', 'chiuse', 'close', 'chiuso'].includes(v)) return 'closed';
@@ -828,11 +828,37 @@
                 }
             });
         },
+        async getNotes(id, page = 1, per_page = 50) {
+            const res = await this._req(`/segnalazioni/${id}/notes?page=${page}&per_page=${per_page}`);
+            return normalizeNotesResponse(res);
+        },
         logs(params) {
             const sp = new URLSearchParams(Object.entries(params || {}).filter(([, v]) => v != null && v !== ''));
             return this._req(`/logs?${sp.toString()}`);
         },
     };
+
+    function normalizeNotesResponse(res) {
+        let items = [],
+            meta = {};
+        if (Array.isArray(res)) items = res;
+        else if (res && typeof res === 'object') {
+            if (Array.isArray(res.data)) items = res.data;
+            else if (Array.isArray(res.notes)) items = res.notes;
+            else if (Array.isArray(res.items)) items = res.items;
+            else if (res.note) items = [res.note];
+            meta = res.meta || {};
+        }
+        items = items.map(n => ({
+            text: n.text ?? n.body ?? n.content ?? '',
+            by: n.by ?? n.user ?? n.author ?? '—',
+            at: n.at ?? n.created_at ?? n.createdAt ?? null
+        }));
+        return {
+            data: items,
+            meta
+        };
+    }
 
     /* ===== State & Roles ===== */
     const ROLES_FALLBACK = [{
@@ -858,7 +884,7 @@
             label: 'Protezione Civile',
             can_assign: false,
             can_close: true
-        }
+        },
     ];
     const state = {
         roles: ROLES_FALLBACK,
@@ -871,9 +897,30 @@
         },
         activeTab: 'queue',
         lists: {
-            queue: [],
-            work: [],
-            closed: []
+            queue: {
+                rows: [],
+                meta: {
+                    current_page: 1,
+                    last_page: 1,
+                    total: 0
+                }
+            },
+            work: {
+                rows: [],
+                meta: {
+                    current_page: 1,
+                    last_page: 1,
+                    total: 0
+                }
+            },
+            closed: {
+                rows: [],
+                meta: {
+                    current_page: 1,
+                    last_page: 1,
+                    total: 0
+                }
+            },
         },
         counts: {
             queue: 0,
@@ -942,18 +989,6 @@
         });
     }
 
-    /* ===== Paginazione ===== */
-    function paginate(arr, key) {
-        const total = Math.max(1, Math.ceil(arr.length / PAGE_SIZE));
-        state.pages[key] = Math.min(Math.max(1, state.pages[key] || 1), total);
-        const start = (state.pages[key] - 1) * PAGE_SIZE;
-        return {
-            slice: arr.slice(start, start + PAGE_SIZE),
-            page: state.pages[key],
-            total
-        };
-    }
-
     /* ===== Card & footer ===== */
     function card(row) {
         const g = row;
@@ -971,6 +1006,7 @@
             by: g.last_note.by,
             at: g.last_note.at
         } : null;
+
         el.innerHTML = `
     <div class="card__head">
       <div><strong>GEN-${g.id}</strong> <span class="muted">• ${FMT(g.created_at)}</span></div>
@@ -988,11 +1024,19 @@
           </div>
           ${g.instructions?`<div class="instructions" style="margin-top:.75rem">${icon('information')} <strong>Indicazioni operative:</strong> ${g.instructions}</div>`:''}
           ${g.sintesi?`<div class="note" style="margin-top:.75rem">${icon('chat')} ${g.sintesi}</div>`:''}
-          ${lastNote?`<div class="note" style="margin-top:.55rem">${icon('chat')} <strong>Ultima nota:</strong> ${lastNote.text} <span class="muted">(${lastNote.by}, ${FMT(lastNote.at)})</span></div>`:''}
+          ${lastNote?`<div class="note" style="margin-top:.55rem" data-last-note="${g.id}">
+              ${icon('chat')} <strong>Ultima nota:</strong> <span data-last-note-text>${lastNote.text}</span>
+              <span class="muted">(<span data-last-note-by>${lastNote.by}</span>, <span data-last-note-at>${FMT(lastNote.at)}</span>)</span>
+           </div>`:`<div class="note" style="margin-top:.55rem; display:none" data-last-note="${g.id}"></div>`}
+
+          <div class="note" style="margin-top:.75rem; display:none" data-note-panel="${g.id}">
+            <div class="muted" style="margin-bottom:.35rem">${icon('chat')} Tutte le note</div>
+            <div data-note-list="${g.id}"><span class="muted">Carico…</span></div>
+          </div>
         </div>
         <div>
           <div class="muted" style="margin-bottom:.3rem">${icon('information','hi')} Aree interessate</div>
-          <div>${areas!=='—' ? areas.split(',').map(a=>`<span class="tag">${a.trim()}</span>`).join(' ') : '—'}</div>
+          <div>${areas!=='—'?areas.split(',').map(a=>`<span class="tag">${a.trim()}</span>`).join(' '):'—'}</div>
         </div>
       </div>
     </div>
@@ -1000,7 +1044,6 @@
       <span class="muted" style="margin-right:auto">${icon('information')} Azioni</span>
       ${footerActions(state.role, g.status, g.id, g.assigned_to)}
     </div>`;
-        // DnD
         el.addEventListener('dragstart', (e) => {
             e.dataTransfer.setData('text/id', g.id);
             e.dataTransfer.setData('text/status', g.status);
@@ -1009,29 +1052,31 @@
     }
 
     function footerActions(role, status, id, assignedTo) {
+        const noteButtons = `
+    <button class="btn" data-act="toggle-notes" data-id="${id}">👁️ Vedi note</button>
+    <button class="btn" data-act="note" data-id="${id}">📝 Aggiungi nota…</button>
+  `;
         if (status === 'queue') {
-            if (!canAssign(role)) return `<span class="muted">In attesa di smistamento…</span>`;
+            if (!canAssign(role)) return `<span class="muted">In attesa di smistamento…</span>${noteButtons}`;
             return assignableRoles().map(rr => `
       <button class="btn" data-act="assign" data-to="${rr.slug}" data-id="${id}">${icon('docArrow')} ${rr.label}</button>
-    `).join('');
+    `).join('') + noteButtons;
         }
         if (status === 'assigned') {
             const canManage = (role === assignedTo) || canClose(role) || role === 'coordinamento';
-            return `
-      <button class="btn" data-act="note" data-id="${id}">📝 Nota…</button>
-      <span class="k-sep"></span>
-      ${canManage?`<button class="btn btn-primary" data-act="close" data-id="${id}">${icon('check')} Chiudi</button>`:''}`;
+            return `${noteButtons}<span class="k-sep"></span>${canManage?`<button class="btn btn-primary" data-act="close" data-id="${id}">${icon('check')} Chiudi</button>`:''}`;
         }
-        return `<button class="btn" data-act="note" data-id="${id}">📝 Aggiungi nota</button>`;
+        return noteButtons;
     }
 
-    /* ===== Section & Render ===== */
-    function section(title, kind, rows) {
-        const {
-            slice,
-            page,
-            total
-        } = paginate(rows, kind);
+    /* ===== Section & Render (paginazione server-side) ===== */
+    function section(title, kind, payload) {
+        const rows = payload.rows || [];
+        const meta = payload.meta || {
+            current_page: 1,
+            last_page: 1,
+            total: rows.length
+        };
         const sec = document.createElement('section');
         sec.className = `sec sec--${kind}`;
         const dropRow = (canAssign(state.role) && kind === 'queue') ?
@@ -1042,19 +1087,19 @@
       ${kind==='queue'?icon('inbox'):kind==='work'?icon('clock'):icon('check')}
       <h3 class="sec__title">${title}</h3>
       ${dropRow}
-      <div class="sec__meta">${rows.length} elementi totali</div>
+      <div class="sec__meta">${meta.total??rows.length} elementi totali</div>
     </div>
     <div class="list" data-kind="${kind}">
-      ${slice.length ? '' : `<div class="empty">Nessuna voce.</div>`}
+      ${rows.length?'':`<div class="empty">Nessuna voce.</div>`}
     </div>
     <div class="pager" data-kind="${kind}">
-      <button class="btn" data-pg="prev" ${page<=1?'disabled':''}>«</button>
-      <span class="pager__label">Pagina ${page} di ${total}</span>
-      <button class="btn" data-pg="next" ${page>=total?'disabled':''}>»</button>
+      <button class="btn" data-pg="prev" ${meta.current_page<=1?'disabled':''}>«</button>
+      <span class="pager__label">Pagina ${meta.current_page} di ${meta.last_page}</span>
+      <button class="btn" data-pg="next" ${meta.current_page>=meta.last_page?'disabled':''}>»</button>
     </div>`;
         const list = sec.querySelector('.list');
-        slice.forEach(r => list.appendChild(card(r)));
-        // drop targets
+        rows.forEach(r => list.appendChild(card(r)));
+
         sec.querySelectorAll('.drop[data-target]').forEach(t => {
             t.addEventListener('dragover', e => {
                 e.preventDefault();
@@ -1076,12 +1121,14 @@
         root.querySelectorAll('.pager').forEach(pg => {
             const kind = pg.dataset.kind;
             pg.querySelectorAll('[data-pg]').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const dir = btn.dataset.pg;
-                    const total = Number(pg.querySelector('.pager__label')?.textContent.match(/di\s+(\d+)/)?.[1] || 1);
-                    if (dir === 'prev') state.pages[kind] = Math.max(1, (state.pages[kind] || 1) - 1);
-                    if (dir === 'next') state.pages[kind] = Math.min(total, (state.pages[kind] || 1) + 1);
-                    render();
+                btn.addEventListener('click', async () => {
+                    const meta = state.lists[kind]?.meta || {
+                        current_page: 1,
+                        last_page: 1
+                    };
+                    if (btn.dataset.pg === 'prev') state.pages[kind] = Math.max(1, (meta.current_page || 1) - 1);
+                    if (btn.dataset.pg === 'next') state.pages[kind] = Math.min(meta.last_page || 1, (meta.current_page || 1) + 1);
+                    await reloadData(kind);
                 });
             });
         });
@@ -1090,9 +1137,9 @@
     function render() {
         renderLegend();
         state.counts = {
-            queue: state.lists.queue.length,
-            work: state.lists.work.length,
-            closed: state.lists.closed.length
+            queue: state.lists.queue.meta?.total ?? state.lists.queue.rows.length,
+            work: state.lists.work.meta?.total ?? state.lists.work.rows.length,
+            closed: state.lists.closed.meta?.total ?? state.lists.closed.rows.length,
         };
         bindTabs();
         root.replaceChildren();
@@ -1132,16 +1179,101 @@
 
     function askConfirm(title, text) {
         return window.Swal ? Swal.fire({
-            title,
-            text,
-            icon: 'warning',
+                title,
+                text,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Conferma',
+                cancelButtonText: 'Annulla',
+                confirmButtonColor: '#2563eb'
+            }) :
+            Promise.resolve({
+                isConfirmed: confirm(title)
+            });
+    }
+
+    /* >>> Aggiungi nota con refresh immediato della LISTA di appartenenza (Aperte/Work/Chiuse) */
+    async function openNoteSwal(id) {
+        if (!window.Swal) {
+            alert('SweetAlert non trovato');
+            return;
+        }
+        const {
+            value,
+            isConfirmed
+        } = await Swal.fire({
+            title: 'Aggiungi nota',
+            input: 'textarea',
+            inputLabel: 'Nota',
+            inputPlaceholder: 'Scrivi qui…',
+            inputAttributes: {
+                'aria-label': 'Nota',
+                maxlength: '5000'
+            },
             showCancelButton: true,
-            confirmButtonText: 'Conferma',
+            confirmButtonText: 'Salva',
             cancelButtonText: 'Annulla',
-            confirmButtonColor: '#2563eb'
-        }) : Promise.resolve({
-            isConfirmed: confirm(title)
+            confirmButtonColor: '#2563eb',
+            allowOutsideClick: () => !Swal.isLoading(),
+            preConfirm: (val) => {
+                if (!val || !val.trim()) {
+                    Swal.showValidationMessage('La nota è obbligatoria.');
+                    return false;
+                }
+                return val.trim();
+            }
         });
+        if (!isConfirmed) return;
+
+        // salva
+        await API.addNote(id, value.trim());
+        toastOK('Nota aggiunta');
+
+        // aggiorna pannello "tutte le note" se aperto
+        try {
+            const panel = document.querySelector(`[data-note-panel="${CSS.escape(String(id))}"]`);
+            const list = document.querySelector(`[data-note-list="${CSS.escape(String(id))}"]`);
+            if (panel && list) {
+                panel.style.display = 'block';
+                list.innerHTML = `<span class="muted">Aggiorno…</span>`;
+                const notes = await API.getNotes(id);
+                renderNotesList(list, notes);
+            }
+        } catch (e) {
+            console.warn('refresh note panel', e);
+        }
+
+        // <<< Rileva lo stato corrente della card e ricarica SOLO quella lista
+        const cardEl = document.querySelector(`.card[data-id="${CSS.escape(String(id))}"]`);
+        const status = cardEl?.dataset.status || 'assigned';
+        const listKey = (status === 'queue') ? 'queue' : (status === 'assigned' ? 'work' : 'closed');
+        await reloadData(listKey); // <-- aggiorna SUBITO la lista giusta (anche Aperte)
+    }
+
+    async function handleDropAction(id, srcStatus, target) {
+        try {
+            if (srcStatus === 'queue' && assignableRoles().some(r => r.slug === target)) {
+                const {
+                    confirmed,
+                    text
+                } = await promptInstructions();
+                if (!confirmed) return;
+                await API.assign(id, target, text || null);
+                toastOK('Segnalazione smistata', `Assegnata a ${labelRole(target)}`);
+                await Promise.all([reloadData('queue'), reloadData('work')]);
+                return;
+            }
+            if (srcStatus === 'assigned' && target === 'close' && canClose(state.role)) {
+                await API.close(id);
+                toastOK('Segnalazione chiusa');
+                await Promise.all([reloadData('work'), reloadData('closed')]);
+                return;
+            }
+            toastInfo('Operazione non permessa');
+        } catch (e) {
+            console.error(e);
+            toastInfo('Errore backend');
+        }
     }
 
     async function promptInstructions() {
@@ -1167,35 +1299,6 @@
             text: (isText ?? '').trim()
         };
     }
-    async function handleDropAction(id, srcStatus, target) {
-        try {
-            if (srcStatus === 'queue' && assignableRoles().some(r => r.slug === target)) {
-                const {
-                    confirmed,
-                    text
-                } = await promptInstructions();
-                if (!confirmed) return;
-                // persist
-                await API.assign(id, target, text || null);
-                // aggiorna liste in memoria (sparisce da aperte, compare in lavorazione)
-                moveInState(+id, 'queue', 'work');
-                toastOK('Segnalazione smistata', `Assegnata a ${labelRole(target)}`);
-                await reloadData('work');
-                return;
-            }
-            if (srcStatus === 'assigned' && target === 'close' && canClose(state.role)) {
-                await API.close(id);
-                moveInState(+id, 'work', 'closed');
-                toastOK('Segnalazione chiusa');
-                await reloadData('closed');
-                return;
-            }
-            toastInfo('Operazione non permessa');
-        } catch (e) {
-            console.error(e);
-            toastInfo('Errore backend');
-        }
-    }
 
     function bindHandlers() {
         root.querySelectorAll('[data-act="assign"]').forEach(b => {
@@ -1208,88 +1311,59 @@
                 } = await promptInstructions();
                 if (!confirmed) return;
                 await API.assign(id, to, text || null);
-                moveInState(id, 'queue', 'work');
                 toastOK('Segnalazione smistata', `Assegnata a ${labelRole(to)}`);
-                await reloadData('work');
+                await Promise.all([reloadData('queue'), reloadData('work')]);
             });
         });
-        root.querySelectorAll('[data-act="note"]').forEach(b => b.addEventListener('click', () => NoteModal.open(b.dataset.id)));
+        root.querySelectorAll('[data-act="note"]').forEach(b => {
+            b.addEventListener('click', () => openNoteSwal(b.dataset.id));
+        });
+        root.querySelectorAll('[data-act="toggle-notes"]').forEach(b => {
+            b.addEventListener('click', async () => {
+                const id = b.dataset.id;
+                const panel = document.querySelector(`[data-note-panel="${CSS.escape(String(id))}"]`);
+                const list = document.querySelector(`[data-note-list="${CSS.escape(String(id))}"]`);
+                if (!panel || !list) return;
+                const hidden = panel.style.display === 'none' || panel.style.display === '';
+                if (hidden) {
+                    panel.style.display = 'block';
+                    list.innerHTML = `<span class="muted">Carico…</span>`;
+                    try {
+                        const notes = await API.getNotes(id);
+                        renderNotesList(list, notes);
+                    } catch (e) {
+                        console.error(e);
+                        list.innerHTML = `<span class="muted">Impossibile caricare le note.</span>`;
+                    }
+                } else panel.style.display = 'none';
+            });
+        });
         root.querySelectorAll('[data-act="close"]').forEach(b => {
             b.addEventListener('click', async () => {
                 const id = +b.dataset.id;
                 const c = await askConfirm('Chiudere la segnalazione?', 'Potrai comunque aggiungere note.');
                 if (!c.isConfirmed) return;
                 await API.close(id);
-                moveInState(id, 'work', 'closed');
                 toastOK('Segnalazione chiusa');
-                await reloadData('closed');
+                await Promise.all([reloadData('work'), reloadData('closed')]);
             });
         });
     }
 
-    /* ===== Move helpers (liste + DOM) ===== */
-    function listEl(kind) {
-        return document.querySelector(`.sec--${kind} .list`);
-    }
-
-    function moveCardDOM(id, toKind) {
-        const card = document.querySelector(`.card[data-id="${CSS.escape(String(id))}"]`);
-        if (!card) return;
-        const dest = listEl(toKind);
-        card.dataset.status = (toKind === 'work' ? 'assigned' : toKind);
-        if (dest) dest.prepend(card);
-    }
-
-    function moveInState(id, fromKind, toKind) {
-        // aggiorna state.lists
-        const pull = arr => {
-            const i = arr.findIndex(x => Number(x.id) === Number(id));
-            if (i >= 0) return arr.splice(i, 1)[0];
-            return null;
-        };
-        let row = null;
-        if (fromKind === 'queue') row = pull(state.lists.queue);
-        if (fromKind === 'work') row = pull(state.lists.work);
-        if (fromKind === 'closed') row = pull(state.lists.closed);
-        if (row) {
-            row.status = (toKind === 'work' ? 'assigned' : toKind === 'queue' ? 'queue' : 'closed');
-            if (toKind === 'queue') state.lists.queue.unshift(row);
-            if (toKind === 'work') state.lists.work.unshift(row);
-            if (toKind === 'closed') state.lists.closed.unshift(row);
-            moveCardDOM(id, toKind);
-            render(); // ricalcola pagine/contatori
-        }
-    }
-
-    /* ===== Modal NOTE ===== */
-    const NoteModal = {
-        el: $('#note-modal'),
-        open(id) {
-            $('#note-id').value = id;
-            $('#note-text').value = '';
-            $('#note-err').hidden = true;
-            $('#note-title').textContent = 'Aggiungi nota';
-            this.el.classList.add('is-open');
-            setTimeout(() => $('#note-text').focus(), 30);
-        },
-        close() {
-            this.el.classList.remove('is-open');
-        }
-    };
-    document.querySelectorAll('[data-close="note"]').forEach(n => n.addEventListener('click', () => NoteModal.close()));
-    $('#note-save').addEventListener('click', async () => {
-        const id = $('#note-id').value;
-        const text = $('#note-text').value.trim();
-        $('#note-err').hidden = !!text;
-        if (!text) {
-            $('#note-text').focus();
+    function renderNotesList(container, payload) {
+        const list = Array.isArray(payload) ? payload :
+            Array.isArray(payload?.data) ? payload.data : [];
+        if (!list.length) {
+            container.innerHTML = `<div class="muted">Nessuna nota.</div>`;
             return;
         }
-        await API.addNote(id, text);
-        NoteModal.close();
-        toastInfo('Nota aggiunta');
-        await reloadData(state.activeTab === 'closed' ? 'closed' : 'work');
-    });
+        container.innerHTML = list.map(n => `
+    <div class="note" style="margin-top:.5rem">
+      ${icon('chat')} <strong>${n.by||'—'}</strong>
+      <span class="muted">• ${n.at?FMT(n.at):''}</span>
+      <div style="margin-top:.35rem">${(n.text||'').replace(/\n/g,'<br>')}</div>
+    </div>`).join('');
+    }
 
     /* ===== Data load/map ===== */
     function mapSeg(s) {
@@ -1317,22 +1391,25 @@
         roleSel.addEventListener('change', async () => {
             state.role = roleSel.value;
             if (state.role !== 'coordinamento' && state.activeTab === 'queue') state.activeTab = 'work';
+            state.pages.queue = state.pages.work = state.pages.closed = 1;
             await loadData();
             render();
             if (state.role === 'coordinamento') {
                 $('#coord-log').style.display = '';
                 await loadLogs();
-            } else $('#coord-log').style.display = 'none';
+                startLogsLive();
+            } else {
+                $('#coord-log').style.display = 'none';
+                stopLogsLive();
+            }
         });
     }
     async function loadList(kind) {
         const params = {
-            page: 1,
-            per_page: 200
+            page: state.pages[kind] || 1,
+            per_page: PAGE_SIZE
         };
-        if (kind === 'queue') {
-            params.status = toBackendStatus('queue');
-        }
+        if (kind === 'queue') params.status = toBackendStatus('queue');
         if (kind === 'work') {
             params.status = toBackendStatus('assigned');
             if (state.role !== 'coordinamento') params.assigned_to = state.role;
@@ -1343,7 +1420,15 @@
         }
         const res = await API.listSegnalazioni(params);
         const rows = Array.isArray(res) ? res : (res.data || []);
-        return rows.map(mapSeg);
+        const meta = res.meta || {
+            current_page: params.page,
+            last_page: 1,
+            total: rows.length
+        };
+        return {
+            rows: rows.map(mapSeg),
+            meta
+        };
     }
     async function loadData() {
         try {
@@ -1356,9 +1441,30 @@
             console.error(e);
             $('#coord-debug').hidden = false;
             state.lists = {
-                queue: [],
-                work: [],
-                closed: []
+                queue: {
+                    rows: [],
+                    meta: {
+                        current_page: 1,
+                        last_page: 1,
+                        total: 0
+                    }
+                },
+                work: {
+                    rows: [],
+                    meta: {
+                        current_page: 1,
+                        last_page: 1,
+                        total: 0
+                    }
+                },
+                closed: {
+                    rows: [],
+                    meta: {
+                        current_page: 1,
+                        last_page: 1,
+                        total: 0
+                    }
+                }
             };
         }
     }
@@ -1382,6 +1488,7 @@
         $('#log-prev').disabled = (meta.current_page ?? 1) <= 1;
         $('#log-next').disabled = (meta.current_page ?? 1) >= (meta.last_page ?? 1);
         tbody.replaceChildren();
+
         const rows = state.logs.data;
         if (!rows.length) {
             const tr = document.createElement('tr');
@@ -1389,31 +1496,36 @@
             tbody.appendChild(tr);
             return;
         }
+
         rows.forEach(l => {
             const tr = document.createElement('tr');
             tr.className = 'border-t';
             const when = FMT(l.created_at || l.at);
             const action = l.action || l.type || '—';
             const seg = l.segnalazione_id ? `GEN-${l.segnalazione_id}` : '—';
-            const daA = `${l.from_status||l.from||'—'} → ${l.to_status||l.to||'—'}` + (l.from_assignee || l.to_assignee ? ` • ${l.from_assignee||'—'} → ${l.to_assignee||'—'}` : '');
-            const by = l.by || l.user || '—';
+            const daA = `${l.from_status||l.from||'—'} → ${l.to_status||l.to||'—'}` +
+                (l.from_assignee || l.to_assignee ? ` • ${l.from_assignee||'—'} → ${l.to_assignee||'—'}` : '');
+            const operator = l.operator || l.actor || l.actor_name || l.performed_by || l.performed_by_name ||
+                l.by || l.user || l.user_name || '—';
             const nota = l.note || l.details || '';
+
             tr.innerHTML = `
       <td class="px-3 py-2">${when}</td>
       <td class="px-3 py-2">${action}</td>
       <td class="px-3 py-2">${seg}</td>
       <td class="px-3 py-2">${daA}</td>
-      <td class="px-3 py-2">${by}</td>
+      <td class="px-3 py-2">${operator}</td>
       <td class="px-3 py-2">${nota}</td>`;
             tbody.appendChild(tr);
         });
     }
+
     async function loadLogs() {
         try {
             const res = await API.logs({
                 entity: 'segnalazione',
                 page: state.pages.log,
-                per_page: 10
+                per_page: PAGE_SIZE
             });
             const data = Array.isArray(res) ? res : (res.data || []);
             state.logs.data = data;
@@ -1445,6 +1557,26 @@
         await loadLogs();
     });
 
+    /* ===== Logs LIVE (polling) ===== */
+    let _logTimer = null;
+    const LOG_POLL_MS = 3000;
+
+    function startLogsLive() {
+        stopLogsLive();
+        loadLogs().catch(console.error);
+        _logTimer = setInterval(() => {
+            if (state.role === 'coordinamento') loadLogs().catch(console.error);
+        }, LOG_POLL_MS);
+    }
+
+    function stopLogsLive() {
+        if (_logTimer) {
+            clearInterval(_logTimer);
+            _logTimer = null;
+        }
+    }
+    window.addEventListener('beforeunload', stopLogsLive);
+
     /* ===== Boot ===== */
     async function boot() {
         renderLegend();
@@ -1454,6 +1586,7 @@
         if (state.role === 'coordinamento') {
             $('#coord-log').style.display = '';
             await loadLogs();
+            startLogsLive();
         }
     }
     $('#debug-retry').addEventListener('click', boot);

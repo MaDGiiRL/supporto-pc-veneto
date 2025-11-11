@@ -5,6 +5,7 @@ use App\Http\Controllers\SegnalazioniController;
 use App\Http\Controllers\Sor\EventoController;
 use App\Http\Controllers\Sor\SegnalazioneController;
 use App\Http\Controllers\Sor\ComunicazioniController;
+use App\Http\Controllers\Sor\CoordinamentoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -77,3 +78,40 @@ Route::middleware(['web', 'auth'])
         // (opzionale) chi sono
         Route::get('me', fn() => auth()->user());
     });
+
+    // PUBBLICHE (/sor) — come le altre tue SOR
+Route::prefix('sor')->group(function () {
+    Route::get('roles',                       [CoordinamentoController::class, 'roles']);
+    Route::get('segnalazioni',                [CoordinamentoController::class, 'listSegnalazioni']); // aggiunge filtri status/assigned_to
+    Route::patch('segnalazioni/{id}/assign',  [CoordinamentoController::class, 'assign']);
+    Route::patch('segnalazioni/{id}/close',   [CoordinamentoController::class, 'close']);
+    Route::post('segnalazioni/{id}/notes',    [CoordinamentoController::class, 'addNote']);
+    Route::get('logs',                        [CoordinamentoController::class, 'logs']);
+});
+
+// PROTETTE (/api/sor) — matching esatto del fallback del client
+Route::middleware(['web','auth'])->prefix('api/sor')->group(function () {
+    Route::get('roles',                       [CoordinamentoController::class, 'roles']);
+    Route::get('segnalazioni',                [CoordinamentoController::class, 'listSegnalazioni']);
+    Route::patch('segnalazioni/{id}/assign',  [CoordinamentoController::class, 'assign']);
+    Route::patch('segnalazioni/{id}/close',   [CoordinamentoController::class, 'close']);
+    Route::post('segnalazioni/{id}/notes',    [CoordinamentoController::class, 'addNote']);
+    Route::get('logs',                        [CoordinamentoController::class, 'logs']);
+});
+
+// use App\Http\Controllers\Sor\SegnalazioneOpsController;
+Route::prefix('sor')->group(function () {
+    Route::patch('/segnalazioni/{id}/assign', [\App\Http\Controllers\Sor\SegnalazioneOpsController::class, 'assign']);
+    Route::patch('/segnalazioni/{id}/close',  [\App\Http\Controllers\Sor\SegnalazioneOpsController::class, 'close']);
+    Route::post('/segnalazioni/{id}/notes',   [\App\Http\Controllers\Sor\SegnalazioneOpsController::class, 'addNote']);
+    Route::get('/roles',                      [\App\Http\Controllers\Sor\SegnalazioneOpsController::class, 'roles']);
+    Route::get('/logs',                       [\App\Http\Controllers\Sor\SegnalazioneOpsController::class, 'logs']);
+});
+
+Route::middleware(['web','auth'])->prefix('api/sor')->group(function () {
+    Route::patch('/segnalazioni/{id}/assign', [\App\Http\Controllers\Sor\SegnalazioneOpsController::class, 'assign']);
+    Route::patch('/segnalazioni/{id}/close',  [\App\Http\Controllers\Sor\SegnalazioneOpsController::class, 'close']);
+    Route::post('/segnalazioni/{id}/notes',   [\App\Http\Controllers\Sor\SegnalazioneOpsController::class, 'addNote']);
+    Route::get('/roles',                      [\App\Http\Controllers\Sor\SegnalazioneOpsController::class, 'roles']);
+    Route::get('/logs',                       [\App\Http\Controllers\Sor\SegnalazioneOpsController::class, 'logs']);
+});

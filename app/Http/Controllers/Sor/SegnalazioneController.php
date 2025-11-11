@@ -22,6 +22,11 @@ class SegnalazioneController extends Controller
     {
         $q = SegnalazioneGenerica::query()->with('evento');
 
+        if ($r->filled('status'))      { $q->where('status', $r->string('status')); }
+        if ($r->filled('assigned_to')) {
+            $q->where('assigned_to', $r->string('assigned_to'));
+        }
+
         if ($r->filled('q')) {
             $needle = mb_strtolower($r->string('q'));
             $q->where(function ($w) use ($needle) {
