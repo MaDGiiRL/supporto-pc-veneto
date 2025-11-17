@@ -171,9 +171,6 @@ textarea.input {
     transition: background .15s, box-shadow .15s, transform .06s
 }
 
-.btn:hover {
-    background: var(--muted-50)
-}
 
 .btn:active {
     transform: translateY(1px)
@@ -186,11 +183,7 @@ textarea.input {
     box-shadow: 0 1px 0 rgba(0, 0, 0, .04), 0 6px 16px rgba(37, 99, 235, .18)
 }
 
-.btn-primary:hover {
-    background: var(--primary-600);
-    border-color: var(--primary-600);
-    box-shadow: 0 2px 0 rgba(0, 0, 0, .05), 0 10px 24px rgba(29, 78, 216, .22)
-}
+
 
 .btn-primary:active {
     background: var(--primary-700);
@@ -342,20 +335,19 @@ tbody tr:nth-child(even) {
     background: rgba(0, 0, 0, .65)
 }
 
-/* ===== FIX: scroll per le modali ===== */
+/* ===== Modali: quasi fullscreen di default ===== */
 .c-modal__dialog {
     position: relative;
-    max-width: 72rem;
-    width: min(96vw, 72rem);
-    margin: 4vh auto;
+    max-width: 90rem;
+    width: min(100vw - 2rem, 90rem);
+    margin: 1.5vh auto;
     background: #fff;
     border: 1px solid var(--line);
     border-radius: 1rem;
     box-shadow: 0 10px 30px rgba(0, 0, 0, .2);
     padding: 1.25rem;
 
-    /* ⬇️ Abilita scroll interno alla modale */
-    max-height: calc(100svh - 8vh);
+    max-height: calc(100svh - 3vh);
     overflow: auto;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
@@ -367,9 +359,33 @@ tbody tr:nth-child(even) {
 /* Mobile: margini e altezza ottimizzati */
 @media (max-width: 640px) {
     .c-modal__dialog {
-        margin: 2vh auto;
-        max-height: calc(100svh - 4vh);
+        margin: 1vh auto;
+        width: 100vw;
+        max-height: calc(100svh - 2vh);
+        border-radius: 0.75rem;
     }
+}
+
+/* Modali grandi esplicitamente quasi fullscreen */
+#modal-gen .c-modal__dialog,
+#modal-edit-gen .c-modal__dialog,
+#modal-event .c-modal__dialog,
+#modal-ev-form .c-modal__dialog,
+#modal-all-reports .c-modal__dialog {
+    max-width: 90rem;
+    width: min(100vw - 2rem, 90rem);
+    margin: 1.5vh auto;
+    max-height: calc(100svh - 3vh);
+}
+
+/* Modali "info" (pulsante i) più piccole, NON fullscreen */
+#modal-gen-info .c-modal__dialog,
+#modal-ev-info .c-modal__dialog,
+#modal-readmore .c-modal__dialog {
+    max-width: 48rem;
+    width: min(96vw, 48rem);
+    margin: 6vh auto;
+    max-height: calc(100svh - 12vh);
 }
 
 .c-modal--overlay {
@@ -571,7 +587,7 @@ tbody tr:nth-child(even) {
     box-shadow: 0 0 0 2px color-mix(in oklab, var(--ev) 25%, white) inset
 }
 
-/* Mappatura colori per legenda EVENTI (questo risolve i "colori non vanno") */
+/* Mappatura colori per legenda EVENTI */
 .ongoing-legend .ol-item[data-type="sismico"] {
     --ev: var(--ev-sismico)
 }
@@ -584,7 +600,6 @@ tbody tr:nth-child(even) {
     --ev: var(--ev-idraulico)
 }
 
-/***** (continua) *****/
 .ongoing-legend .ol-item[data-type="idrogeologico"] {
     --ev: var(--ev-idrogeologico)
 }
@@ -826,7 +841,6 @@ tbody tr.prio-row.prio--nessuna {
 /* lascia spazio interno a destra nel dialog così i bottoni non finiscono sotto la X */
 #modal-event .c-modal__dialog {
     padding-right: 3.25rem;
-    /* >= larghezza/hitbox della X */
 }
 
 /* restringi l’area cliccabile della X: niente overlay “invisibile” sui bottoni */
@@ -834,9 +848,7 @@ tbody tr.prio-row.prio--nessuna {
     top: .6rem;
     right: .6rem;
     width: 2rem;
-    /* 32px */
     height: 2rem;
-    /* 32px */
     padding: 0;
     display: grid;
     place-items: center;
@@ -846,14 +858,11 @@ tbody tr.prio-row.prio--nessuna {
     border: 1px solid var(--line);
     box-shadow: 0 1px 2px rgba(0, 0, 0, .06);
     z-index: 5;
-    /* sopra il contenuto, ma senza coprire oltre i suoi 32px */
 }
 
 #modal-event .c-modal__close * {
     pointer-events: none;
 }
-
-/* evita “bolle” di click strane */
 
 /* (opzionale) sugli schermi piccoli riduci un filo il padding extra */
 @media (max-width: 640px) {
@@ -907,7 +916,6 @@ tbody tr.prio-row.prio--nessuna {
 /* =========================
    OVERRIDE: PRIORITÀ MODALE EV-FORM
    ========================= */
-/* La modale di modifica/nuova comunicazione evento sta sopra a tutto */
 #modal-ev-form {
     z-index: 2000 !important;
 }
@@ -921,7 +929,7 @@ tbody tr.prio-row.prio--nessuna {
     z-index: 2001 !important;
 }
 
-/* (opzionale) assicura che eventuali altre modali non le passino davanti */
+/* altre priorità */
 #modal-event {
     z-index: 1300 !important;
 }
@@ -942,14 +950,13 @@ tbody tr.prio-row.prio--nessuna {
 /* =========================
    OVERRIDE: BADGE AREE INTERESSATE
    ========================= */
-/* Contenitore generale dei tag/badge */
 .tags {
     display: flex;
     flex-wrap: wrap;
     gap: .4rem .5rem;
 }
 
-/* Trasforma i .tag in badge compatti */
+/* badge aree interessate nel dettaglio evento */
 #ev-areas .tag {
     display: inline-flex;
     align-items: center;
@@ -960,15 +967,11 @@ tbody tr.prio-row.prio--nessuna {
     font-size: .75rem;
     line-height: 1;
     background: #f8fafc;
-    /* bg chiaro */
     color: #0f172a;
-    /* testo scuro */
     border: 1px solid var(--line);
-    /* bordo sottile */
     box-shadow: 0 1px 0 rgba(0, 0, 0, .02);
 }
 
-/* Puntino decorativo (facoltativo) all'inizio del badge */
 #ev-areas .tag::before {
     content: "";
     width: .45rem;
@@ -978,14 +981,12 @@ tbody tr.prio-row.prio--nessuna {
     opacity: .9;
 }
 
-/* I badge qui sono solo display, niente “X” di rimozione */
 #ev-areas .tag .tag__x {
     display: none !important;
 }
 
 /* =========================
-   (FACOLTATIVO) RIFINITURE TAG-INPUT
-   – utile per i campi dove inserisci/editi le aree
+   TAG-INPUT RIFINITO
    ========================= */
 .tag-input--wrap {
     display: flex;
@@ -1102,4 +1103,17 @@ tbody tr.prio-row.prio--nessuna {
     font-size: .8rem;
     opacity: .75;
     padding: .25rem 0
+}
+
+/* Centra orizzontalmente il wrapper dei bottoni */
+.actions {
+    display: flex;
+    gap: .25rem;
+    justify-content: center;   /* ⬅️ centrati */
+    align-items: center;       /* opzionale ma carino */
+}
+
+/* Assicura che la cella "Azioni" sia centrata in tutte le tabelle */
+table tbody td:last-child {
+    text-align: center;
 }

@@ -68,12 +68,11 @@
             <table class="w-full text-sm" id="tbl-gen">
                 <thead class="text-left">
                     <tr>
-                        <th class="px-3 py-2">Data/Ora</th>
+                        <th class="px-3 py-2">Data</th>
+                        <th class="px-3 py-2">Ora</th>
                         <th class="px-3 py-2">E/U</th>
-                        <th class="px-3 py-2">Ente</th>
-                        <th class="px-3 py-2">Comuni</th>
-                        <th class="px-3 py-2 w-sintesi">Sintesi</th>
-                        <th class="px-3 py-2">Operatore</th>
+                        <th class="px-3 py-2">Comune</th>
+                        <th class="px-3 py-2 w-sintesi">Oggetto</th>
                         <th class="px-3 py-2">Evento</th>
                         <th class="px-3 py-2">Azioni</th>
                     </tr>
@@ -128,79 +127,162 @@
     </section>
 </div>
 
-<!-- ========== MODALI (come le avevi) ========== -->
 <!-- ========== MODALI ========== -->
-
 <!-- GENERICO (CREA) -->
 <div class="c-modal hidden" id="modal-gen" aria-hidden="true">
     <div class="c-modal__backdrop" data-close-modal></div>
-    <div class="c-modal__dialog" role="dialog" aria-modal="true">
+    <div class="c-modal__dialog" role="dialog" aria-modal="true" style="max-width:56rem">
         <button type="button" class="c-modal__close" data-close-modal>✕</button>
-        <h3 class="mb-2 text-lg font-semibold">Segnalazione generica — Nuovo evento</h3>
-        <p class="text-xs opacity-70 mb-4">Modulo normalizzato: con campi base + campi specifici per tipologia.</p>
+        <h3 class="mb-2 text-lg font-semibold">Nuova segnalazione generica</h3>
+        <p class="text-xs opacity-70 mb-4">
+            Il modulo utilizza gli stessi campi di una comunicazione evento, con in più la tipologia e i campi specifici.
+        </p>
 
-        <form id="form-gen" class="grid gap-4 max-h-[70vh] overflow-auto">
-            <fieldset class="grid md:grid-cols-2 gap-4">
-                <label class="grid gap-1.5">
-                    <span class="label">Tipologia evento</span>
-                    <select name="tipologia" id="gen-tipologia" class="input" required>
-                        <option value="" disabled selected>Seleziona…</option>
-                        <option value="sismico">Sismico</option>
-                        <option value="vulcanico">Vulcanico</option>
-                        <option value="idraulico">Idraulico</option>
-                        <option value="idrogeologico">Idrogeologico</option>
-                        <option value="maremoto">Maremoto</option>
-                        <option value="deficit-idrico">Deficit idrico</option>
-                        <option value="meteo-avverso">Fenomeni meteo avversi</option>
-                        <option value="aib">AIB (Incendi boschivi)</option>
-                        <option value="uomo">Evento prodotto dall’uomo</option>
-                        <option value="altro">Altro</option>
-                    </select>
-                </label>
+        <form id="form-gen" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input type="hidden" id="gen-id" />
 
-                <label class="grid gap-1.5">
-                    <span class="label">Priorità</span>
-                    <div class="flex flex-wrap items-center gap-4 mt-1">
-                        <label class="inline-flex items-center gap-2"><input type="radio" name="priorita" value="Nessuna" checked /> Nessuna</label>
-                        <label class="inline-flex items-center gap-2"><input type="radio" name="priorita" value="Alta" /> Alta</label>
-                        <label class="inline-flex items-center gap-2"><input type="radio" name="priorita" value="Media" /> Media</label>
-                        <label class="inline-flex items-center gap-2"><input type="radio" name="priorita" value="Bassa" /> Bassa</label>
-                    </div>
-                </label>
+            <!-- Tipologia + Priorità -->
+            <label class="grid gap-1.5">
+                <span class="label">Tipologia evento (opzionale)</span>
+                <select name="tipologia" id="gen-tipologia" class="input">
+                    <option value="" selected>— Non specificata —</option>
+                    <option value="sismico">Sismico</option>
+                    <option value="vulcanico">Vulcanico</option>
+                    <option value="idraulico">Idraulico</option>
+                    <option value="idrogeologico">Idrogeologico</option>
+                    <option value="maremoto">Maremoto</option>
+                    <option value="deficit-idrico">Deficit idrico</option>
+                    <option value="meteo-avverso">Fenomeni meteo avversi</option>
+                    <option value="aib">AIB (Incendi boschivi)</option>
+                    <option value="uomo">Evento prodotto dall’uomo</option>
+                    <option value="altro">Altro</option>
+                </select>
+            </label>
 
-                <label class="grid gap-1.5 md:col-span-2">
-                    <span class="label">Aree interessate (Comuni e Frazioni)</span>
-                    <div class="tag-input" id="gen-aree" data-datalist="comuni-datalist" data-placeholder="Scrivi Comune o Frazione e premi Invio"></div>
-                    <input type="hidden" name="aree" id="gen-aree-hidden" />
-                    <span class="text-xs opacity-70">Esempio: “Verona”, “Verona - Avesa”, “Farra di Soligo - Soligo”.</span>
-                </label>
+            <label class="grid gap-1.5">
+                <span class="label">Priorità</span>
+                <div class="flex flex-wrap items-center gap-4 mt-1">
+                    <label class="inline-flex items-center gap-2">
+                        <input type="radio" name="priorita" value="Nessuna" checked /> Nessuna
+                    </label>
+                    <label class="inline-flex items-center gap-2">
+                        <input type="radio" name="priorita" value="Alta" /> Alta
+                    </label>
+                    <label class="inline-flex items-center gap-2">
+                        <input type="radio" name="priorita" value="Media" /> Media
+                    </label>
+                    <label class="inline-flex items-center gap-2">
+                        <input type="radio" name="priorita" value="Bassa" /> Bassa
+                    </label>
+                </div>
+            </label>
 
-                <!-- Note -->
-                <label class="grid gap-1.5 md:col-span-2">
-                    <span class="label">Note descrittive</span>
-                    <textarea name="note" class="input" placeholder="Eventuali note descrittive dell'evento. Non utilizzare per aggiornamenti"></textarea>
-                </label>
+            <!-- Associazione evento -->
+            <label class="grid gap-1.5 md:col-span-2">
+                <span class="label">Associa a evento in atto</span>
+                <select name="event_id" id="gen-event-select" class="input">
+                    <option value="">— Nessuna associazione —</option>
+                    <option value="__new__">[+ Crea nuovo evento]</option>
+                </select>
+                <span class="text-xs opacity-70 mt-1">
+                    Se scegli “Crea nuovo evento”, verrà creato un evento in “Eventi in atto” con questa segnalazione.
+                </span>
+            </label>
 
-                <!-- Associazione evento -->
-                <label class="grid gap-1.5 md:col-span-2">
-                    <span class="label">Associa a evento in atto</span>
-                    <select name="event_id" id="gen-event-select" class="input">
-                        <option value="">— Nessuna associazione —</option>
-                        <option value="__new__">[+ Crea nuovo evento]</option>
-                    </select>
-                    <span class="text-xs opacity-70 mt-1">Se scegli “Crea nuovo evento”, verrà creato un evento in “Eventi in atto” con questa segnalazione.</span>
-                </label>
-            </fieldset>
+            <!-- 🔹 Clone form comunicazione 🔹 -->
 
-            <fieldset>
+            <label class="grid gap-1.5">
+                <span class="label">Data comunicazione</span>
+                <input id="g-data" class="input" type="text" placeholder="gg/mm/aaaa" />
+            </label>
+            <label class="grid gap-1.5">
+                <span class="label">Ora comunicazione</span>
+                <input id="g-ora" class="input" type="text" placeholder="hh:mm" />
+            </label>
+
+            <label class="grid gap-1.5">
+                <span class="label">Tipo comunicazione</span>
+                <select id="g-tipo" class="input">
+                    <option value="" selected>Seleziona...</option>
+                    <option>FAX</option>
+                    <option>Email</option>
+                    <option>Telefono</option>
+                    <option>PEC</option>
+                </select>
+            </label>
+
+            <div class="grid gap-1.5">
+                <span class="label">Verso</span>
+                <div class="flex items-center gap-4">
+                    <label class="inline-flex items-center gap-2">
+                        <input type="radio" name="g-verso" value="E" checked /> Entrata (E)
+                    </label>
+                    <label class="inline-flex items-center gap-2">
+                        <input type="radio" name="g-verso" value="U" /> Uscita (U)
+                    </label>
+                </div>
+            </div>
+
+            <label class="grid gap-1.5 md:col-span-2">
+                <span class="label">Mittente/Destinatario</span>
+                <input id="g-mitt" class="input" />
+            </label>
+
+            <label class="grid gap-1.5">
+                <span class="label">Telefono</span>
+                <input id="g-tel" class="input" />
+            </label>
+
+            <label class="grid gap-1.5">
+                <span class="label">E-mail</span>
+                <input id="g-mail" class="input" type="email" />
+            </label>
+
+            <label class="grid gap-1.5 md:col-span-2">
+                <span class="label">Indirizzo zona colpita</span>
+                <input id="g-indirizzo" class="input" />
+            </label>
+
+            <label class="grid gap-1.5">
+                <span class="label">Provincia</span>
+                <select id="g-provincia" class="input">
+                    <option value="">Tutte le province...</option>
+                </select>
+            </label>
+
+            <label class="grid gap-1.5">
+                <span class="label">Zona (Comune)</span>
+                <select id="g-comune" class="input" disabled>
+                    <option value="">Prima seleziona una provincia...</option>
+                </select>
+            </label>
+
+            <label class="grid gap-1.5 md:col-span-2">
+                <span class="label">Aree interessate (Comuni e Frazioni)</span>
+                <div class="tag-input" id="gen-aree" data-datalist="comuni-datalist"></div>
+                <input type="hidden" name="aree" id="gen-aree-hidden" />
+            </label>
+
+            <label class="grid gap-1.5 md:col-span-2">
+                <span class="label">Oggetto</span>
+                <input id="g-oggetto" class="input" />
+            </label>
+
+            <label class="grid gap-1.5 md:col-span-2">
+                <span class="label">Contenuto</span>
+                <textarea id="g-contenuto" class="input"></textarea>
+            </label>
+
+            <!-- Campi specifici dinamici -->
+            <div class="md:col-span-2">
                 <legend class="text-sm font-semibold mb-1">Campi specifici</legend>
                 <div id="gen-specific"></div>
-            </fieldset>
+            </div>
 
-            <div class="flex justify-end gap-2 mt-2">
+            <div class="md:col-span-2 flex justify-end gap-2 pt-2">
                 <button type="button" class="btn" data-close-modal>Chiudi</button>
                 <button type="reset" class="btn">Reset</button>
-                <button type="submit" class="btn btn-primary">Salva</button>
+                <button type="submit" class="btn btn-primary">💾 Salva segnalazione</button>
             </div>
         </form>
     </div>
@@ -303,24 +385,18 @@
                             <tr>
                                 <th class="px-3 py-2">Data</th>
                                 <th class="px-3 py-2">Ora</th>
-                                <th class="px-3 py-2">Tipo</th>
-                                <th class="px-3 py-2">Verso</th>
-                                <th class="px-3 py-2">Mitt./Dest.</th>
-                                <th class="px-3 py-2">Telefono</th>
-                                <th class="px-3 py-2">E-mail</th>
-                                <th class="px-3 py-2">Aree (Comune/Frazione)</th>
-                                <th class="px-3 py-2">Oggetto</th>
-                                <th class="px-3 py-2">Priorità</th>
+                                <th class="px-3 py-2">E/U</th>
+                                <th class="px-3 py-2 w-sintesi">Oggetto</th>
+                                <th class="px-3 py-2">Azioni</th>
                             </tr>
                         </thead>
                         <tbody id="ev-reports-tbody">
                             <tr>
-                                <td colspan="10" class="px-3 py-3 opacity-70">Nessuna segnalazione.</td>
+                                <td colspan="6" class="px-3 py-3 opacity-70">Nessuna segnalazione.</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <p class="text-xs opacity-70 mt-2">Suggerimento: clicca una riga per caricarla nel form e modificarla.</p>
             </section>
         </div>
     </div>
@@ -422,20 +498,21 @@
     <div class="c-modal__dialog" role="dialog" aria-modal="true" style="max-width:90rem">
         <button type="button" class="c-modal__close" data-close-modal>✕</button>
         <h3 class="mb-3 text-lg font-semibold">Tutte le comunicazioni — Eventi in atto</h3>
+
+        <!-- wrapper per le prime 5 card evento -->
+        <div id="all-reports-top" class="grid md:grid-cols-2 xl:grid-cols-3 gap-3 mb-4"></div>
+
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead>
                     <tr>
                         <th class="px-3 py-2">Data</th>
                         <th class="px-3 py-2">Ora</th>
+                        <th class="px-3 py-2">E/U</th>
+                        <th class="px-3 py-2">Comune</th>
+                        <th class="px-3 py-2 w-sintesi">Oggetto</th>
                         <th class="px-3 py-2">Evento</th>
-                        <th class="px-3 py-2">Tipo</th>
-                        <th class="px-3 py-2">Verso</th>
-                        <th class="px-3 py-2">Mitt./Dest.</th>
-                        <th class="px-3 py-2">Telefono</th>
-                        <th class="px-3 py-2">E-mail</th>
-                        <th class="px-3 py-2">Oggetto</th>
-                        <th class="px-3 py-2">Priorità</th>
+                        <th class="px-3 py-2">Azioni</th>
                     </tr>
                 </thead>
                 <tbody id="all-reports-tbody"></tbody>
@@ -444,8 +521,10 @@
     </div>
 </div>
 
+
+
 <!-- MODALE: Dettagli Segnalazione Generica -->
-<div class="c-modal hidden" id="modal-gen-info" aria-hidden="true">
+<div class="c-modal c-modal--overlay hidden" id="modal-gen-info" aria-hidden="true">
     <div class="c-modal__backdrop" data-close-modal></div>
     <div class="c-modal__dialog" role="dialog" aria-modal="true" style="max-width:48rem">
         <button type="button" class="c-modal__close" data-close-modal>✕</button>
@@ -458,9 +537,28 @@
     </div>
 </div>
 
+<!-- MODALE: Dettagli Comunicazione Evento -->
+<div class="c-modal c-modal--overlay hidden" id="modal-ev-info" aria-hidden="true">
+    <div class="c-modal__backdrop" data-close-modal></div>
+    <div class="c-modal__dialog" role="dialog" aria-modal="true" style="max-width:48rem">
+        <button type="button" class="c-modal__close" data-close-modal>✕</button>
+        <h3 class="mb-2 text-lg font-semibold">Dettagli comunicazione evento</h3>
+        <div id="ev-info-body" class="grid gap-3"></div>
+        <div class="flex justify-end mt-3 gap-2">
+            <button type="button" class="btn" data-close-modal>Chiudi</button>
+        </div>
+    </div>
+</div>
+
 
 <!-- Datalist Comuni -->
 <datalist id="comuni-datalist"></datalist>
+
+<script>
+    window.PROVINCE = @json(config('province.veneto'));
+    window.VENETO_COMUNI = @json(config('comuni_veneto'));
+</script>
+
 
 <script type="module">
     /* ===== Utils ===== */
@@ -530,7 +628,7 @@
         }
     }
 
-    /* ===== Tag Input ===== */
+    /* ===== Tag Input (vincolato ai valori del datalist) ===== */
     class TagInput {
         constructor(root, {
             placeholder = "Aggiungi e premi Invio",
@@ -540,8 +638,21 @@
             this.values = [];
             this.placeholder = placeholder;
             this.datalistId = datalistId;
+            this.allowedValues = null;
             this.render();
         }
+
+        refreshAllowedFromDatalist() {
+            if (!this.datalistId) return;
+            const dl = document.getElementById(this.datalistId);
+            if (!dl) return;
+            this.allowedValues = new Set(
+                Array.from(dl.options)
+                .map(o => o.value)
+                .filter(Boolean)
+            );
+        }
+
         render() {
             this.root.classList.add("tag-input--wrap");
             this.root.innerHTML = `<div class="tags" role="list"></div>
@@ -550,6 +661,11 @@
         } placeholder="${this.placeholder}"/></div>`;
             this.tagsEl = this.root.querySelector(".tags");
             this.inputEl = this.root.querySelector(".tag-input__field");
+
+            if (this.datalistId) {
+                this.refreshAllowedFromDatalist();
+            }
+
             this.inputEl.addEventListener("keydown", (e) => {
                 if (e.key === "Enter" && this.inputEl.value.trim()) {
                     e.preventDefault();
@@ -560,19 +676,32 @@
                 }
             });
         }
+
         setValues(arr) {
             this.values = Array.isArray(arr) ? arr.filter(Boolean) : [];
             this.refresh();
         }
+
         add(v) {
             if (!v) return;
+
+            // vincolo: se c'è un datalist, accetto solo valori presenti
+            if (this.allowedValues && !this.allowedValues.has(v)) {
+                if (typeof toast === "function") {
+                    toast("Valore non valido", "Seleziona un'area dalla lista predefinita.", "error", 2200);
+                }
+                return;
+            }
+
             if (!this.values.includes(v)) this.values.push(v);
             this.refresh();
         }
+
         remove(idx) {
             this.values.splice(idx, 1);
             this.refresh();
         }
+
         refresh() {
             this.tagsEl.replaceChildren();
             this.values.forEach((val, i) => {
@@ -588,28 +717,138 @@
         }
     }
 
-    /* ===== Seed di base (puoi sostituire con API meta) ===== */
-    const COMUNI = [
-        "Adria", "Affi", "Albignasego", "Bologna", "Bussolengo", "Farra di Soligo",
-        "Milano", "Napoli", "Roma", "Rovigo", "Torino", "Verona", "Vicenza", "Venezia",
-    ];
-    COMUNI.forEach((c) => {
-        const o = document.createElement("option");
-        o.value = c;
-        $("#comuni-datalist").appendChild(o);
-    });
-    const PROVINCE = {
-        VR: ["Verona", "Affi", "Bussolengo"],
-        VI: ["Vicenza"],
-        VE: ["Venezia"],
-        RO: ["Rovigo", "Adria"],
-        TV: ["Farra di Soligo"],
-        BO: ["Bologna"],
-        MI: ["Milano"],
-        NA: ["Napoli"],
-        RM: ["Roma"],
-        TO: ["Torino"],
-    };
+    /* ===== Seed da config (Veneto) – NUOVO con istat/zona/frazioni ===== */
+    const PROVINCE = window.PROVINCE || {};
+    const COMUNI_RAW = window.VENETO_COMUNI || {};
+    const COMUNI_FLAT_CONFIG = window.VENETO_COMUNI_FLAT || [];
+
+    /**
+     * COMUNE_META: lookup robusto
+     * key = `${provincia}|${nomeComune}`
+     * value = { istat, nome, provincia, zona, frazioni[] }
+     */
+    const COMUNE_META = {};
+
+    (function buildComuneMeta() {
+        Object.entries(COMUNI_RAW).forEach(([prov, list]) => {
+            if (Array.isArray(list)) {
+                // Nuovo schema: array di oggetti {istat, nome, provincia, zona_bollettino, frazioni[]}
+                list.forEach((raw) => {
+                    if (!raw) return;
+                    if (typeof raw === "string") {
+                        const nome = raw;
+                        const key = `${prov}|${nome}`;
+                        if (!COMUNE_META[key]) {
+                            COMUNE_META[key] = {
+                                istat: null,
+                                nome,
+                                provincia: prov,
+                                zona: null,
+                                frazioni: [],
+                            };
+                        }
+                    } else if (typeof raw === "object") {
+                        const nome = raw.nome || raw.comune || raw.name;
+                        if (!nome) return;
+                        const key = `${prov}|${nome}`;
+                        COMUNE_META[key] = {
+                            istat: raw.istat || null,
+                            nome,
+                            provincia: raw.provincia || prov,
+                            zona: raw.zona_bollettino || raw.zona || null,
+                            frazioni: Array.isArray(raw.frazioni) ? raw.frazioni : [],
+                        };
+                    }
+                });
+            } else if (list && typeof list === "object") {
+                // Vecchio schema: oggetto { "Verona": { ... }, ... }
+                Object.entries(list).forEach(([nome, raw]) => {
+                    const key = `${prov}|${nome}`;
+                    if (typeof raw === "object" && raw !== null) {
+                        COMUNE_META[key] = {
+                            istat: raw.istat || null,
+                            nome,
+                            provincia: raw.provincia || prov,
+                            zona: raw.zona_bollettino || raw.zona || null,
+                            frazioni: Array.isArray(raw.frazioni) ? raw.frazioni : [],
+                        };
+                    } else {
+                        COMUNE_META[key] = {
+                            istat: null,
+                            nome,
+                            provincia: prov,
+                            zona: null,
+                            frazioni: [],
+                        };
+                    }
+                });
+            }
+        });
+    })();
+
+    /**
+     * Elenco comuni per provincia, dai metadati.
+     */
+    function getComuniByProvincia(code) {
+        const names = new Set();
+        Object.values(COMUNE_META).forEach((c) => {
+            if (c.provincia === code) names.add(c.nome);
+        });
+        return Array.from(names).sort((a, b) => a.localeCompare(b, "it"));
+    }
+
+    /**
+     * Metadati di un comune (nome+provincia).
+     */
+    function getComuneMeta(nomeComune, prov) {
+        if (!nomeComune || !prov) return null;
+        const key = `${prov}|${nomeComune}`;
+        return COMUNE_META[key] || null;
+    }
+
+    /**
+     * Datalist per comuni + frazioni + zone:
+     * - se esiste VENETO_COMUNI_FLAT lo usiamo
+     * - altrimenti lo costruiamo da COMUNE_META + frazioni + zona_bollettino
+     */
+    (function buildDatalist() {
+        const datalist = $("#comuni-datalist");
+        if (!datalist) return;
+
+        const pushOption = (val) => {
+            if (!val) return;
+            const opt = document.createElement("option");
+            opt.value = val;
+            datalist.appendChild(opt);
+        };
+
+        if (Array.isArray(COMUNI_FLAT_CONFIG) && COMUNI_FLAT_CONFIG.length) {
+            COMUNI_FLAT_CONFIG.forEach(pushOption);
+            return;
+        }
+
+        const seen = new Set();
+        Object.values(COMUNE_META).forEach((c) => {
+            if (!seen.has(c.nome)) {
+                seen.add(c.nome);
+                pushOption(c.nome);
+            }
+            (c.frazioni || []).forEach((fr) => {
+                const label = `${fr} (${c.nome})`;
+                if (!seen.has(label)) {
+                    seen.add(label);
+                    pushOption(label);
+                }
+            });
+            // aggiungo anche le zone bollettino come "posti"
+            if (c.zona && !seen.has(c.zona)) {
+                seen.add(c.zona);
+                pushOption(c.zona);
+            }
+        });
+    })();
+
+    /* ===== Tipologie evento ===== */
     const TYPES = [
         "sismico", "vulcanico", "idraulico", "idrogeologico", "maremoto",
         "deficit-idrico", "meteo-avverso", "aib", "uomo", "altro",
@@ -678,7 +917,8 @@
         ui: {
             currentEventId: null,
             genInfoJson: null,
-            ongoingStatus: "all"
+            ongoingStatus: "all",
+            currentEventReports: []
         },
         _last: {
             genKey: "",
@@ -742,6 +982,7 @@
         });
         selectEl.value = selectedId ? String(selectedId) : "";
     }
+
     (function ensureReadMoreModal() {
         if ($("#modal-readmore")) return;
         const wrap = document.createElement("div");
@@ -769,10 +1010,25 @@
     function openModal(sel) {
         const m = document.querySelector(sel);
         if (!m) return;
+
         if (sel === "#modal-gen") {
             populateEventSelect($("#gen-event-select"), "", true);
             renderEvPreview($("#gen-event-select").value, $("#gen-event-select"));
+
+            const {
+                date,
+                time
+            } = nowIT();
+            $("#g-data").value = date;
+            $("#g-ora").value = time;
+
+            const tipSel = $("#gen-tipologia");
+            if (tipSel) tipSel.value = "";
+            renderSpecific($("#gen-specific"), "", "gensp");
+
+            populateProvinceSelect("", "g-");
         }
+
         m.classList.remove("hidden");
         m.classList.add("is-open");
         document.body.style.overflow = "hidden";
@@ -906,23 +1162,57 @@
         closeTopModal();
     });
 
-    /* ===== Mappers robusti ===== */
+    /* ===== Mappers ===== */
+
     const mapSegToUI = (s = {}) => {
-        const created = pick(s, "creata_il", "created_at", "createdAt", "data_creazione", "data");
+        const created = pick(
+            s,
+            "creata_il",
+            "created_at",
+            "createdAt",
+            "data_creazione",
+            "data"
+        );
         const dtISO = normalizeISO(created);
-        const evId = pick(s, "evento_id", "event_id", "eventId", ["evento", "id"], ["event", "id"]);
-        const rawTipo = pick(s, "tipologia", "tipo") || "";
+
+        const evId = pick(
+            s,
+            "evento_id",
+            "event_id",
+            "eventId",
+            ["evento", "id"],
+            ["event", "id"]
+        );
+
+        const tipologia = pick(s, "tipologia") || "";
+        const tipoCom = pick(s, "tipo") || "";
+
+        const aree = pick(s, "aree", "areas") || [];
+        const oggetto = pick(s, "oggetto", "sintesi", "contenuto") || "";
+        const sintesi = pick(s, "sintesi", "note", "descrizione") || oggetto;
+
         return {
             id: pick(s, "id", "uuid"),
             created_at: dtISO,
-            direzione: (pick(s, "direzione", "verso") || "E").toString().toUpperCase(),
-            tipologia: rawTipo,
-            aree: pick(s, "aree", "areas") || [],
-            sintesi: pick(s, "sintesi", "note", "descrizione", "oggetto") || "",
+            direzione: (pick(s, "direzione", "verso") || "E")
+                .toString()
+                .toUpperCase(),
+            tipologia,
+            tipo: tipoCom,
+            aree,
+            sintesi,
             operatore: pick(s, "operatore", "user", "utente", "created_by") || "",
             event_id: evId ? String(evId) : "",
             priorita: pick(s, "priorita", "priority") || "Nessuna",
-            ente: pick(s, "ente", "ente_nome", "enteName"),
+            ente: pick(s, "ente", "ente_nome", "enteName") || "",
+            comune: pick(s, "comune") || "",
+            telefono: pick(s, "telefono") || "",
+            email: pick(s, "email") || "",
+            indirizzo: pick(s, "indirizzo") || "",
+            provincia: pick(s, "provincia") || "",
+            mitt_dest: pick(s, "mitt_dest", "mittente", "destinatario") || "",
+            oggetto,
+            contenuto: pick(s, "contenuto", "content", "testo") || "",
         };
     };
 
@@ -962,9 +1252,7 @@
         };
     };
 
-    // *** QUI: mapper robusto della segnalazione generica collegata all’evento
     const mapGenToUI = (s = {}) => {
-        // Data/Ora
         let itDate = "",
             itTime = "";
         const created = pick(s, "creata_il", "created_at", "createdAt", "data_creazione", "data");
@@ -979,21 +1267,16 @@
             itTime = (s.ora || "").toString();
         }
 
-        // Direzione: E/U o Entrata/Uscita
         const rawDir = (pick(s, "direzione", "verso") || "E").toString().trim().toUpperCase();
         const direzione = rawDir.startsWith("U") ? "U" : "E";
 
-        // Tipologia
         const rawTipo = pick(s, "tipologia", "tipo") || "";
         const tipologia = TYPE_LABELS[rawTipo] || rawTipo || "";
 
-        // Aree
         const areeArr = Array.isArray(s.aree) ? s.aree :
-            typeof s.aree_text === "string" ? s.aree_text.split(",").map(x => x.trim()).filter(Boolean) :
-            [];
+            typeof s.aree_text === "string" ? s.aree_text.split(",").map(x => x.trim()).filter(Boolean) : [];
         const areeText = areeArr.join(", ");
 
-        // Sintesi
         const sintesi = pick(s, "sintesi", "note", "descrizione", "oggetto") || "";
 
         return {
@@ -1133,51 +1416,50 @@
         if (window.lucide) lucide.createIcons();
     })();
 
-    /* ===== Render SEGNALAZIONI ===== */
+    /* ===== Render SEGNALAZIONI (data/ora separati) ===== */
     function renderGEN() {
         const root = $("#gen-body");
         root.replaceChildren();
+
         state.gen.forEach((r) => {
             const tr = document.createElement("tr");
             tr.className = "border-t border-slate-200";
             tr.dataset.id = r.id;
             tr.classList.add("prio-row", prioClass(r.priorita));
 
-            const tdDt = Object.assign(document.createElement("td"), {
-                className: "px-3 py-2",
-                textContent: r.created_at ? fmtDT(new Date(r.created_at)) : "—",
-            });
+            let dText = "—",
+                tText = "—";
+            if (r.created_at) {
+                const d = new Date(r.created_at);
+                if (!isNaN(d)) {
+                    dText = d.toLocaleDateString("it-IT");
+                    tText = d.toTimeString().slice(0, 5);
+                }
+            }
 
-            const tdDir = Object.assign(document.createElement("td"), {
-                className: "px-3 py-2"
-            });
+            const tdData = document.createElement("td");
+            tdData.className = "px-3 py-2";
+            tdData.textContent = dText;
+
+            const tdOra = document.createElement("td");
+            tdOra.className = "px-3 py-2";
+            tdOra.textContent = tText;
+
+            const tdDir = document.createElement("td");
+            tdDir.className = "px-3 py-2";
             tdDir.appendChild(makeDirBadge(r.direzione));
 
-            // Ente/Tipologia (come richiesto dall'header)
-            const typeLabel = TYPE_LABELS[r.tipologia] || r.tipologia || "";
-            const tdTp = Object.assign(document.createElement("td"), {
-                className: "px-3 py-2",
-                textContent: r.ente ? `${r.ente} — ${typeLabel}` : typeLabel,
-            });
+            const tdComune = document.createElement("td");
+            tdComune.className = "px-3 py-2";
+            tdComune.textContent = r.comune || (r.aree || [])[0] || "—";
 
-            const tdAr = Object.assign(document.createElement("td"), {
-                className: "px-3 py-2",
-                textContent: (r.aree || []).join(", "),
-            });
+            const tdOggetto = document.createElement("td");
+            tdOggetto.className = "px-3 py-2 w-sintesi";
+            const testoOggetto = r.oggetto || r.sintesi || "";
+            tdOggetto.textContent = truncate(testoOggetto);
 
-            const tdSy = Object.assign(document.createElement("td"), {
-                className: "px-3 py-2 w-sintesi",
-            });
-            addReadMoreCell(tdSy, r.sintesi || "", "Segnalazione");
-
-            const tdOp = Object.assign(document.createElement("td"), {
-                className: "px-3 py-2",
-                textContent: r.operatore || "",
-            });
-
-            const tdEv = Object.assign(document.createElement("td"), {
-                className: "px-3 py-2"
-            });
+            const tdEv = document.createElement("td");
+            tdEv.className = "px-3 py-2";
             if (r.event_id) {
                 const btn = document.createElement("button");
                 btn.type = "button";
@@ -1185,19 +1467,26 @@
                 btn.dataset.openEvent = String(r.event_id);
                 btn.textContent = `Evento #${r.event_id}`;
                 tdEv.appendChild(btn);
-            } else tdEv.textContent = "—";
+            } else {
+                tdEv.textContent = "—";
+            }
 
             const tdAc = document.createElement("td");
             tdAc.className = "px-3 py-2";
-            tdAc.innerHTML = `<div class="actions">
-        <button class="btn-xs btn-ghost" title="Dettagli" data-action="info" data-type="gen" data-id="${r.id}">ℹ️</button>
-        <button class="btn-xs btn-ghost" title="Modifica" data-action="edit" data-type="gen" data-id="${r.id}">✏️</button>
-        <button class="btn-xs btn-danger" title="Elimina" data-action="del" data-type="gen" data-id="${r.id}">🗑️</button>
-      </div>`;
+            tdAc.innerHTML = `
+                <div class="actions">
+                    <button class="btn-xs btn-ghost" title="Dettagli"
+                        data-action="info" data-type="gen" data-id="${r.id}">ℹ️</button>
+                    <button class="btn-xs btn-ghost" title="Modifica"
+                        data-action="edit" data-type="gen" data-id="${r.id}">✏️</button>
+                    <button class="btn-xs btn-danger" title="Elimina"
+                        data-action="del" data-type="gen" data-id="${r.id}">🗑️</button>
+                </div>`;
 
-            tr.append(tdDt, tdDir, tdTp, tdAr, tdSy, tdOp, tdEv, tdAc);
+            tr.append(tdData, tdOra, tdDir, tdComune, tdOggetto, tdEv, tdAc);
             root.appendChild(tr);
         });
+
         if (window.lucide) lucide.createIcons();
     }
 
@@ -1273,11 +1562,10 @@
         const full = await API.getEvento(eventId);
         const ev = mapEvToUI(full);
 
-        // Comunicazioni (tecniche)
         const commsRaw = pick(full, "comunicazioni", "reports") || [];
         ev.reports = (Array.isArray(commsRaw) ? commsRaw : []).map(mapComToUI);
+        state.ui.currentEventReports = ev.reports.slice();
 
-        // Segnalazioni generiche collegate (normalizzazione robusta)
         ev.genericReports = extractGenericReportsFromEvent(full);
 
         $("#ev-title").textContent = ev.descrizione || "—";
@@ -1297,7 +1585,6 @@
         $("#ev-id").value = ev.id;
         openModal("#modal-event");
 
-        // debug utile
         console.debug("Evento", ev.id, {
             genericReportsCount: ev.genericReports.length,
             sampleGeneric: ev.genericReports[0],
@@ -1318,65 +1605,127 @@
     function renderEventReports(ev) {
         const tbody = $("#ev-reports-tbody");
         tbody.replaceChildren();
+
         const rows = (ev.reports || []).map((r, idx) => ({
             ...r,
             _idx: idx
         }));
+
         if (!rows.length) {
             const tr = document.createElement("tr");
             const td = document.createElement("td");
-            td.colSpan = 10;
+            td.colSpan = 5; // 5 colonne totali
             td.className = "px-3 py-3 opacity-70";
             td.textContent = "Nessuna segnalazione.";
             tr.appendChild(td);
             tbody.appendChild(tr);
             return;
         }
+
         rows.forEach((r) => {
             const tr = document.createElement("tr");
-            tr.className = "border-t border-slate-200 hover:bg-slate-50 cursor-pointer";
+            tr.className = "border-t border-slate-200";
             tr.classList.add("prio-row", prioClass(r.priorita));
             tr.dataset.idx = r._idx;
-            tr.addEventListener("click", () => {
-                loadReportIntoForm(r._idx);
-                openModal("#modal-ev-form");
-                $("#ev-save").textContent = "Salva modifiche";
-            });
 
+            // Data
             const tdData = Object.assign(document.createElement("td"), {
                 className: "px-3 py-2",
                 textContent: r.data || ""
             });
+
+            // Ora
             const tdOra = Object.assign(document.createElement("td"), {
                 className: "px-3 py-2",
                 textContent: r.ora || ""
             });
-            const tdTipo = Object.assign(document.createElement("td"), {
-                className: "px-3 py-2",
-                textContent: r.tipo || ""
-            });
 
+            // E/U (badge come nelle generiche)
             const tdVerso = document.createElement("td");
-            tdVerso.className = "px-3 py-2 text-center";
-            tdVerso.dataset.verso = "1";
+            tdVerso.className = "px-3 py-2";
             const raw = (r.verso || "").trim().toUpperCase();
             const dir = raw.startsWith("U") ? "U" : "E";
             tdVerso.appendChild(makeDirBadge(dir));
 
-            const restVals = [r.mitt, r.tel, r.mail, (r.aree || []).join(", "), r.oggetto];
-            const restTds = restVals.map((v) => {
-                const td = document.createElement("td");
-                td.className = "px-3 py-2";
-                td.textContent = v || "";
-                return td;
-            });
-            const tdPr = document.createElement("td");
-            tdPr.className = "px-3 py-2";
-            tdPr.appendChild(makePrioBadge(r.priorita || "Nessuna"));
+            // Oggetto (troncato, come generiche)
+            const tdOggetto = document.createElement("td");
+            tdOggetto.className = "px-3 py-2 w-sintesi";
+            tdOggetto.textContent = truncate(r.oggetto || "");
 
-            tr.append(tdData, tdOra, tdTipo, tdVerso, ...restTds, tdPr);
+            // Azioni
+            const tdAc = document.createElement("td");
+            tdAc.className = "px-3 py-2";
+            tdAc.innerHTML = `
+            <div class="actions">
+                <button class="btn-xs btn-ghost" title="Dettagli"
+                    data-action="ev-info" data-idx="${r._idx}">ℹ️</button>
+                <button class="btn-xs btn-ghost" title="Modifica"
+                    data-action="ev-edit" data-idx="${r._idx}">✏️</button>
+            </div>`;
+
+            // 5 colonne: Data, Ora, E/U, Oggetto, Azioni
+            tr.append(tdData, tdOra, tdVerso, tdOggetto, tdAc);
             tbody.appendChild(tr);
         });
+    }
+
+    function openEvReportInfo(idx) {
+        const list = state.ui.currentEventReports || [];
+        const r = list[Number(idx)];
+        if (!r) return;
+
+        const body = document.querySelector("#ev-info-body");
+        if (!body) return;
+
+        const rows = [
+            ["Data", r.data || "—"],
+            ["Ora", r.ora || "—"],
+            ["Tipo comunicazione", r.tipo || "—"],
+            ["Verso", (r.verso || "").toString()],
+            ["Mittente/Destinatario", r.mitt || "—"],
+            ["Telefono", r.tel || "—"],
+            ["E-mail", r.mail || "—"],
+            ["Indirizzo", r.indirizzo || "—"],
+            ["Provincia", r.provincia || "—"],
+            ["Comune", r.comune || "—"],
+            ["Aree interessate", (r.aree || []).join(", ") || "—"],
+            ["Oggetto", r.oggetto || "—"],
+            ["Priorità", r.priorita || "Nessuna"],
+            ["Contenuto", r.contenuto || "—"],
+        ];
+
+        const tbl = document.createElement("table");
+        tbl.className = "w-full text-sm";
+        tbl.innerHTML = `
+        <tbody>
+            ${rows.map(
+                ([k, v]) => `
+                    <tr class="border-t border-slate-200">
+                        <td class="px-3 py-2 font-semibold w-44">${k}</td>
+                        <td class="px-3 py-2">${v}</td>
+                    </tr>`
+            ).join("")}
+        </tbody>
+    `;
+
+        body.replaceChildren(tbl);
+
+        // Badge direzione (E/U)
+        const tds = body.querySelectorAll("tbody tr td:nth-child(2)");
+        const raw = (r.verso || "").toString().trim().toUpperCase();
+        const dir = raw.startsWith("U") ? "U" : "E";
+        if (tds[3]) { // riga "Verso"
+            tds[3].textContent = "";
+            tds[3].appendChild(makeDirBadge(dir));
+        }
+
+        // Badge priorità
+        if (tds[12]) { // riga "Priorità"
+            tds[12].textContent = "";
+            tds[12].appendChild(makePrioBadge(r.priorita || "Nessuna"));
+        }
+
+        openModal("#modal-ev-info");
     }
 
     function ensureGenericSection() {
@@ -1386,7 +1735,8 @@
         sec = document.createElement("section");
         sec.id = "ev-gen-sec";
         sec.className = "rounded-2xl border border-slate-200 bg-white p-4";
-        sec.innerHTML = `<h4 class="text-sm font-semibold mb-3">Segnalazioni generiche collegate</h4>
+        sec.innerHTML = `
+      <h4 class="text-sm font-semibold mb-3">Segnalazioni generiche collegate</h4>
       <div class="overflow-x-auto">
         <table class="w-full text-sm">
           <thead class="text-left">
@@ -1394,15 +1744,17 @@
               <th class="px-3 py-2">Data</th>
               <th class="px-3 py-2">Ora</th>
               <th class="px-3 py-2">E/U</th>
-              <th class="px-3 py-2">Tipologia</th>
-              <th class="px-3 py-2">Aree</th>
-              <th class="px-3 py-2 w-sintesi">Sintesi</th>
-              <th class="px-3 py-2">Operatore</th>
-              <th class="px-3 py-2">Priorità</th>
+              <th class="px-3 py-2 w-sintesi">Oggetto</th>
+              <th class="px-3 py-2">Azioni</th>
             </tr>
           </thead>
           <tbody id="ev-gen-tbody">
-            <tr><td colspan="8" class="px-3 py-3 opacity-70">Nessuna segnalazione generica collegata.</td></tr>
+            <tr>
+              <!-- ora 5 colonne -->
+              <td colspan="5" class="px-3 py-3 opacity-70">
+                Nessuna segnalazione generica collegata.
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>`;
@@ -1415,55 +1767,61 @@
         const tbody = $("#ev-gen-tbody");
         if (!tbody) return;
         tbody.replaceChildren();
+
         const rows = ev.genericReports || [];
         if (!rows.length) {
             const tr = document.createElement("tr");
-            tr.innerHTML = `<td colspan="8" class="px-3 py-3 opacity-70">Nessuna segnalazione generica collegata.</td>`;
+            tr.innerHTML = `
+          <td colspan="5" class="px-3 py-3 opacity-70">
+            Nessuna segnalazione generica collegata.
+          </td>`;
             tbody.appendChild(tr);
             return;
         }
+
         rows.forEach((r) => {
             const tr = document.createElement("tr");
             tr.className = "border-t border-slate-200";
             tr.classList.add("prio-row", prioClass(r.priorita));
+            tr.dataset.id = r.id;
 
+            // Data
             const tdData = Object.assign(document.createElement("td"), {
                 className: "px-3 py-2",
                 textContent: r.data || ""
             });
+
+            // Ora
             const tdOra = Object.assign(document.createElement("td"), {
                 className: "px-3 py-2",
                 textContent: r.ora || ""
             });
 
-            const tdDir = Object.assign(document.createElement("td"), {
-                className: "px-3 py-2"
-            });
+            // E/U (badge)
+            const tdDir = document.createElement("td");
+            tdDir.className = "px-3 py-2";
             tdDir.appendChild(makeDirBadge(r.direzione));
 
-            const tdTp = Object.assign(document.createElement("td"), {
-                className: "px-3 py-2",
-                textContent: r.tipologia || ""
-            });
-            const tdAr = Object.assign(document.createElement("td"), {
-                className: "px-3 py-2",
-                textContent: r.areeText || "—"
-            });
+            // Oggetto – SOLO tronca, niente "Mostra di più"
+            const tdOggetto = document.createElement("td");
+            tdOggetto.className = "px-3 py-2 w-sintesi";
+            const fullText = r.oggetto || r.sintesi || "";
+            tdOggetto.textContent = truncate(fullText);
 
-            const tdSy = document.createElement("td");
-            tdSy.className = "px-3 py-2 w-sintesi";
-            addReadMoreCell(tdSy, r.sintesi || "", "Segnalazione");
+            // Azioni – bottone info (riusa openGenInfoModal)
+            const tdAz = document.createElement("td");
+            tdAz.className = "px-3 py-2";
+            tdAz.innerHTML = `
+          <div class="actions">
+            <button class="btn-xs btn-ghost"
+                    title="Dettagli segnalazione generica"
+                    data-action="info" data-type="gen" data-id="${r.id}">
+              ℹ️
+            </button>
+          </div>`;
 
-            const tdOp = Object.assign(document.createElement("td"), {
-                className: "px-3 py-2",
-                textContent: r.operatore || ""
-            });
-
-            const tdPr = document.createElement("td");
-            tdPr.className = "px-3 py-2";
-            tdPr.appendChild(makePrioBadge(r.priorita || "Nessuna"));
-
-            tr.append(tdData, tdOra, tdDir, tdTp, tdAr, tdSy, tdOp, tdPr);
+            // 5 colonne: Data, Ora, E/U, Oggetto, Azioni
+            tr.append(tdData, tdOra, tdDir, tdOggetto, tdAz);
             tbody.appendChild(tr);
         });
     }
@@ -1487,60 +1845,85 @@
         $("#f-contenuto").value = "";
         document.querySelector('input[name="f-priorita"][value="Nessuna"]').checked = true;
         evAreeInput.setValues(areas || []);
-        populateProvinceSelect();
-        $("#f-comune").innerHTML = `<option value="">Prima seleziona una provincia...</option>`;
-        $("#f-comune").disabled = true;
+        populateProvinceSelect("", "f-");
+        const comuneSel = $("#f-comune");
+        if (comuneSel) {
+            comuneSel.innerHTML = `<option value="">Prima seleziona una provincia...</option>`;
+            comuneSel.disabled = true;
+        }
         const container = $("#ev-specific");
         container.innerHTML = "";
         const hint = document.createElement("div");
         hint.className = "text-xs opacity-70";
-        hint.textContent = `Tipologia evento: ${TYPE_LABELS[type] || type || "—"}. Aggiungi eventuali dettagli nella comunicazione.`;
+        hint.textContent = `Tipologia evento: ${TYPE_LABELS[type] || type || "—"}. Aggiungi eventuali dettagli nella comunicazione`;
         container.appendChild(hint);
     }
 
     function loadReportIntoForm(idx) {
-        const trs = Array.from($("#ev-reports-tbody")?.querySelectorAll("tr") || []);
-        const currentIdx = Number(idx);
-        if (Number.isNaN(currentIdx)) return;
-        const row = trs.find((r) => String(r.dataset.idx) === String(idx));
-        if (!row) return;
-        const cells = row.querySelectorAll("td");
+        const list = state.ui.currentEventReports || [];
+        const r = list[Number(idx)];
+        if (!r) return;
+
         $("#ev-edit-index").value = idx;
-        $("#f-data").value = cells[0]?.textContent?.trim() || "";
-        $("#f-ora").value = cells[1]?.textContent?.trim() || "";
-        $("#f-tipo").value = cells[2]?.textContent?.trim() || "";
-        const badge = cells[3]?.querySelector(".badge");
-        const verso = badge?.title === "Uscita" ? "Uscita" : "Entrata";
+        $("#f-data").value = r.data || "";
+        $("#f-ora").value = r.ora || "";
+        $("#f-tipo").value = r.tipo || "";
+
+        const verso = (r.verso || "").toString().toUpperCase().startsWith("U") ? "Uscita" : "Entrata";
         const radio = document.querySelector(`input[name="f-verso"][value="${verso}"]`);
         if (radio) radio.checked = true;
-        $("#f-mitt").value = cells[4]?.textContent?.trim() || "";
-        $("#f-tel").value = cells[5]?.textContent?.trim() || "";
-        $("#f-mail").value = cells[6]?.textContent?.trim() || "";
+
+        $("#f-mitt").value = r.mitt || "";
+        $("#f-tel").value = r.tel || "";
+        $("#f-mail").value = r.mail || "";
+        $("#f-indirizzo").value = r.indirizzo || "";
+        $("#f-oggetto").value = r.oggetto || "";
+        $("#f-contenuto").value = r.contenuto || "";
+        populateProvinceSelect(r.provincia || "", "f-");
+        populateComuniSelect(r.provincia || "", r.comune || "", "f-");
+        evAreeInput.setValues(r.aree || []);
+        document.querySelector(`input[name="f-priorita"][value="${r.priorita || "Nessuna"}"]`)?.click?.();
     }
 
-    function populateProvinceSelect(selected = "") {
-        const sel = $("#f-provincia");
+    function populateProvinceSelect(selected = "", prefix = "f-") {
+        const sel = document.getElementById(prefix + "provincia");
+        if (!sel) return;
         sel.innerHTML = "";
         const first = new Option("Tutte le province...", "");
         sel.add(first);
-        Object.keys(PROVINCE).sort().forEach((k) => sel.add(new Option(`${k}`, k)));
+
+        Object.keys(PROVINCE).sort().forEach((code) => {
+            sel.add(new Option(code, code));
+        });
+
         sel.value = selected || "";
-        $("#f-comune").disabled = !sel.value;
+        const comuneSel = document.getElementById(prefix + "comune");
+        if (comuneSel) {
+            comuneSel.disabled = !sel.value;
+        }
     }
 
-    function populateComuniSelect(prov, selected = "") {
-        const comuneSel = $("#f-comune");
+    function populateComuniSelect(prov, selected = "", prefix = "f-") {
+        const comuneSel = document.getElementById(prefix + "comune");
+        if (!comuneSel) return;
         comuneSel.innerHTML = "";
         if (!prov) {
             comuneSel.add(new Option("Prima seleziona una provincia...", ""));
             comuneSel.disabled = true;
             return;
         }
-        (PROVINCE[prov] || []).forEach((c) => comuneSel.add(new Option(c, c)));
+        const comuni = getComuniByProvincia(prov);
+        comuni.forEach((c) => comuneSel.add(new Option(c, c)));
         comuneSel.disabled = false;
         comuneSel.value = selected || "";
     }
-    $("#f-provincia").addEventListener("change", (e) => populateComuniSelect(e.target.value));
+
+    $("#f-provincia").addEventListener("change", (e) =>
+        populateComuniSelect(e.target.value, "", "f-")
+    );
+    $("#g-provincia").addEventListener("change", (e) =>
+        populateComuniSelect(e.target.value, "", "g-")
+    );
 
     /* ===== Reset forms ===== */
     document.getElementById("form-gen").addEventListener("reset", () => {
@@ -1576,7 +1959,13 @@
         const evBtn = e.target.closest("[data-open-event]");
         if (evBtn) {
             const id = +evBtn.dataset.openEvent;
-            if (!Number.isNaN(id)) openEventModal(id);
+            if (!Number.isNaN(id)) {
+                const allModal = $("#modal-all-reports");
+                if (allModal && allModal.classList.contains("is-open")) {
+                    closeModal(allModal);
+                }
+                openEventModal(id);
+            }
             return;
         }
         const opener = e.target.closest("[data-open-modal]");
@@ -1585,42 +1974,60 @@
             openModal(opener.getAttribute("data-open-modal"));
             return;
         }
+
         const btn = e.target.closest("[data-action]");
         if (btn) {
             const {
                 action,
                 type,
-                id
+                id,
+                idx
             } = btn.dataset;
-            if (type !== "gen") return;
-            if (action === "info") {
-                openGenInfoModal(id);
+
+            // Azioni segnalazioni generiche
+            if (type === "gen") {
+                if (action === "info") {
+                    openGenInfoModal(id);
+                    return;
+                }
+                if (action === "edit") {
+                    const item = state.gen.find((x) => String(x.id) === String(id));
+                    if (!item) return;
+                    fillForm($("#form-edit-gen"), {
+                        ...item,
+                        aree_json: JSON.stringify(item.aree || [])
+                    });
+                    populateEventSelect($("#edit-gen-event"), item.event_id || "", true);
+                    renderEvPreview($("#edit-gen-event").value, $("#edit-gen-event"));
+                    editAree.setValues(item.aree || []);
+                    $("#form-edit-gen").dataset.initialAree = JSON.stringify(item.aree || []);
+                    openModal("#modal-edit-gen");
+                    return;
+                }
+                if (action === "del") {
+                    confirmDelete().then(async (res) => {
+                        if (!res.isConfirmed) return;
+                        await API.deleteSegnalazione(id);
+                        await Promise.all([refreshGEN(), refreshONGOING()]);
+                        toast("Eliminata!", "Rimossa dal backend.", "success");
+                    });
+                    return;
+                }
+            }
+
+            // Azioni comunicazioni evento
+            if (action === "ev-info") {
+                openEvReportInfo(idx);
                 return;
             }
-            if (action === "edit") {
-                const item = state.gen.find((x) => String(x.id) === String(id));
-                if (!item) return;
-                fillForm($("#form-edit-gen"), {
-                    ...item,
-                    aree_json: JSON.stringify(item.aree || [])
-                });
-                populateEventSelect($("#edit-gen-event"), item.event_id || "", true);
-                renderEvPreview($("#edit-gen-event").value, $("#edit-gen-event"));
-                editAree.setValues(item.aree || []);
-                $("#form-edit-gen").dataset.initialAree = JSON.stringify(item.aree || []);
-                openModal("#modal-edit-gen");
-                return;
-            }
-            if (action === "del") {
-                confirmDelete().then(async (res) => {
-                    if (!res.isConfirmed) return;
-                    await API.deleteSegnalazione(id);
-                    await Promise.all([refreshGEN(), refreshONGOING()]);
-                    toast("Eliminata!", "Rimossa dal backend.", "success");
-                });
+            if (action === "ev-edit") {
+                loadReportIntoForm(idx);
+                openModal("#modal-ev-form");
+                $("#ev-save").textContent = "Salva modifiche";
                 return;
             }
         }
+
         if (e.target.id === "gen-info-copy" || e.target.closest("#gen-info-copy")) {
             const data = state.ui.genInfoJson ?? {};
             const text = JSON.stringify(data, null, 2);
@@ -1658,7 +2065,7 @@
         await refreshONGOING();
     });
     $("#ongoing-next").addEventListener("click", async () => {
-        state.page.ongoing += 1;
+        state.page.ongoing = Math.max(1, state.page.ongoing + 1);
         await refreshONGOING();
     });
 
@@ -1689,40 +2096,93 @@
         }
     }
 
-    /* ===== CREATE Segnalazione ===== */
+    /* ===== CREATE Segnalazione GENERICA ===== */
     $("#form-gen").addEventListener("submit", async (e) => {
         e.preventDefault();
-        const fd = Object.fromEntries(new FormData(e.currentTarget).entries());
+
         const tipologia = $("#gen-tipologia").value || "altro";
-        const priorita = (fd.priorita || "Nessuna").trim();
+        const priorita =
+            document.querySelector('input[name="priorita"]:checked')?.value || "Nessuna";
         const aree = genAree.values.slice();
         const chosenEvent = $("#gen-event-select").value;
 
+        const d = $("#g-data").value.trim() || nowIT().date;
+        const t = $("#g-ora").value.trim() || nowIT().time;
+        const dt = parseIT(d, t);
+        const creata_il = dt.toISOString();
+
+        const dirVal = document.querySelector('input[name="g-verso"]:checked')?.value || "E";
+        const direzione = dirVal === "U" ? "U" : "E";
+
+        const tipoCom = $("#g-tipo").value || "";
+        const mitt = $("#g-mitt").value.trim();
+        const tel = $("#g-tel").value.trim();
+        const mail = $("#g-mail").value.trim();
+        const indirizzo = $("#g-indirizzo").value.trim();
+        const provincia = $("#g-provincia").value;
+        const comune = $("#g-comune").value;
+        const oggetto = $("#g-oggetto").value.trim();
+        const contenuto = $("#g-contenuto").value.trim();
+
+        const sintesi = oggetto || contenuto || "";
+
+        const campi_specifici = {};
+        $("#gen-specific")
+            .querySelectorAll("input, textarea, select")
+            .forEach((el) => {
+                const id = el.id || "";
+                if (!id.startsWith("gensp-")) return;
+                const key = id.replace(/^gensp-/, "");
+                const val = el.value.trim();
+                if (val) campi_specifici[key] = val;
+            });
+
         let evento_id = null;
         if (chosenEvent === "__new__") {
-            const ev = await API.createEvento({
+            const evRes = await API.createEvento({
                 tipologia,
-                descrizione: fd.note || `Evento ${TYPE_LABELS[tipologia] || tipologia}`,
+                descrizione: oggetto || `Evento ${TYPE_LABELS[tipologia] || tipologia}`,
                 aree,
                 aperto: true,
             });
-            evento_id = ev.id;
+
+            const newEvId = evRes?.id ?? evRes?.data?.id;
+            if (!newEvId) {
+                console.error("createEvento: risposta senza id", evRes);
+                toast("Errore creazione evento", "Il server non ha restituito l'ID dell'evento.", "error", 2600);
+            } else {
+                evento_id = newEvId;
+            }
         } else if (chosenEvent) {
             evento_id = Number(chosenEvent);
         }
 
-        await API.createSegnalazione({
-            direzione: "E",
+        const payload = {
+            creata_il,
+            direzione,
             tipologia,
+            tipo: tipoCom,
             aree,
-            sintesi: fd.note || "",
+            sintesi,
             priorita,
-            // inviamo entrambi per compatibilità
-            event_id: evento_id ?? null,
-            evento_id: evento_id ?? null,
-        });
 
+            mitt_dest: mitt,
+            telefono: tel,
+            email: mail,
+            indirizzo,
+            provincia,
+            comune,
+            oggetto,
+            contenuto,
+            campi_specifici,
+
+            event_id: evento_id,
+            evento_id: evento_id,
+        };
+
+        await API.createSegnalazione(payload);
         await Promise.all([refreshGEN(), refreshONGOING()]);
+
         e.currentTarget.reset();
         genAree.setValues([]);
         $("#gen-specific").innerHTML = "";
@@ -1730,7 +2190,7 @@
     });
 
     $("#gen-tipologia").addEventListener("change", () => {
-        const t = $("#gen-tipologia").value || "altro";
+        const t = $("#gen-tipologia").value || "";
         renderSpecific($("#gen-specific"), t, "gensp");
     });
 
@@ -1743,23 +2203,30 @@
 
         if (evento_id === "__new__") {
             const base = state.gen.find((x) => String(x.id) === String(id));
-            const ev = await API.createEvento({
+            const evRes = await API.createEvento({
                 tipologia: base?.tipologia || "altro",
                 descrizione: fd.sintesi || base?.sintesi || "Evento",
                 aree: editAree.values.slice(),
                 aperto: true,
             });
-            evento_id = ev.id;
 
-            await API.addComunicazione(ev.id, {
-                comunicata_il: new Date().toISOString(),
-                tipo: "—",
-                verso: (fd.direzione || "E").toUpperCase() === "U" ? "Uscita" : "Entrata",
-                aree: editAree.values.slice(),
-                oggetto: fd.sintesi || base?.sintesi || "",
-                contenuto: fd.sintesi || base?.sintesi || "",
-                priorita: fd.priorita || "Nessuna",
-            });
+            const newEvId = evRes?.id ?? evRes?.data?.id;
+            if (!newEvId) {
+                console.error("createEvento (edit): risposta senza id", evRes);
+                toast("Errore creazione evento", "Impossibile recuperare l'ID del nuovo evento.", "error", 2600);
+            } else {
+                evento_id = newEvId;
+
+                await API.addComunicazione(newEvId, {
+                    comunicata_il: new Date().toISOString(),
+                    tipo: "—",
+                    verso: (fd.direzione || "E").toUpperCase() === "U" ? "Uscita" : "Entrata",
+                    aree: editAree.values.slice(),
+                    oggetto: fd.sintesi || base?.sintesi || "",
+                    contenuto: fd.sintesi || base?.sintesi || "",
+                    priorita: fd.priorita || "Nessuna",
+                });
+            }
         }
 
         const payload = {
@@ -1829,14 +2296,198 @@
         });
     });
 
+    /* ===== MODALE: tutte le comunicazioni con top 5 eventi ===== */
     $("#ongoing-all-reports").addEventListener("click", () => {
-        const tbody = $("#all-reports-tbody");
-        tbody.replaceChildren();
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td colspan="10" class="px-3 py-3 opacity-70">Usa il dettaglio evento per vedere le comunicazioni. (Endpoint aggregato non disponibile)</td>`;
-        tbody.appendChild(tr);
-        openModal("#modal-all-reports");
+        openAllReportsModal();
     });
+
+    async function openAllReportsModal() {
+        const modalId = "#modal-all-reports";
+        const topWrap = $("#all-reports-top");
+        const tbody = $("#all-reports-tbody");
+
+        if (!topWrap || !tbody) {
+            openModal(modalId);
+            return;
+        }
+
+        topWrap.replaceChildren();
+        tbody.replaceChildren();
+
+        // ordino eventi per ultimo aggiornamento (più recenti in alto)
+        const events = state.ongoing
+            .slice()
+            .sort((a, b) => {
+                const da = a.aggiornamento ? new Date(a.aggiornamento).getTime() : 0;
+                const db = b.aggiornamento ? new Date(b.aggiornamento).getTime() : 0;
+                return db - da;
+            });
+
+        const topFive = events.slice(0, 5);
+
+        // card dei primi 5 eventi
+        if (!topFive.length) {
+            const empty = document.createElement("div");
+            empty.className = "text-sm opacity-70";
+            empty.textContent = "Nessun evento in atto.";
+            topWrap.appendChild(empty);
+        } else {
+            topFive.forEach((ev) => {
+                const typeKey = TYPES.includes(ev.tipo) ? ev.tipo : "altro";
+                const typeLabel = TYPE_LABELS[typeKey] || ev.tipo;
+                const when = ev.aggiornamento ? fmtDT(new Date(ev.aggiornamento)) : "—";
+                const aree = (ev.aree || []).join(", ") || "—";
+
+                const card = document.createElement("article");
+                card.className = "ev-card ev-card--compact cursor-pointer";
+                card.dataset.openEvent = ev.id;
+                card.innerHTML = `
+                <div class="ev-card__head">
+                    <h4 class="ev-card__title">${ev.descrizione || "Evento"}</h4>
+                    <div class="ev-card__chips">
+                        <span class="ev-card__status ${ev.open !== false ? "is-open" : "is-closed"}">
+                            ${ev.open !== false ? "Aperto" : "Chiuso"}
+                        </span>
+                        <span class="ev-card__badge">${typeLabel}</span>
+                    </div>
+                </div>
+                <ul class="ev-card__meta">
+                    <li><strong>Ultimo agg.:</strong> ${when}</li>
+                    <li><strong>Aree:</strong> ${aree}</li>
+                </ul>
+            `;
+                topWrap.appendChild(card);
+            });
+        }
+
+        // apro subito la modale
+        openModal(modalId);
+
+        // riga di caricamento nella tabella
+        const loadingRow = document.createElement("tr");
+        loadingRow.innerHTML =
+            `<td colspan="7" class="px-3 py-3 opacity-70">Caricamento comunicazioni...</td>`;
+        tbody.appendChild(loadingRow);
+
+        const allRows = [];
+
+        for (const ev of events) {
+            try {
+                const full = await API.getEvento(ev.id);
+                const mapped = mapEvToUI(full);
+                const evLabel = mapped.descrizione || `Evento #${ev.id}`;
+                const evTypeLabel = TYPE_LABELS[mapped.tipo] || mapped.tipo;
+
+                // Comunicazioni evento
+                const commsRaw = pick(full, "comunicazioni", "reports") || [];
+                const comms = (Array.isArray(commsRaw) ? commsRaw : []).map(mapComToUI);
+
+                comms.forEach((c) => {
+                    allRows.push({
+                        kind: "com",
+                        evId: ev.id,
+                        evLabel,
+                        evTypeLabel,
+                        data: c.data || "",
+                        ora: c.ora || "",
+                        verso: c.verso || "Entrata",
+                        comune: c.comune || "",
+                        oggetto: c.oggetto || "",
+                    });
+                });
+
+                // Segnalazioni generiche collegate all'evento
+                const gens = extractGenericReportsFromEvent(full);
+                gens.forEach((g) => {
+                    allRows.push({
+                        kind: "gen",
+                        evId: ev.id,
+                        evLabel,
+                        evTypeLabel,
+                        data: g.data || "",
+                        ora: g.ora || "",
+                        verso: (g.direzione || "E").toUpperCase() === "U" ? "Uscita" : "Entrata",
+                        comune: g.comune || "",
+                        oggetto: g.oggetto || g.sintesi || "",
+                    });
+                });
+            } catch (err) {
+                console.error("Errore getEvento per all-reports", ev.id, err);
+            }
+        }
+
+        tbody.replaceChildren();
+
+        if (!allRows.length) {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `<td colspan="7" class="px-3 py-3 opacity-70">
+            Nessuna comunicazione disponibile per gli eventi in atto.
+        </td>`;
+            tbody.appendChild(tr);
+            return;
+        }
+
+        // ordino per data/ora desc
+        allRows.sort((a, b) => {
+            const dA = parseIT(a.data, a.ora);
+            const dB = parseIT(b.data, b.ora);
+            const tA = isNaN(dA.getTime()) ? 0 : dA.getTime();
+            const tB = isNaN(dB.getTime()) ? 0 : dB.getTime();
+            return tB - tA;
+        });
+
+        allRows.forEach((row) => {
+            const tr = document.createElement("tr");
+            tr.className = "border-t border-slate-200";
+
+            const dirBadge = makeDirBadge(
+                (row.verso || "").toString().toUpperCase().startsWith("U") ? "U" : "E"
+            );
+
+            // celle create "a mano" per usare correttamente il badge
+            const tdData = document.createElement("td");
+            tdData.className = "px-3 py-2";
+            tdData.textContent = row.data || "";
+
+            const tdOra = document.createElement("td");
+            tdOra.className = "px-3 py-2";
+            tdOra.textContent = row.ora || "";
+
+            const tdDir = document.createElement("td");
+            tdDir.className = "px-3 py-2";
+            tdDir.appendChild(dirBadge);
+
+            const tdComune = document.createElement("td");
+            tdComune.className = "px-3 py-2";
+            tdComune.textContent = row.comune || "—";
+
+            const tdOggetto = document.createElement("td");
+            tdOggetto.className = "px-3 py-2 w-sintesi";
+            tdOggetto.textContent = truncate(row.oggetto || "");
+
+            const tdEvento = document.createElement("td");
+            tdEvento.className = "px-3 py-2";
+            tdEvento.innerHTML = `
+            <button type="button" class="link" data-open-event="${row.evId}">
+                ${row.evLabel}
+            </button>
+        `;
+
+            const tdAzioni = document.createElement("td");
+            tdAzioni.className = "px-3 py-2";
+            tdAzioni.innerHTML = `
+            <div class="actions">
+                <button type="button" class="btn-xs btn-ghost" data-open-event="${row.evId}">
+                    ℹ️
+                </button>
+            </div>
+        `;
+
+            tr.append(tdData, tdOra, tdDir, tdComune, tdOggetto, tdEvento, tdAzioni);
+            tbody.appendChild(tr);
+        });
+    }
+
 
     function appendQuery(url, obj) {
         Object.entries(obj).forEach(([k, v]) => {
@@ -1907,6 +2558,31 @@
         $("#edit-aree-hidden").value = JSON.stringify(e.detail || []);
     });
 
+    /* ===== Auto-set area da comune (zona bollettino) ===== */
+    function maybeAddZonaToAree(tagInputInstance, provSelId, comuneSelId) {
+        const prov = $(provSelId)?.value;
+        const comune = $(comuneSelId)?.value;
+        if (!prov || !comune || !tagInputInstance) return;
+
+        const meta = getComuneMeta(comune, prov);
+        const zona = meta?.zona;
+        if (!zona) return;
+
+        if (!tagInputInstance.values.includes(zona)) {
+            tagInputInstance.add(zona);
+        }
+    }
+
+    // Segnalazione generica -> aree da zona_bollettino
+    $("#g-comune")?.addEventListener("change", () => {
+        maybeAddZonaToAree(genAree, "#g-provincia", "#g-comune");
+    });
+
+    // Comunicazione evento -> aree da zona_bollettino
+    $("#f-comune")?.addEventListener("change", () => {
+        maybeAddZonaToAree(evAreeInput, "#f-provincia", "#f-comune");
+    });
+
     /* ===== Filtri ===== */
     ["#gen-filter-comune", "#gen-filter-dal", "#gen-filter-al"].forEach((s) =>
         $(s).addEventListener("input", async () => {
@@ -1941,16 +2617,21 @@
         if (!toggleBtn) return;
         toggleBtn.textContent =
             state.ui.ongoingStatus === "all" ?
-            "Tutti" : state.ui.ongoingStatus === "open" ?
-            "Solo aperti" : "Solo chiusi";
+            "Tutti" :
+            state.ui.ongoingStatus === "open" ?
+            "Solo aperti" :
+            "Solo chiusi";
         toggleBtn.title = toggleBtn.textContent;
     }
     if (toggleBtn) {
         updateToggleBtn();
         toggleBtn.addEventListener("click", async () => {
             state.ui.ongoingStatus =
-                state.ui.ongoingStatus === "all" ? "open" :
-                state.ui.ongoingStatus === "open" ? "closed" : "all";
+                state.ui.ongoingStatus === "all" ?
+                "open" :
+                state.ui.ongoingStatus === "open" ?
+                "closed" :
+                "all";
             state.page.ongoing = 1;
             updateToggleBtn();
             await refreshONGOING();
@@ -1976,14 +2657,18 @@
         head.innerHTML = `<h5 class="ev-preview__title">Comunicazioni evento</h5><div class="ev-preview__meta text-xs opacity-70"></div>`;
         box.appendChild(head);
         if (!evId || evId === "__new__") {
-            box.appendChild(document.createElement("div")).outerHTML =
-                `<div class="ev-preview__empty">Nessun evento selezionato. Se scegli “Crea nuovo evento”, questa segnalazione diventerà la prima comunicazione.</div>`;
+            const div = document.createElement("div");
+            div.className = "ev-preview__empty";
+            div.textContent = "Nessun evento selezionato. Se scegli “Crea nuovo evento”, questa segnalazione diventerà la prima comunicazione.";
+            box.appendChild(div);
             return;
         }
         const ev = state.ongoing.find((e) => String(e.id) === String(evId));
         if (!ev) {
-            box.appendChild(document.createElement("div")).outerHTML =
-                `<div class="ev-preview__empty">Evento #${evId} non presente nella pagina corrente.</div>`;
+            const div = document.createElement("div");
+            div.className = "ev-preview__empty";
+            div.textContent = `Evento #${evId} non presente nella pagina corrente.`;
+            box.appendChild(div);
             return;
         }
         head.querySelector(".ev-preview__meta").innerHTML =
@@ -2032,20 +2717,37 @@
 
     /* ===== Dettagli segnalazione (modal) ===== */
     function genInfoRows(rec) {
-        const typeLabel = TYPE_LABELS[rec.tipologia] || rec.tipologia || "—";
-        const created = rec.created_at ? new Date(rec.created_at) : new Date();
-        const when = fmtDT(created);
+        const typeLabel =
+            TYPE_LABELS[rec.tipologia] || rec.tipologia || "—";
+        const created = rec.created_at ?
+            new Date(rec.created_at) :
+            null;
+        const when = created ? fmtDT(created) : "—";
         const evText = rec.event_id ? `Evento #${rec.event_id}` : "—";
+
         return [
             ["ID", String(rec.id)],
             ["Data/Ora", when],
-            ["Direzione", (rec.direzione || "E").toUpperCase() === "U" ? "Uscita (U)" : "Entrata (E)"],
-            ["Tipologia", typeLabel],
+            [
+                "Direzione",
+                (rec.direzione || "E").toUpperCase() === "U" ?
+                "Uscita (U)" :
+                "Entrata (E)",
+            ],
+            ["Tipologia evento", typeLabel],
+            ["Tipo comunicazione", rec.tipo || "—"],
+            ["Comune", rec.comune || "—"],
             ["Aree interessate", (rec.aree || []).join(", ") || "—"],
+            ["Mittente/Destinatario", rec.mitt_dest || "—"],
+            ["Telefono", rec.telefono || "—"],
+            ["E-mail", rec.email || "—"],
+            ["Indirizzo", rec.indirizzo || "—"],
+            ["Provincia", rec.provincia || "—"],
             ["Operatore", rec.operatore || "—"],
             ["Priorità", rec.priorita || "Nessuna"],
             ["Evento associato", evText],
-            ["Sintesi", rec.sintesi || "—"],
+            ["Oggetto", rec.oggetto || "—"],
+            ["Contenuto", rec.contenuto || "—"],
         ];
     }
 
@@ -2071,9 +2773,9 @@
             tds[2].textContent = "";
             tds[2].appendChild(dirBadge.cloneNode(true));
         }
-        if (tds[6]) {
-            tds[6].textContent = "";
-            tds[6].appendChild(prBadge);
+        if (tds[12]) {
+            tds[12].textContent = "";
+            tds[12].appendChild(prBadge);
         }
 
         const payload = {
@@ -2087,6 +2789,12 @@
             priorita: rec.priorita || "Nessuna",
             event_id: rec.event_id || null,
             sintesi: rec.sintesi || "",
+            oggetto: rec.oggetto || "",
+            comune: rec.comune || "",
+            telefono: rec.telefono || "",
+            email: rec.email || "",
+            indirizzo: rec.indirizzo || "",
+            provincia: rec.provincia || "",
         };
         state.ui.genInfoJson = payload;
         openModal("#modal-gen-info");
@@ -2222,7 +2930,7 @@
             id: "descrizione",
             label: "Descrizione dettagli (testo)",
             type: "textarea"
-        }],
+        }, ],
     };
 
     function renderSpecific(container, type, prefix) {
@@ -2245,5 +2953,4 @@
         });
         container.appendChild(grid);
     }
-
 </script>

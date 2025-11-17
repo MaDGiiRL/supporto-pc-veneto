@@ -27,9 +27,10 @@
 </head>
 
 <body class="h-full antialiased font-[Inter] bg-white text-slate-900">
-    <x-banner-avviso dataLimite="01/01/2026" />
-    <x-navbar />
 
+    <x-banner-avviso dataLimite="01/01/2026" />
+
+    <x-navbar />
 
 
     <main class="min-h-screen">
