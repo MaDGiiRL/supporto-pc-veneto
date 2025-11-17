@@ -1,622 +1,14 @@
-<style>
-    /* ====== STYLES (identici ai tuoi, compattati) ====== */
-    :root {
-        --line: #e2e8f0;
-        --bg: #f7f9fc;
-        --card: #fff;
-        --muted: #64748b;
-        --txt: #0f172a;
-        --blue: #2563eb;
-        --blue-50: #eff6ff;
-        --amber: #d97706;
-        --amber-50: #fffbeb;
-        --slate-50: #f1f5f9;
-        --shadow: 0 12px 34px rgba(2, 6, 23, .10), 0 1px 3px rgba(2, 6, 23, .06);
-        --ev-sismico: #dc2626;
-        --ev-sismico-50: #fef2f2;
-        --ev-vulcanico: #9a3412;
-        --ev-vulcanico-50: #fff7ed;
-        --ev-idraulico: #0ea5e9;
-        --ev-idraulico-50: #e0f2fe;
-        --ev-idrogeologico: #10b981;
-        --ev-idrogeologico-50: #d1fae5;
-        --ev-maremoto: #0284c7;
-        --ev-maremoto-50: #e0f2fe;
-        --ev-deficit-idrico: #a16207;
-        --ev-deficit-idrico-50: #fefce8;
-        --ev-meteo-avverso: #7c3aed;
-        --ev-meteo-avverso-50: #f3e8ff;
-        --ev-aib: #f97316;
-        --ev-aib-50: #ffedd5;
-        --ev-uomo: #334155;
-        --ev-uomo-50: #e2e8f0;
-        --accent-note: #2563eb;
-        --accent-form: #7c3aed;
-        --note-bg: color-mix(in oklab, var(--accent-note) 7%, #fff);
-        --form-bg: color-mix(in oklab, var(--accent-form) 6%, #fff)
-    }
-
-    body {
-        margin: 0;
-        background: var(--bg);
-        color: var(--txt);
-        font: 14px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial
-    }
-
-    #coord-app {
-        padding: 1.25rem
-    }
-
-    .coord-head {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 1.1rem 1.25rem;
-        border: 1px solid var(--line);
-        border-radius: 1rem;
-        background: #fff;
-        margin-bottom: 1rem;
-        box-shadow: var(--shadow)
-    }
-
-    .title {
-        margin: 0;
-        font-size: 1.15rem;
-        font-weight: 800
-    }
-
-    .role {
-        display: flex;
-        align-items: center;
-        gap: .6rem
-    }
-
-    .lbl {
-        font-size: .82rem;
-        color: #475569;
-        display: block;
-        margin-bottom: .35rem;
-        font-weight: 600
-    }
-
-    .lbl--inline {
-        margin: 0
-    }
-
-    .coord-root {
-        display: flex;
-        flex-direction: column;
-        gap: 1.1rem
-    }
-
-    .input {
-        height: 2.55rem;
-        border: 1px solid var(--line);
-        border-radius: .7rem;
-        padding: .45rem .7rem;
-        font-size: .94rem;
-        background: #fff;
-        width: 100%;
-        line-height: 1.3
-    }
-
-    .input:hover {
-        border-color: #cbd5e1
-    }
-
-    .input:focus {
-        outline: 3px solid color-mix(in oklab, var(--accent-form) 28%, transparent);
-        border-color: color-mix(in oklab, var(--accent-form) 45%, var(--line))
-    }
-
-    .input.textarea {
-        min-height: 132px;
-        resize: vertical;
-        padding: .6rem .7rem
-    }
-
-    .field {
-        margin-bottom: .9rem
-    }
-
-    .form-help {
-        margin: .35rem 0 0;
-        color: #b91c1c;
-        font-size: .8rem
-    }
-
-    .debug {
-        border: 1px dashed #f59e0b;
-        background: #fffbeb;
-        border-radius: .9rem;
-        padding: 1rem 1.1rem;
-        margin-bottom: 1rem
-    }
-
-    .debug__msg {
-        display: flex;
-        gap: .6rem;
-        align-items: center;
-        flex-wrap: wrap;
-        margin-bottom: .45rem
-    }
-
-    .legend {
-        display: flex;
-        flex-wrap: wrap;
-        gap: .6rem .85rem;
-        margin: 0 0 .8rem 0;
-        align-items: center
-    }
-
-    .legend__item {
-        display: inline-flex;
-        align-items: center;
-        gap: .45rem;
-        font-size: .82rem;
-        color: #334155;
-        border: 1px solid var(--line);
-        border-radius: .8rem;
-        padding: .3rem .65rem;
-        background: #fff
-    }
-
-    .legend__dot {
-        width: .9rem;
-        height: .9rem;
-        border-radius: 999px;
-        display: inline-block;
-        background-color: var(--ev, #64748b);
-        box-shadow: 0 0 0 2px color-mix(in oklab, var(--ev, #64748b) 25%, #fff) inset
-    }
-
-    .tabbar {
-        display: flex;
-        gap: .5rem;
-        border-bottom: 1px solid var(--line);
-        padding-bottom: .5rem;
-        margin-bottom: .8rem
-    }
-
-    .tab {
-        display: inline-flex;
-        align-items: center;
-        gap: .45rem;
-        border: 1px solid var(--line);
-        background: #fff;
-        border-radius: .7rem;
-        padding: .45rem .7rem;
-        cursor: pointer;
-        font-size: .9rem;
-        box-shadow: var(--shadow)
-    }
-
-    .tab[aria-selected="true"] {
-        border-color: var(--blue);
-        background: var(--blue-50)
-    }
-
-    .tab__count {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-width: 1.2rem;
-        height: 1.2rem;
-        padding: 0 .3rem;
-        border-radius: .65rem;
-        font-size: .75rem;
-        background: #fff;
-        border: 1px solid var(--line)
-    }
-
-    .sec {
-        border: 1px solid var(--line);
-        border-radius: 1rem;
-        background: #fff;
-        overflow: hidden;
-        box-shadow: var(--shadow)
-    }
-
-    .sec__head {
-        display: flex;
-        align-items: center;
-        gap: .7rem;
-        padding: 1rem 1.1rem;
-        border-bottom: 1px solid var(--line)
-    }
-
-    .sec__title {
-        margin: 0;
-        font-weight: 800;
-        font-size: 1rem
-    }
-
-    .sec__meta {
-        margin-left: auto;
-        color: var(--muted);
-        font-size: .84rem
-    }
-
-    .sec--queue .sec__head {
-        background: var(--amber-50)
-    }
-
-    .sec--work .sec__head {
-        background: var(--blue-50)
-    }
-
-    .sec--closed .sec__head {
-        background: var(--slate-50)
-    }
-
-    .list {
-        display: grid;
-        gap: 1rem;
-        padding: 1.1rem
-    }
-
-    .empty {
-        padding: 1rem;
-        color: var(--muted);
-        font-size: .92rem
-    }
-
-    .droprow {
-        display: flex;
-        gap: .5rem;
-        margin-left: .9rem
-    }
-
-    .drop {
-        display: inline-flex;
-        align-items: center;
-        gap: .4rem;
-        border: 2px dashed transparent;
-        border-radius: .7rem;
-        padding: .3rem .65rem;
-        font-size: .82rem
-    }
-
-    .drop[data-target] {
-        border-color: #cbd5e1;
-        background: #fff
-    }
-
-    .drop.over {
-        border-color: #2563eb;
-        background: var(--blue-50)
-    }
-
-    .card {
-        border: 1px solid var(--line);
-        border-radius: 1rem;
-        background: #fff;
-        overflow: hidden;
-        transition: transform .08s ease, box-shadow .1s ease
-    }
-
-    .card:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 10px 22px rgba(2, 6, 23, .08)
-    }
-
-    .card__head {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: .7rem .9rem;
-        border-bottom: 1px solid var(--line);
-        background: #fafbff
-    }
-
-    .badge {
-        display: inline-block;
-        font-weight: 800;
-        font-size: .72rem;
-        padding: .22rem .55rem;
-        border-radius: .5rem;
-        border: 1px solid transparent
-    }
-
-    .b-queue {
-        background: var(--amber-50);
-        border-color: #fde68a;
-        color: #7c2d12
-    }
-
-    .b-work {
-        background: var(--blue-50);
-        border-color: #bfdbfe;
-        color: #1e3a8a
-    }
-
-    .b-closed {
-        background: #eef2f7;
-        border-color: #e5e7eb;
-        color: #334155
-    }
-
-    .muted {
-        color: var(--muted);
-        font-size: .85rem
-    }
-
-    .card__body {
-        padding: 1rem
-    }
-
-    .row {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 1rem
-    }
-
-    @media(min-width:900px) {
-        .row {
-            grid-template-columns: 2fr 1fr
-        }
-    }
-
-    .pill {
-        display: inline-flex;
-        align-items: center;
-        gap: .35rem;
-        border: 1px solid var(--line);
-        border-radius: 999px;
-        padding: .2rem .6rem;
-        font-size: .76rem;
-        background: #fff
-    }
-
-    .tag {
-        display: inline-flex;
-        align-items: center;
-        gap: .25rem;
-        border: 1px solid var(--line);
-        border-radius: .5rem;
-        padding: .2rem .5rem;
-        font-size: .74rem;
-        background: #fff
-    }
-
-    .tip-row {
-        display: flex;
-        align-items: center;
-        gap: .5rem;
-        flex-wrap: wrap
-    }
-
-    .tip-badge.legend__item {
-        padding: .22rem .55rem;
-        font-size: .84rem
-    }
-
-    .instructions {
-        border: 1px solid color-mix(in oklab, #dc2626 22%, var(--line));
-        border-left-width: 6px;
-        border-left-color: #dc2626;
-        border-radius: .75rem;
-        padding: .65rem .7rem;
-        background: color-mix(in oklab, #dc2626 12%, #fff);
-        line-height: 1.45;
-        font-weight: 500
-    }
-
-    .note {
-        border: 1px solid color-mix(in oklab, var(--accent-note) 20%, var(--line));
-        border-left-width: 6px;
-        border-left-color: var(--accent-note);
-        border-radius: .75rem;
-        padding: .65rem .7rem;
-        background: var(--note-bg);
-        line-height: 1.45
-    }
-
-    .card__footer {
-        display: flex;
-        align-items: center;
-        gap: .45rem;
-        border-top: 1px solid var(--line);
-        padding: .65rem .75rem;
-        background: #fff
-    }
-
-    .btn {
-        display: inline-flex;
-        align-items: center;
-        gap: .4rem;
-        border: 1px solid var(--line);
-        border-radius: .65rem;
-        background: #fff;
-        padding: .4rem .7rem;
-        font-size: .86rem;
-        cursor: pointer;
-        transition: background .08s ease, box-shadow .08s ease
-    }
-
-    .btn:hover {
-        background: #f8fafc;
-        box-shadow: 0 1px 0 rgba(2, 6, 23, .04) inset
-    }
-
-    .btn-primary {
-        background: var(--blue);
-        border-color: var(--blue);
-        color: #fff
-    }
-
-    .btn-primary:hover {
-        filter: brightness(.96)
-    }
-
-    .k-sep {
-        flex: 1
-    }
-
-    .hi {
-        width: 18px;
-        height: 18px;
-        display: inline-block;
-        vertical-align: middle
-    }
-
-    .card[data-type] {
-        border-left: 8px solid var(--ev, var(--line))
-    }
-
-    .card[data-type] .card__head {
-        background: var(--ev-50, #fafbff)
-    }
-
-    .pager {
-        display: flex;
-        align-items: center;
-        gap: .6rem;
-        justify-content: center;
-        padding: .6rem 1.1rem;
-        border-top: 1px solid var(--line);
-        background: #fff
-    }
-
-    .pager .btn {
-        padding: .35rem .6rem
-    }
-
-    .pager__label {
-        font-size: .88rem;
-        color: var(--muted)
-    }
-
-    .modal {
-        position: fixed;
-        inset: 0;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        z-index: 50
-    }
-
-    .modal.is-open {
-        display: flex
-    }
-
-    .modal__backdrop {
-        position: absolute;
-        inset: 0;
-        background: rgba(15, 23, 42, .45);
-        backdrop-filter: saturate(120%) blur(2px)
-    }
-
-    .modal__dialog {
-        position: relative;
-        width: min(900px, 92vw);
-        max-height: 88vh;
-        display: flex;
-        flex-direction: column;
-        border-radius: 1rem;
-        background: #fff;
-        box-shadow: var(--shadow);
-        overflow: hidden
-    }
-
-    .modal__head {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 1rem 1.1rem;
-        border-bottom: 1px solid var(--line);
-        background: #fafafa
-    }
-
-    .modal__head--note {
-        background: var(--note-bg);
-        border-bottom-color: color-mix(in oklab, var(--accent-note) 25%, var(--line))
-    }
-
-    .modal__title {
-        margin: 0;
-        font-size: 1.05rem;
-        font-weight: 800
-    }
-
-    .modal__x {
-        border: none;
-        background: transparent;
-        font-size: 1.6rem;
-        line-height: 1;
-        cursor: pointer;
-        color: #475569
-    }
-
-    .modal__body {
-        padding: 1.1rem;
-        overflow: auto;
-        background: var(--form-bg)
-    }
-
-    .modal__foot {
-        display: flex;
-        gap: .6rem;
-        justify-content: flex-end;
-        padding: .85rem 1.1rem;
-        border-top: 1px solid var(--line);
-        background: #fff
-    }
-
-    /* Palette data-type */
-    .card[data-type="sismico"] {
-        --ev: var(--ev-sismico);
-        --ev-50: var(--ev-sismico-50)
-    }
-
-    .card[data-type="vulcanico"] {
-        --ev: var(--ev-vulcanico);
-        --ev-50: var(--ev-vulcanico-50)
-    }
-
-    .card[data-type="idraulico"] {
-        --ev: var(--ev-idraulico);
-        --ev-50: var(--ev-idraulico-50)
-    }
-
-    .card[data-type="idrogeologico"] {
-        --ev: var(--ev-idrogeologico);
-        --ev-50: var(--ev-idrogeologico-50)
-    }
-
-    .card[data-type="maremoto"] {
-        --ev: var(--ev-maremoto);
-        --ev-50: var(--ev-maremoto-50)
-    }
-
-    .card[data-type="deficit-idrico"] {
-        --ev: var(--ev-deficit-idrico);
-        --ev-50: var(--ev-deficit-idrico-50)
-    }
-
-    .card[data-type="meteo-avverso"] {
-        --ev: var(--ev-meteo-avverso);
-        --ev-50: var(--ev-meteo-avverso-50)
-    }
-
-    .card[data-type="aib"] {
-        --ev: var(--ev-aib);
-        --ev-50: var(--ev-aib-50)
-    }
-
-    .card[data-type="uomo"] {
-        --ev: var(--ev-uomo);
-        --ev-50: var(--ev-uomo-50)
-    }
-
-    .card[data-type="altro"] {
-        --ev: #64748b;
-        --ev-50: #f1f5f9
-    }
-</style>
-
-
 <section class="w-full h-full" id="coord-app">
+    <style>
+        /* opzionale: solo se non lo hai già nel CSS globale */
+        .btn.btn-xs {
+            padding: .18rem .45rem;
+            font-size: .78rem;
+            border-radius: .55rem;
+            line-height: 1.1;
+        }
+    </style>
+
     <header class="coord-head">
         <div>
             <h2 class="title">Coordinamento</h2>
@@ -638,7 +30,8 @@
             Verifica gli endpoint:
             <code>GET /sor/roles</code>, <code>GET /sor/segnalazioni?status=…</code>,
             <code>PATCH /sor/segnalazioni/{id}/assign</code>, <code>PATCH /sor/segnalazioni/{id}/close</code>,
-            <code>POST /sor/segnalazioni/{id}/notes</code>, <code>GET /sor/logs</code>.
+            <code>POST /sor/segnalazioni/{id}/notes</code>, <code>GET /sor/logs</code>,
+            <code>GET /sor/segnalazioni/{id}</code>.
             <br />Il client prova anche <code>/api/sor/*</code> in fallback.
         </div>
     </div>
@@ -648,63 +41,93 @@
     <div id="coord-root" class="coord-root"></div>
 
     <!-- LOG admin -->
-    <section id="coord-log" class="sec" style="margin-top:1rem;display:none">
-        <div class="sec__head">
-            <svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 3h9v3h-9zM4.5 6h15v15h-15zM9 10.5h6M9 15h6" />
-            </svg>
-            <h3 class="sec__title">Registro attività (Admin)</h3>
-            <div class="sec__meta"><span id="log-total">0</span> eventi</div>
+    <section id="coord-log" class="log-sec" style="margin-top:1rem;display:none">
+        <div class="log-head">
+            <h3 class="log-title">Registro attività (Admin)</h3>
+            <div class="log-meta"><span id="log-total">0</span> eventi</div>
         </div>
-        <div class="list" style="padding:0">
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm">
-                    <thead class="text-left">
-                        <tr>
-                            <th class="px-3 py-2">Data/Ora</th>
-                            <th class="px-3 py-2">Azione</th>
-                            <th class="px-3 py-2">Segnalazione</th>
-                            <th class="px-3 py-2">Da → A</th>
-                            <th class="px-3 py-2">Operatore</th>
-                            <th class="px-3 py-2">Nota</th>
-                        </tr>
-                    </thead>
-                    <tbody id="log-body">
-                        <tr>
-                            <td colspan="6" class="px-3 py-3 opacity-70">Nessun log.</td>
-                        </tr>
-                    </tbody>
-                </table>
+
+        <div class="log-toolbar" id="log-toolbar">
+            <div class="log-field">
+                <label class="lbl">Ricerca testo</label>
+                <input id="log-q" class="log-input" placeholder="Operatore, nota, azione…" />
+            </div>
+            <div class="log-field">
+                <label class="lbl">Azione</label>
+                <select id="log-action" class="log-select">
+                    <option value="">Tutte…</option>
+                    <option value="assign">Assegnazione</option>
+                    <option value="note">Nota</option>
+                    <option value="close">Chiusura</option>
+                </select>
+            </div>
+            <div class="log-field">
+                <label class="lbl">Operatore</label>
+                <input id="log-operator" class="log-input" placeholder="Nome / email…" />
+            </div>
+            <div class="log-field">
+                <label class="lbl">ID Segnalazione</label>
+                <input id="log-sid" class="log-input" inputmode="numeric" placeholder="es. 123" />
+            </div>
+            <div class="log-field">
+                <label class="lbl">Dal</label>
+                <input id="log-from" type="date" class="log-input" />
+            </div>
+            <div class="log-field">
+                <label class="lbl">Al</label>
+                <input id="log-to" type="date" class="log-input" />
+            </div>
+
+            <div class="log-field" style="grid-column: 1 / -1; display:flex; gap:.6rem; align-items:center">
+                <button id="log-reset" class="log-btn" type="button">Reset</button>
+                <button id="log-export" class="log-btn" type="button">⬇️ Export CSV</button>
+                <span class="log-muted" style="margin-left:auto">Vista:</span>
+                <button id="log-view-table" class="log-btn log-btn--primary" type="button">Tabella</button>
+                <button id="log-view-timeline" class="log-btn" type="button">Timeline</button>
             </div>
         </div>
-        <div class="pager" data-kind="log">
-            <button class="btn" id="log-prev">«</button>
+
+        <div class="log-wrap" id="log-table-wrap">
+            <table class="log-table">
+                <thead>
+                    <tr>
+                        <th style="width:160px">Data/Ora</th>
+                        <th style="width:140px">Azione</th>
+                        <th style="width:120px">Segnalazione</th>
+                        <th>Da → A</th>
+                        <th style="width:200px">Operatore</th>
+                        <th>Nota</th>
+                    </tr>
+                </thead>
+                <tbody id="log-body">
+                    <tr>
+                        <td colspan="6" class="px-3 py-3 log-muted">Nessun log.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="timeline" id="log-timeline" style="display:none"></div>
+
+        <div class="log-pager">
+            <button class="log-btn" id="log-prev">«</button>
             <span class="pager__label" id="log-page">Pagina 1 di 1</span>
-            <button class="btn" id="log-next">»</button>
+            <button class="log-btn" id="log-next">»</button>
         </div>
     </section>
 </section>
 
-<!-- Modale NOTE -->
-<div class="modal" id="note-modal" aria-hidden="true" aria-labelledby="note-title" role="dialog" style="display:none">
-    <div class="modal__backdrop" data-close="note"></div>
-    <div class="modal__dialog" role="document">
-        <header class="modal__head modal__head--note">
-            <h3 id="note-title" class="modal__title">Aggiungi nota</h3>
-            <button class="modal__x" data-close="note" aria-label="Chiudi">&times;</button>
-        </header>
-        <form class="modal__body" id="note-form">
-            <div class="field">
-                <label class="lbl">Nota *</label>
-                <textarea id="note-text" class="input textarea" placeholder="Scrivi qui…"></textarea>
-                <p class="form-help" id="note-err" hidden>La nota è obbligatoria.</p>
-                <input type="hidden" id="note-id">
-            </div>
-        </form>
-        <footer class="modal__foot">
-            <button class="btn" data-close="note" type="button">Annulla</button>
-            <button class="btn btn-primary" id="note-save" type="button">Salva nota</button>
-        </footer>
+<!-- ======= MODALE STILE DASHBOARD: Dettagli Segnalazione ======= -->
+<div class="c-modal hidden" id="modal-gen-info" aria-hidden="true">
+    <div class="c-modal__backdrop" data-close-modal></div>
+    <div class="c-modal__dialog" role="dialog" aria-modal="true" style="max-width:48rem">
+        <button type="button" class="c-modal__close" data-close-modal>✕</button>
+        <h3 class="mb-2 text-lg font-semibold">Dettagli segnalazione</h3>
+        <div id="gen-info-body" class="grid gap-3"></div>
+        <div class="flex justify-end mt-3 gap-2">
+            <button type="button" class="btn" data-close-modal>Chiudi</button>
+            <button type="button" class="btn btn-primary" id="gen-info-copy">Copia JSON</button>
+        </div>
     </div>
 </div>
 
@@ -725,6 +148,7 @@
         };
         return `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">${m[name]||''}</svg>`;
     }
+
     const PAGE_SIZE = 10;
     const TYPE_LABELS = {
         sismico: 'Sismico',
@@ -805,6 +229,9 @@
         listSegnalazioni(params) {
             const sp = new URLSearchParams(Object.entries(params || {}).filter(([, v]) => v !== undefined && v !== null && v !== ''));
             return this._req(`/segnalazioni?${sp.toString()}`);
+        },
+        segnalazione(id) {
+            return this._req(`/segnalazioni/${id}`);
         },
         assign(id, to, instructions) {
             return this._req(`/segnalazioni/${id}/assign`, {
@@ -933,7 +360,19 @@
                 current_page: 1,
                 last_page: 1,
                 total: 0
+            },
+            view: 'table',
+            filters: {
+                q: '',
+                action: '',
+                operator: '',
+                segnalazione_id: '',
+                from: '',
+                to: ''
             }
+        },
+        ui: {
+            genInfoJson: null
         }
     };
     const roleSel = $('#role'),
@@ -951,9 +390,7 @@
         if (!mount) return;
         const keys = ['sismico', 'vulcanico', 'idraulico', 'idrogeologico', 'maremoto', 'deficit-idrico', 'meteo-avverso', 'aib', 'uomo', 'altro'];
         mount.innerHTML = keys.map(t => `
-    <span class="legend__item" data-type="${t}" style="--ev: var(--ev-${t});">
-      <i class="legend__dot" aria-hidden="true"></i>${TYPE_LABELS[t]}
-    </span>`).join('');
+    <span class="legend__item" data-type="${t}"><i class="legend__dot" aria-hidden="true"></i>${TYPE_LABELS[t]}</span>`).join('');
     }
 
     function bindTabs() {
@@ -1017,7 +454,7 @@
         <div>
           <div class="muted" style="margin-bottom:.3rem">${icon('tag','hi')} Tipologia</div>
           <div class="tip-row">
-            <span class="legend__item tip-badge" style="--ev: var(--ev-${g.tipologia||'altro'});">
+            <span class="legend__item tip-badge">
               <i class="legend__dot" aria-hidden="true"></i>${TYPE_LABELS[g.tipologia]||g.tipologia||'Altro'}
             </span>
             ${g.operatore?`<span class="muted">• Operatore: ${g.operatore}</span>`:''}
@@ -1027,7 +464,7 @@
           ${lastNote?`<div class="note" style="margin-top:.55rem" data-last-note="${g.id}">
               ${icon('chat')} <strong>Ultima nota:</strong> <span data-last-note-text>${lastNote.text}</span>
               <span class="muted">(<span data-last-note-by>${lastNote.by}</span>, <span data-last-note-at>${FMT(lastNote.at)}</span>)</span>
-           </div>`:`<div class="note" style="margin-top:.55rem; display:none" data-last-note="${g.id}"></div>`}
+          </div>`:`<div class="note" style="margin-top:.55rem; display:none" data-last-note="${g.id}"></div>`}
 
           <div class="note" style="margin-top:.75rem; display:none" data-note-panel="${g.id}">
             <div class="muted" style="margin-bottom:.35rem">${icon('chat')} Tutte le note</div>
@@ -1042,6 +479,8 @@
     </div>
     <div class="card__footer" data-id="${g.id}">
       <span class="muted" style="margin-right:auto">${icon('information')} Azioni</span>
+      <!-- (qui i bottoni card non sono richiesti per la richiesta attuale) -->
+      <button class="btn" data-act="note" data-id="${g.id}">📝 Aggiungi nota…</button>
       ${footerActions(state.role, g.status, g.id, g.assigned_to)}
     </div>`;
         el.addEventListener('dragstart', (e) => {
@@ -1052,10 +491,7 @@
     }
 
     function footerActions(role, status, id, assignedTo) {
-        const noteButtons = `
-    <button class="btn" data-act="toggle-notes" data-id="${id}">👁️ Vedi note</button>
-    <button class="btn" data-act="note" data-id="${id}">📝 Aggiungi nota…</button>
-  `;
+        const noteButtons = ``; // nella card lasciamo solo "Aggiungi nota…"
         if (status === 'queue') {
             if (!canAssign(role)) return `<span class="muted">In attesa di smistamento…</span>${noteButtons}`;
             return assignableRoles().map(rr => `
@@ -1069,7 +505,7 @@
         return noteButtons;
     }
 
-    /* ===== Section & Render (paginazione server-side) ===== */
+    /* ===== Section & Render ===== */
     function section(title, kind, payload) {
         const rows = payload.rows || [];
         const meta = payload.meta || {
@@ -1152,7 +588,7 @@
         $('#coord-log').style.display = (state.role === 'coordinamento') ? '' : 'none';
     }
 
-    /* ===== Handlers ===== */
+    /* ===== Toast & Confirms ===== */
     function toastOK(t, txt = '') {
         if (window.Swal) Swal.fire({
             title: t,
@@ -1179,20 +615,19 @@
 
     function askConfirm(title, text) {
         return window.Swal ? Swal.fire({
-                title,
-                text,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Conferma',
-                cancelButtonText: 'Annulla',
-                confirmButtonColor: '#2563eb'
-            }) :
-            Promise.resolve({
-                isConfirmed: confirm(title)
-            });
+            title,
+            text,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Conferma',
+            cancelButtonText: 'Annulla',
+            confirmButtonColor: '#2563eb'
+        }) : Promise.resolve({
+            isConfirmed: confirm(title)
+        });
     }
 
-    /* >>> Aggiungi nota con refresh immediato della LISTA di appartenenza (Aperte/Work/Chiuse) */
+    /* ===== NOTE modal con SweetAlert ===== */
     async function openNoteSwal(id) {
         if (!window.Swal) {
             alert('SweetAlert non trovato');
@@ -1218,38 +653,75 @@
             preConfirm: (val) => {
                 if (!val || !val.trim()) {
                     Swal.showValidationMessage('La nota è obbligatoria.');
-                    return false;
+                    return false
                 }
                 return val.trim();
             }
         });
         if (!isConfirmed) return;
-
-        // salva
         await API.addNote(id, value.trim());
         toastOK('Nota aggiunta');
-
-        // aggiorna pannello "tutte le note" se aperto
-        try {
-            const panel = document.querySelector(`[data-note-panel="${CSS.escape(String(id))}"]`);
-            const list = document.querySelector(`[data-note-list="${CSS.escape(String(id))}"]`);
-            if (panel && list) {
-                panel.style.display = 'block';
-                list.innerHTML = `<span class="muted">Aggiorno…</span>`;
-                const notes = await API.getNotes(id);
-                renderNotesList(list, notes);
-            }
-        } catch (e) {
-            console.warn('refresh note panel', e);
-        }
-
-        // <<< Rileva lo stato corrente della card e ricarica SOLO quella lista
+        // refresh liste coerenti
         const cardEl = document.querySelector(`.card[data-id="${CSS.escape(String(id))}"]`);
         const status = cardEl?.dataset.status || 'assigned';
         const listKey = (status === 'queue') ? 'queue' : (status === 'assigned' ? 'work' : 'closed');
-        await reloadData(listKey); // <-- aggiorna SUBITO la lista giusta (anche Aperte)
+        await reloadData(listKey);
     }
 
+    /* ===== MODALE: tutte le note (per bottone nella tabella log) ===== */
+    async function loadAllNotesFor(id) {
+        const out = [];
+        let page = 1,
+            per_page = 100,
+            last = 1;
+        do {
+            const {
+                data,
+                meta
+            } = await API.getNotes(id, page, per_page);
+            out.push(...(data || []));
+            last = meta?.last_page ?? page;
+            page++;
+        } while (page <= last);
+        return out;
+    }
+
+    function htmlNotesList(notes) {
+        if (!notes.length) return `<div class="log-muted">Nessuna nota.</div>`;
+        return notes.map(n => `
+    <div style="border:1px solid var(--line); border-radius:.6rem; padding:.55rem .65rem; margin:.5rem 0; background:#fff">
+      <div style="display:flex; gap:.5rem; align-items:center; margin-bottom:.25rem">
+        ${icon('chat','hi')}
+        <strong>${n.by || '—'}</strong>
+        <span class="log-muted">• ${n.at?FMT(n.at):''}</span>
+      </div>
+      <div class="log-note">${(n.text||'').replace(/\n/g,'<br>')}</div>
+    </div>`).join('');
+    }
+    async function openNotesModal(id) {
+        if (!window.Swal) {
+            alert('SweetAlert non trovato');
+            return;
+        }
+        const content = document.createElement('div');
+        content.innerHTML = `<div class="log-muted" style="padding:.25rem 0">Carico le note…</div>`;
+        Swal.fire({
+            title: `Note segnalazione GEN-${id}`,
+            html: content,
+            showConfirmButton: true,
+            confirmButtonText: 'Chiudi',
+            width: 800,
+            focusConfirm: false,
+        });
+        try {
+            const notes = await loadAllNotesFor(id);
+            content.innerHTML = `<div style="max-height:58vh; overflow:auto; text-align:left">${htmlNotesList(notes)}</div>`;
+        } catch (e) {
+            content.innerHTML = `<div class="log-muted">Impossibile caricare le note.</div>`;
+        }
+    }
+
+    /* ===== Drag&Drop, handler vari ===== */
     async function handleDropAction(id, srcStatus, target) {
         try {
             if (srcStatus === 'queue' && assignableRoles().some(r => r.slug === target)) {
@@ -1275,7 +747,6 @@
             toastInfo('Errore backend');
         }
     }
-
     async function promptInstructions() {
         if (!window.Swal) return {
             confirmed: true,
@@ -1318,26 +789,6 @@
         root.querySelectorAll('[data-act="note"]').forEach(b => {
             b.addEventListener('click', () => openNoteSwal(b.dataset.id));
         });
-        root.querySelectorAll('[data-act="toggle-notes"]').forEach(b => {
-            b.addEventListener('click', async () => {
-                const id = b.dataset.id;
-                const panel = document.querySelector(`[data-note-panel="${CSS.escape(String(id))}"]`);
-                const list = document.querySelector(`[data-note-list="${CSS.escape(String(id))}"]`);
-                if (!panel || !list) return;
-                const hidden = panel.style.display === 'none' || panel.style.display === '';
-                if (hidden) {
-                    panel.style.display = 'block';
-                    list.innerHTML = `<span class="muted">Carico…</span>`;
-                    try {
-                        const notes = await API.getNotes(id);
-                        renderNotesList(list, notes);
-                    } catch (e) {
-                        console.error(e);
-                        list.innerHTML = `<span class="muted">Impossibile caricare le note.</span>`;
-                    }
-                } else panel.style.display = 'none';
-            });
-        });
         root.querySelectorAll('[data-act="close"]').forEach(b => {
             b.addEventListener('click', async () => {
                 const id = +b.dataset.id;
@@ -1348,21 +799,6 @@
                 await Promise.all([reloadData('work'), reloadData('closed')]);
             });
         });
-    }
-
-    function renderNotesList(container, payload) {
-        const list = Array.isArray(payload) ? payload :
-            Array.isArray(payload?.data) ? payload.data : [];
-        if (!list.length) {
-            container.innerHTML = `<div class="muted">Nessuna nota.</div>`;
-            return;
-        }
-        container.innerHTML = list.map(n => `
-    <div class="note" style="margin-top:.5rem">
-      ${icon('chat')} <strong>${n.by||'—'}</strong>
-      <span class="muted">• ${n.at?FMT(n.at):''}</span>
-      <div style="margin-top:.35rem">${(n.text||'').replace(/\n/g,'<br>')}</div>
-    </div>`).join('');
     }
 
     /* ===== Data load/map ===== */
@@ -1479,83 +915,299 @@
         }
     }
 
-    /* ===== Logs ===== */
-    function renderLogs() {
+    /* ===== LOGS ===== */
+    const LOG_PAGE_SIZE = 12;
+    const LOG_VIEW = {
+        TABLE: 'table',
+        TIMELINE: 'timeline'
+    };
+
+    /* ——— Helpers per “Da → A” e per NOTE ——— */
+    function labelStatus(s) {
+        const v = (s || '').toString().toLowerCase();
+        if (['queue', 'aperta', 'open'].includes(v)) return 'Aperta';
+        if (['assigned', 'work', 'in_lavorazione'].includes(v)) return 'In lavorazione';
+        if (['closed', 'chiusa', 'close'].includes(v)) return 'Chiusa';
+        return v || '—';
+    }
+
+    function statusClass(s) {
+        const v = (s || '').toString().toLowerCase();
+        if (['queue', 'aperta', 'open'].includes(v)) return 'st-queue';
+        if (['assigned', 'work', 'in_lavorazione'].includes(v)) return 'st-assigned';
+        if (['closed', 'chiusa', 'close'].includes(v)) return 'st-closed';
+        return '';
+    }
+
+    function formatTransition(fromStatus, toStatus, fromAssignee, toAssignee, action) {
+        const a = (action || '').toLowerCase();
+        if (a === 'note') {
+            return `<em class="log-muted">Inserita una nuova nota</em>`;
+        }
+        const fromHTML = `
+    <span class="chip chip--from">
+      <strong>da</strong>
+      <span class="${statusClass(fromStatus)}">${labelStatus(fromStatus)}</span>
+      ${fromAssignee?`<span class="log-muted">• ${fromAssignee}</span>`:''}
+    </span>`;
+        const toHTML = `
+    <span class="chip chip--to">
+      <strong>a</strong>
+      <span class="${statusClass(toStatus)}">${labelStatus(toStatus)}</span>
+      ${toAssignee?`<span class="log-muted">• ${toAssignee}</span>`:''}
+    </span>`;
+        return `<div class="flow">${fromHTML}<span class="arrow">→</span>${toHTML}</div>`;
+    }
+
+    /* Badge azione */
+    function actBadge(a) {
+        const t = (a || '').toLowerCase();
+        const tag = (txt, cls = '') => `<span class="badge ${cls}">${txt}</span>`;
+        if (t === 'assign') return tag('Assegnazione', 'badge-assign');
+        if (t === 'close') return tag('Chiusura', 'badge-close');
+        if (t === 'note') return tag('Nota', 'badge-note');
+        return tag(a || '—');
+    }
+    const FMT_LOG = (iso) => new Intl.DateTimeFormat('it-IT', {
+        dateStyle: 'short',
+        timeStyle: 'short'
+    }).format(new Date(iso || Date.now()));
+
+    /* Tabella log */
+    function renderLogsTable() {
         const tbody = $('#log-body');
         const meta = state.logs.meta || {};
         $('#log-total').textContent = meta.total ?? state.logs.data.length;
         $('#log-page').textContent = `Pagina ${meta.current_page??1} di ${meta.last_page??1}`;
         $('#log-prev').disabled = (meta.current_page ?? 1) <= 1;
         $('#log-next').disabled = (meta.current_page ?? 1) >= (meta.last_page ?? 1);
-        tbody.replaceChildren();
 
+        tbody.replaceChildren();
         const rows = state.logs.data;
         if (!rows.length) {
             const tr = document.createElement('tr');
-            tr.innerHTML = `<td colspan="6" class="px-3 py-3 opacity-70">Nessun log.</td>`;
+            tr.innerHTML = `<td colspan="6" class="px-3 py-3 log-muted">Nessun log.</td>`;
             tbody.appendChild(tr);
             return;
         }
-
         rows.forEach(l => {
             const tr = document.createElement('tr');
-            tr.className = 'border-t';
-            const when = FMT(l.created_at || l.at);
+            tr.className = 'log-row';
+            tr.setAttribute('data-action', (l.action || l.type || '').toLowerCase());
+
+            const when = FMT_LOG(l.created_at || l.at);
             const action = l.action || l.type || '—';
-            const seg = l.segnalazione_id ? `GEN-${l.segnalazione_id}` : '—';
-            const daA = `${l.from_status||l.from||'—'} → ${l.to_status||l.to||'—'}` +
-                (l.from_assignee || l.to_assignee ? ` • ${l.from_assignee||'—'} → ${l.to_assignee||'—'}` : '');
-            const operator = l.operator || l.actor || l.actor_name || l.performed_by || l.performed_by_name ||
-                l.by || l.user || l.user_name || '—';
-            const nota = l.note || l.details || '';
+            const segId = l.segnalazione_id ? String(l.segnalazione_id) : '';
+            const segBtn = segId ? `<button class="btn btn-xs" data-open-seg="${segId}" title="Apri dettaglio">GEN-${segId}</button>` : '—';
+            const chainHTML = formatTransition(l.from_status || l.from, l.to_status || l.to, l.from_assignee, l.to_assignee, action);
+            const operator = l.performed_by || l.operator || l.by || l.user || '—';
+            const notaTxt = l.details || l.note || '';
+
+            /* ——— NUOVO: pulsante "i" nella colonna Nota che apre la modale con TUTTE le note della segnalazione ——— */
+            const notesBtn = segId ? `<button class="btn btn-icon" data-notes-for="${segId}" title="Tutte le note">${icon('information','hi')}</button>` : '';
 
             tr.innerHTML = `
-      <td class="px-3 py-2">${when}</td>
-      <td class="px-3 py-2">${action}</td>
-      <td class="px-3 py-2">${seg}</td>
-      <td class="px-3 py-2">${daA}</td>
-      <td class="px-3 py-2">${operator}</td>
-      <td class="px-3 py-2">${nota}</td>`;
+      <td>${when}</td>
+      <td>${actBadge(action)}</td>
+      <td>${segBtn}</td>
+      <td>${chainHTML}</td>
+      <td>${operator}</td>
+      <td class="log-note">${notesBtn}${notaTxt?` <span>${(notaTxt||'').replace(/\n/g,'<br>')}</span>`:''}</td>`;
             tbody.appendChild(tr);
         });
     }
 
+    /* Timeline log */
+    function renderLogsTimeline() {
+        const wrap = $('#log-timeline');
+        wrap.replaceChildren();
+        const rows = state.logs.data;
+        if (!rows.length) {
+            const empty = document.createElement('div');
+            empty.className = 'log-muted';
+            empty.textContent = 'Nessun log.';
+            wrap.appendChild(empty);
+            return;
+        }
+        rows.forEach(l => {
+            const it = document.createElement('div');
+            it.className = 't-item';
+            it.setAttribute('data-action', (l.action || l.type || '').toLowerCase());
+            const when = FMT_LOG(l.created_at || l.at);
+            const action = l.action || l.type || '—';
+            const segId = l.segnalazione_id ? `GEN-${l.segnalazione_id}` : '—';
+            const operator = l.performed_by || l.operator || l.by || l.user || '—';
+            const chainHTML = formatTransition(l.from_status || l.from, l.to_status || l.to, l.from_assignee, l.to_assignee, action);
+            const nota = l.details || l.note || '';
+            it.innerHTML = `
+      <span class="t-dot" aria-hidden="true"></span>
+      <div class="t-meta">
+        <strong>${when}</strong>
+        <span>${actBadge(action)}</span>
+        <span class="log-muted">${segId}</span>
+        <span class="log-muted">${operator}</span>
+      </div>
+      <div class="t-note">
+        <div style="margin-bottom:.35rem">${chainHTML}</div>
+        <div class="log-note">${(nota||'').replace(/\n/g,'<br>')}</div>
+      </div>`;
+            wrap.appendChild(it);
+        });
+    }
+
+    /* Render & load logs */
+    function renderLogs() {
+        const isTable = state.logs.view === LOG_VIEW.TABLE;
+        $('#log-table-wrap').style.display = isTable ? '' : 'none';
+        $('#log-timeline').style.display = isTable ? 'none' : '';
+        $('#log-view-table').classList.toggle('log-btn--primary', isTable);
+        $('#log-view-timeline').classList.toggle('log-btn--primary', !isTable);
+        if (isTable) renderLogsTable();
+        else renderLogsTimeline();
+    }
     async function loadLogs() {
         try {
-            const res = await API.logs({
-                entity: 'segnalazione',
-                page: state.pages.log,
-                per_page: PAGE_SIZE
-            });
+            const f = state.logs.filters;
+            const params = {
+                page: state.pages.log || 1,
+                per_page: LOG_PAGE_SIZE,
+                q: f.q || undefined,
+                action: f.action || undefined,
+                operator: f.operator || undefined,
+                segnalazione_id: f.segnalazione_id || undefined,
+                from: f.from || undefined,
+                to: f.to || undefined
+            };
+            const res = await API.logs(params);
             const data = Array.isArray(res) ? res : (res.data || []);
             state.logs.data = data;
             state.logs.meta = res.meta || {
-                current_page: 1,
+                current_page: params.page,
                 last_page: 1,
                 total: data.length
             };
             renderLogs();
         } catch (e) {
             console.error('logs', e);
-            state.logs = {
-                data: [],
-                meta: {
-                    current_page: 1,
-                    last_page: 1,
-                    total: 0
-                }
+            state.logs.data = [];
+            state.logs.meta = {
+                current_page: 1,
+                last_page: 1,
+                total: 0
             };
             renderLogs();
         }
     }
-    $('#log-prev')?.addEventListener('click', async () => {
-        state.pages.log = Math.max(1, (state.pages.log || 1) - 1);
-        await loadLogs();
+
+    function debounce(fn, ms = 350) {
+        let t;
+        return (...a) => {
+            clearTimeout(t);
+            t = setTimeout(() => fn(...a), ms);
+        };
+    }
+
+    function bindLogToolbar() {
+        const f = state.logs.filters;
+        const Q = $('#log-q'),
+            A = $('#log-action'),
+            OP = $('#log-operator'),
+            SID = $('#log-sid'),
+            F = $('#log-from'),
+            T = $('#log-to');
+        const onChange = debounce(async () => {
+            f.q = (Q.value || '').trim();
+            f.action = A.value || '';
+            f.operator = (OP.value || '').trim();
+            f.segnalazione_id = (SID.value || '').trim();
+            f.from = F.value || '';
+            f.to = T.value || '';
+            state.pages.log = 1;
+            await loadLogs();
+        }, 250);
+        [Q, A, OP, SID, F, T].forEach(el => el.addEventListener('input', onChange));
+        $('#log-reset').addEventListener('click', async () => {
+            Q.value = A.value = OP.value = SID.value = F.value = T.value = '';
+            Object.assign(f, {
+                q: '',
+                action: '',
+                operator: '',
+                segnalazione_id: '',
+                from: '',
+                to: ''
+            });
+            state.pages.log = 1;
+            await loadLogs();
+        });
+        $('#log-view-table').addEventListener('click', () => {
+            state.logs.view = LOG_VIEW.TABLE;
+            renderLogs();
+        });
+        $('#log-view-timeline').addEventListener('click', () => {
+            state.logs.view = LOG_VIEW.TIMELINE;
+            renderLogs();
+        });
+        $('#log-export').addEventListener('click', () => exportLogsCSV());
+        $('#log-prev')?.addEventListener('click', async () => {
+            state.pages.log = Math.max(1, (state.pages.log || 1) - 1);
+            await loadLogs();
+        });
+        $('#log-next')?.addEventListener('click', async () => {
+            state.pages.log = (state.pages.log || 1) + 1;
+            await loadLogs();
+        });
+    }
+
+    /* --- Delegated handlers per LOG TABLE --- */
+    document.getElementById('coord-log')?.addEventListener('click', async (e) => {
+        // Apri dettaglio segnalazione
+        const b1 = e.target.closest('[data-open-seg]');
+        if (b1) {
+            const id = b1.getAttribute('data-open-seg');
+            try {
+                const rec = await fetchSegnalazioneWithFallback(id);
+                renderGenInfoModal(rec);
+            } catch (err) {
+                console.error(err);
+                toastInfo('Dettaglio non disponibile', 'Impossibile caricare la segnalazione.');
+            }
+            return;
+        }
+        // NUOVO: bottone "i" nella colonna NOTE
+        const b2 = e.target.closest('[data-notes-for]');
+        if (b2) {
+            const segId = b2.getAttribute('data-notes-for');
+            openNotesModal(segId);
+        }
     });
-    $('#log-next')?.addEventListener('click', async () => {
-        state.pages.log = (state.pages.log || 1) + 1;
-        await loadLogs();
-    });
+
+    /* ===== CSV Export ===== */
+    function exportLogsCSV() {
+        const rows = state.logs.data;
+        const hdr = ['data_ora', 'azione', 'segnalazione', 'from_status', 'to_status', 'from_assignee', 'to_assignee', 'operatore', 'nota'];
+        const esc = s => `"${String(s??'').replace(/"/g,'""')}"`;
+        const csv = [hdr.join(';')]
+            .concat(rows.map(l => [
+                FMT_LOG(l.created_at || l.at),
+                (l.action || l.type || ''),
+                l.segnalazione_id ? `GEN-${l.segnalazione_id}` : '',
+                (l.from_status || ''),
+                (l.to_status || ''),
+                (l.from_assignee || ''),
+                (l.to_assignee || ''),
+                (l.performed_by || l.operator || l.by || l.user || ''),
+                (l.details || l.note || '')
+            ].map(esc).join(';'))).join('\r\n');
+        const blob = new Blob([csv], {
+            type: 'text/csv;charset=utf-8;'
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `sor_logs_${new Date().toISOString().slice(0,10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
 
     /* ===== Logs LIVE (polling) ===== */
     let _logTimer = null;
@@ -1577,14 +1229,159 @@
     }
     window.addEventListener('beforeunload', stopLogsLive);
 
+    /* ===== MODALE GEN INFO (stile Dashboard) ===== */
+    function makePrioBadge(p = 'Nessuna') {
+        const s = document.createElement('span');
+        s.className = 'prio-badge ' + (p.toLowerCase() === 'alta' ? 'prio--alta' : p.toLowerCase() === 'media' ? 'prio--media' : p.toLowerCase() === 'bassa' ? 'prio--bassa' : 'prio--nessuna');
+        s.textContent = p || 'Nessuna';
+        return s;
+    }
+
+    function makeDirBadge(val) {
+        const v = (val || 'E').toString().trim().toUpperCase();
+        const isIn = v === 'E' || v.startsWith('E');
+        const s = document.createElement('span');
+        s.className = 'badge ' + (isIn ? 'badge--in' : 'badge--out');
+        s.textContent = isIn ? 'E' : 'U';
+        s.title = isIn ? 'Entrata' : 'Uscita';
+        return s;
+    }
+
+    function openModal(sel) {
+        const m = document.querySelector(sel);
+        if (!m) return;
+        m.classList.remove('hidden');
+        m.classList.add('is-open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(el) {
+        if (!el) return;
+        el.classList.remove('is-open');
+        el.classList.add('hidden');
+        if (!document.querySelector('.c-modal.is-open')) document.body.style.overflow = '';
+    }
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('[data-close-modal]') || e.target.classList.contains('c-modal__backdrop')) closeModal(e.target.closest('.c-modal'));
+    });
+
+    function genInfoRows(rec) {
+        const typeLabel = TYPE_LABELS[rec.tipologia] || rec.tipologia || '—';
+        const when = FMT(rec.created_at);
+        const evText = rec.event_id ? `Evento #${rec.event_id}` : '—';
+        return [
+            ['ID', `GEN-${rec.id}`],
+            ['Data/Ora', when],
+            ['Direzione', rec.direzione === 'U' ? 'Uscita (U)' : 'Entrata (E)'],
+            ['Tipologia', typeLabel],
+            ['Aree interessate', (rec.aree || []).join(', ') || '—'],
+            ['Operatore', rec.operatore || '—'],
+            ['Priorità', rec.priorita || 'Nessuna'],
+            ['Evento associato', evText],
+            ['Sintesi', rec.sintesi || '—'],
+        ];
+    }
+
+    function renderGenInfoModal(rec) {
+        const body = document.querySelector('#gen-info-body');
+        if (!body) return;
+        const rows = genInfoRows(rec);
+        const tbl = document.createElement('table');
+        tbl.className = 'w-full text-sm';
+        tbl.innerHTML = `<tbody>${rows.map(([k,v])=>`<tr class="border-t" style="border-color:var(--line)"><td class="px-3 py-2 font-semibold w-44">${k}</td><td class="px-3 py-2">${v}</td></tr>`).join('')}</tbody>`;
+        body.replaceChildren(tbl);
+        const tds = body.querySelectorAll('tbody tr td:nth-child(2)');
+        if (tds[2]) {
+            tds[2].textContent = '';
+            tds[2].appendChild(makeDirBadge(rec.direzione));
+        }
+        if (tds[6]) {
+            tds[6].textContent = '';
+            tds[6].appendChild(makePrioBadge(rec.priorita || 'Nessuna'));
+        }
+        state.ui.genInfoJson = {
+            id: rec.id,
+            created_at: rec.created_at,
+            direzione: rec.direzione,
+            tipologia: rec.tipologia,
+            tipologia_label: TYPE_LABELS[rec.tipologia] || rec.tipologia || null,
+            aree: rec.aree || [],
+            operatore: rec.operatore || null,
+            priorita: rec.priorita || 'Nessuna',
+            event_id: rec.event_id || null,
+            sintesi: rec.sintesi || ''
+        };
+        openModal('#modal-gen-info');
+    }
+    document.addEventListener('click', (e) => {
+        if (e.target.id === 'gen-info-copy' || e.target.closest('#gen-info-copy')) {
+            const data = state.ui.genInfoJson ?? {};
+            const text = JSON.stringify(data, null, 2);
+            if (navigator.clipboard?.writeText) {
+                navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+            } else fallbackCopy(text);
+        }
+    });
+
+    function fallbackCopy(text) {
+        try {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+        } catch {}
+    }
+    async function fetchSegnalazioneWithFallback(id) {
+        try {
+            const res = await API.segnalazione(id);
+            if (res) {
+                const s = Array.isArray(res?.data) ? res.data[0] : (res?.data || res);
+                return {
+                    id: s.id,
+                    created_at: s.creata_il || s.created_at || s.createdAt || new Date().toISOString(),
+                    tipologia: s.tipologia || s.tipo || 'altro',
+                    aree: s.aree || [],
+                    sintesi: s.sintesi || s.note || s.descrizione || s.oggetto || '',
+                    operatore: s.operatore || s.user || '',
+                    direzione: ((s.direzione || s.verso || 'E') + '').toUpperCase().startsWith('U') ? 'U' : 'E',
+                    priorita: s.priorita || 'Nessuna',
+                    event_id: s.event_id ?? s.evento_id ?? null
+                };
+            }
+        } catch (e) {}
+        const hit = ['queue', 'work', 'closed'].flatMap(k => state.lists[k]?.rows || []).find(r => String(r.id) === String(id));
+        if (hit) {
+            return {
+                id: hit.id,
+                created_at: hit.created_at,
+                tipologia: hit.tipologia,
+                aree: hit.aree,
+                sintesi: hit.sintesi,
+                operatore: hit.operatore,
+                direzione: 'E',
+                priorita: 'Nessuna',
+                event_id: hit.event_id ?? null
+            };
+        }
+        throw new Error('Segnalazione non trovata');
+    }
+
     /* ===== Boot ===== */
-    async function boot() {
+    function renderLegendInit() {
         renderLegend();
+    }
+    async function boot() {
+        renderLegendInit();
         await loadRoles();
         await loadData();
         render();
         if (state.role === 'coordinamento') {
             $('#coord-log').style.display = '';
+            bindLogToolbar();
             await loadLogs();
             startLogsLive();
         }

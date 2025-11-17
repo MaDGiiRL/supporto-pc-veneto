@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 @import './style.css';
 @import './applicativi_informatici/segnalazioni/dashboard.css';
+@import './applicativi_informatici/segnalazioni/coordinamento.css';
 
 @tailwind base;
 @tailwind components;

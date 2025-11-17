@@ -1,0 +1,1217 @@
+/* ====== STYLES (compattati e allineati) ====== */
+:root {
+    --line: #e2e8f0;
+    --bg: #f7f9fc;
+    --card: #fff;
+    --muted: #64748b;
+    --txt: #0f172a;
+    --blue: #2563eb;
+    --blue-50: #eff6ff;
+    --amber: #d97706;
+    --amber-50: #fffbeb;
+    --slate-50: #f1f5f9;
+    --shadow: 0 12px 34px rgba(2, 6, 23, .10), 0 1px 3px rgba(2, 6, 23, .06);
+
+    /* Tipologie evento */
+    --ev-sismico: #dc2626;
+    --ev-sismico-50: #fef2f2;
+    --ev-vulcanico: #9a3412;
+    --ev-vulcanico-50: #fff7ed;
+    --ev-idraulico: #0ea5e9;
+    --ev-idraulico-50: #e0f2fe;
+    --ev-idrogeologico: #10b981;
+    --ev-idrogeologico-50: #d1fae5;
+    --ev-maremoto: #0284c7;
+    --ev-maremoto-50: #e0f2fe;
+    --ev-deficit-idrico: #a16207;
+    --ev-deficit-idrico-50: #fefce8;
+    --ev-meteo-avverso: #7c3aed;
+    --ev-meteo-avverso-50: #f3e8ff;
+    --ev-aib: #f97316;
+    --ev-aib-50: #ffedd5;
+    --ev-uomo: #334155;
+    --ev-uomo-50: #e2e8f0;
+
+    --accent-note: #2563eb;
+    --accent-form: #7c3aed;
+    --note-bg: color-mix(in oklab, var(--accent-note) 7%, #fff);
+    --form-bg: color-mix(in oklab, var(--accent-form) 6%, #fff);
+}
+
+/* Base */
+* {
+    box-sizing: border-box
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--txt);
+    font: 14px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial
+}
+
+#coord-app {
+    padding: 1.25rem
+}
+
+/* Header / role */
+.coord-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1rem 1.25rem;
+    border: 1px solid var(--line);
+    border-radius: 1rem;
+    background: #fff;
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow)
+}
+
+.title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: .2px
+}
+
+.role {
+    display: flex;
+    align-items: center;
+    gap: .6rem
+}
+
+.lbl {
+    font-size: .82rem;
+    color: #475569;
+    display: block;
+    margin-bottom: .35rem;
+    font-weight: 600
+}
+
+.lbl--inline {
+    margin: 0
+}
+
+/* Main layout */
+.coord-root {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem
+}
+
+/* Inputs / buttons */
+.input {
+    height: 2.55rem;
+    border: 1px solid var(--line);
+    border-radius: .7rem;
+    padding: .45rem .7rem;
+    font-size: .94rem;
+    background: #fff;
+    width: 100%;
+    line-height: 1.3
+}
+
+.input:hover {
+    border-color: #cbd5e1
+}
+
+.input:focus {
+    outline: 3px solid color-mix(in oklab, var(--accent-form) 28%, transparent);
+    border-color: color-mix(in oklab, var(--accent-form) 45%, var(--line))
+}
+
+.input.textarea {
+    min-height: 132px;
+    resize: vertical;
+    padding: .6rem .7rem
+}
+
+.field {
+    margin-bottom: .9rem
+}
+
+.form-help {
+    margin: .35rem 0 0;
+    color: #b91c1c;
+    font-size: .8rem
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    border: 1px solid var(--line);
+    border-radius: .65rem;
+    background: #fff;
+    padding: .4rem .7rem;
+    font-size: .86rem;
+    cursor: pointer;
+    transition: background .08s, box-shadow .08s
+}
+
+.btn:hover {
+    background: #f8fafc;
+    box-shadow: 0 1px 0 rgba(2, 6, 23, .04) inset
+}
+
+.btn-primary {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: #fff
+}
+
+.btn-primary:hover {
+    filter: brightness(.96)
+}
+
+.k-sep {
+    flex: 1
+}
+
+.hi {
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    vertical-align: middle
+}
+
+/* Debug */
+.debug {
+    border: 1px dashed #f59e0b;
+    background: #fffbeb;
+    border-radius: .9rem;
+    padding: 1rem 1.1rem;
+    margin-bottom: 1rem
+}
+
+.debug__msg {
+    display: flex;
+    gap: .6rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: .45rem
+}
+
+/* Legend */
+.legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .6rem .85rem;
+    margin: 0 0 .8rem 0;
+    align-items: center
+}
+
+.legend__item {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    font-size: .82rem;
+    color: #334155;
+    border: 1px solid var(--line);
+    border-radius: .8rem;
+    padding: .3rem .65rem;
+    background: #fff
+}
+
+.legend__dot {
+    width: .9rem;
+    height: .9rem;
+    border-radius: 999px;
+    display: inline-block;
+    background-color: var(--ev, #64748b);
+    box-shadow: 0 0 0 2px color-mix(in oklab, var(--ev, #64748b) 25%, #fff) inset
+}
+
+/* Colori legenda per data-type */
+.legend__item[data-type="sismico"] {
+    --ev: var(--ev-sismico)
+}
+
+.legend__item[data-type="vulcanico"] {
+    --ev: var(--ev-vulcanico)
+}
+
+.legend__item[data-type="idraulico"] {
+    --ev: var(--ev-idraulico)
+}
+
+.legend__item[data-type="idrogeologico"] {
+    --ev: var(--ev-idrogeologico)
+}
+
+.legend__item[data-type="maremoto"] {
+    --ev: var(--ev-maremoto)
+}
+
+.legend__item[data-type="deficit-idrico"] {
+    --ev: var(--ev-deficit-idrico)
+}
+
+.legend__item[data-type="meteo-avverso"] {
+    --ev: var(--ev-meteo-avverso)
+}
+
+.legend__item[data-type="aib"] {
+    --ev: var(--ev-aib)
+}
+
+.legend__item[data-type="uomo"] {
+    --ev: var(--ev-uomo)
+}
+
+.legend__item[data-type="altro"] {
+    --ev: #64748b
+}
+
+/* Tabs */
+.tabbar {
+    display: flex;
+    gap: .5rem;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: .5rem;
+    margin-bottom: .8rem
+}
+
+.tab {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    border: 1px solid var(--line);
+    background: #fff;
+    border-radius: .7rem;
+    padding: .45rem .7rem;
+    cursor: pointer;
+    font-size: .9rem;
+    box-shadow: var(--shadow)
+}
+
+.tab[aria-selected="true"] {
+    border-color: var(--blue);
+    background: var(--blue-50)
+}
+
+.tab__count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.2rem;
+    height: 1.2rem;
+    padding: 0 .3rem;
+    border-radius: .65rem;
+    font-size: .75rem;
+    background: #fff;
+    border: 1px solid var(--line)
+}
+
+/* Sections */
+.sec {
+    border: 1px solid var(--line);
+    border-radius: 1rem;
+    background: #fff;
+    overflow: hidden;
+    box-shadow: var(--shadow)
+}
+
+.sec__head {
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+    padding: 1rem 1.1rem;
+    border-bottom: 1px solid var(--line)
+}
+
+.sec__title {
+    margin: 0;
+    font-weight: 800;
+    font-size: 1rem
+}
+
+.sec__meta {
+    margin-left: auto;
+    color: var(--muted);
+    font-size: .84rem
+}
+
+.sec--queue .sec__head {
+    background: var(--amber-50)
+}
+
+.sec--work .sec__head {
+    background: var(--blue-50)
+}
+
+.sec--closed .sec__head {
+    background: var(--slate-50)
+}
+
+.list {
+    display: grid;
+    gap: 1rem;
+    padding: 1.1rem
+}
+
+.empty {
+    padding: 1rem;
+    color: var(--muted);
+    font-size: .92rem
+}
+
+/* Drag targets */
+.droprow {
+    display: flex;
+    gap: .5rem;
+    margin-left: .9rem
+}
+
+.drop {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    border: 2px dashed transparent;
+    border-radius: .7rem;
+    padding: .3rem .65rem;
+    font-size: .82rem
+}
+
+.drop[data-target] {
+    border-color: #cbd5e1;
+    background: #fff
+}
+
+.drop.over {
+    border-color: #2563eb;
+    background: var(--blue-50)
+}
+
+/* Cards */
+.card {
+    border: 1px solid var(--line);
+    border-radius: 1rem;
+    background: #fff;
+    overflow: hidden;
+    transition: transform .08s ease, box-shadow .1s ease
+}
+
+.card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px rgba(2, 6, 23, .08)
+}
+
+.card__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .7rem .9rem;
+    border-bottom: 1px solid var(--line);
+    background: #fafbff
+}
+
+.muted {
+    color: var(--muted);
+    font-size: .85rem
+}
+
+/* Badge base (riusata ovunque) */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    border: 1px solid var(--line);
+    border-radius: .55rem;
+    padding: .2rem .55rem;
+    font-size: .78rem;
+    font-weight: 800;
+    white-space: nowrap;
+    background: #fff;
+    color: #0f172a;
+    line-height: 1
+}
+
+.badge.badge--sm {
+    padding: .1rem .45rem;
+    font-size: .74rem
+}
+
+/* Badge di stato card */
+.b-queue {
+    background: var(--amber-50);
+    border-color: #fde68a;
+    color: #7c2d12
+}
+
+.b-work {
+    background: var(--blue-50);
+    border-color: #bfdbfe;
+    color: #1e3a8a
+}
+
+.b-closed {
+    background: #eef2f7;
+    border-color: #e5e7eb;
+    color: #334155
+}
+
+/* Body card */
+.card__body {
+    padding: 1rem
+}
+
+.row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem
+}
+
+@media(min-width:900px) {
+    .row {
+        grid-template-columns: 2fr 1fr
+    }
+}
+
+.pill {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: .2rem .6rem;
+    font-size: .76rem;
+    background: #fff
+}
+
+.tag {
+    display: inline-flex;
+    align-items: center;
+    gap: .25rem;
+    border: 1px solid var(--line);
+    border-radius: .5rem;
+    padding: .2rem .5rem;
+    font-size: .74rem;
+    background: #fff
+}
+
+.tip-row {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    flex-wrap: wrap
+}
+
+.tip-badge.legend__item {
+    padding: .22rem .55rem;
+    font-size: .84rem
+}
+
+.instructions {
+    border: 1px solid color-mix(in oklab, #dc2626 22%, var(--line));
+    border-left: 6px solid #dc2626;
+    border-radius: .75rem;
+    padding: .65rem .7rem;
+    background: color-mix(in oklab, #dc2626 12%, #fff);
+    line-height: 1.45;
+    font-weight: 500
+}
+
+.note {
+    border: 1px solid color-mix(in oklab, var(--accent-note) 20%, var(--line));
+    border-left: 6px solid var(--accent-note);
+    border-radius: .75rem;
+    padding: .65rem .7rem;
+    background: var(--note-bg);
+    line-height: 1.45
+}
+
+.card__footer {
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+    border-top: 1px solid var(--line);
+    padding: .65rem .75rem;
+    background: #fff
+}
+
+/* Color palette per data-type (cards) */
+.card[data-type="sismico"] {
+    --ev: var(--ev-sismico);
+    --ev-50: var(--ev-sismico-50)
+}
+
+.card[data-type="vulcanico"] {
+    --ev: var(--ev-vulcanico);
+    --ev-50: var(--ev-vulcanico-50)
+}
+
+.card[data-type="idraulico"] {
+    --ev: var(--ev-idraulico);
+    --ev-50: var(--ev-idraulico-50)
+}
+
+.card[data-type="idrogeologico"] {
+    --ev: var(--ev-idrogeologico);
+    --ev-50: var(--ev-idrogeologico-50)
+}
+
+.card[data-type="maremoto"] {
+    --ev: var(--ev-maremoto);
+    --ev-50: var(--ev-maremoto-50)
+}
+
+.card[data-type="deficit-idrico"] {
+    --ev: var(--ev-deficit-idrico);
+    --ev-50: var(--ev-deficit-idrico-50)
+}
+
+.card[data-type="meteo-avverso"] {
+    --ev: var(--ev-meteo-avverso);
+    --ev-50: var(--ev-meteo-avverso-50)
+}
+
+.card[data-type="aib"] {
+    --ev: var(--ev-aib);
+    --ev-50: var(--ev-aib-50)
+}
+
+.card[data-type="uomo"] {
+    --ev: var(--ev-uomo);
+    --ev-50: var(--ev-uomo-50)
+}
+
+.card[data-type="altro"] {
+    --ev: #64748b;
+    --ev-50: #f1f5f9
+}
+
+.card[data-type] {
+    border-left: 8px solid var(--ev, var(--line))
+}
+
+.card[data-type] .card__head {
+    background: var(--ev-50, #fafbff)
+}
+
+/* Pager */
+.pager {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    justify-content: center;
+    padding: .6rem 1.1rem;
+    border-top: 1px solid var(--line);
+    background: #fff
+}
+
+.pager .btn {
+    padding: .35rem .6rem
+}
+
+.pager__label {
+    font-size: .88rem;
+    color: var(--muted);
+    letter-spacing: .1px
+}
+
+/* BADGE direzione/priorità (modale) */
+.badge--in {
+    background: #ecfeff;
+    border-color: #a5f3fc
+}
+
+.badge--out {
+    background: #fff7ed;
+    border-color: #fed7aa
+}
+
+.prio-badge {
+    display: inline-block;
+    border: 1px solid #e5e7eb;
+    border-radius: .5rem;
+    padding: .15rem .45rem;
+    font-size: .72rem
+}
+
+.prio--alta {
+    background: #fef2f2;
+    border-color: #fecaca
+}
+
+.prio--media {
+    background: #fffbeb;
+    border-color: #fde68a
+}
+
+.prio--bassa {
+    background: #ecfeff;
+    border-color: #a5f3fc
+}
+
+.prio--nessuna {
+    background: #f1f5f9;
+    border-color: #e2e8f0
+}
+
+/* ===== Modals ===== */
+.modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 50
+}
+
+.modal.is-open {
+    display: flex
+}
+
+.modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, .45);
+    backdrop-filter: saturate(120%) blur(2px)
+}
+
+.modal__dialog {
+    position: relative;
+    width: min(900px, 92vw);
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    border-radius: 1rem;
+    background: #fff;
+    box-shadow: var(--shadow);
+    overflow: hidden
+}
+
+.modal__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.1rem;
+    border-bottom: 1px solid var(--line);
+    background: #fafafa
+}
+
+.modal__head--note {
+    background: var(--note-bg);
+    border-bottom-color: color-mix(in oklab, var(--accent-note) 25%, var(--line))
+}
+
+.modal__title {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 800
+}
+
+.modal__x {
+    border: none;
+    background: transparent;
+    font-size: 1.6rem;
+    line-height: 1;
+    cursor: pointer;
+    color: #475569
+}
+
+.modal__body {
+    padding: 1.1rem;
+    overflow: auto;
+    background: var(--form-bg)
+}
+
+.modal__foot {
+    display: flex;
+    gap: .6rem;
+    justify-content: flex-end;
+    padding: .85rem 1.1rem;
+    border-top: 1px solid var(--line);
+    background: #fff
+}
+
+/* ===== C-MODAL ===== */
+.c-modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 60
+}
+
+.c-modal.is-open {
+    display: flex
+}
+
+.c-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, .45);
+    backdrop-filter: saturate(120%) blur(2px)
+}
+
+.c-modal__dialog {
+    position: relative;
+    width: min(48rem, 92vw);
+    max-height: 80vh;
+    overflow: auto;
+    border-radius: 1rem;
+    background: #fff;
+    box-shadow: var(--shadow);
+    padding: 1.1rem
+}
+
+.c-modal__close {
+    position: absolute;
+    top: .6rem;
+    right: .6rem;
+    border: 1px solid var(--line);
+    background: #fff;
+    border-radius: .6rem;
+    padding: .25rem .5rem;
+    cursor: pointer
+}
+
+.hidden {
+    display: none
+}
+
+/* === LOG UI – look & feel pro (toolbar, table, timeline, badges) === */
+.log-sec {
+    border: 1px solid var(--line);
+    border-radius: 1rem;
+    background: #fff;
+    box-shadow: var(--shadow)
+}
+
+/* Head */
+.log-head {
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+    padding: 1rem 1.1rem;
+    border-bottom: 1px solid var(--line);
+    background: linear-gradient(180deg, #fafafa 0%, #ffffff 100%)
+}
+
+.log-title {
+    margin: 0;
+    font-weight: 800;
+    font-size: 1rem
+}
+
+.log-meta {
+    margin-left: auto;
+    color: var(--muted);
+    font-size: .84rem
+}
+
+/* Toolbar */
+.log-toolbar {
+    display: grid;
+    gap: .6rem;
+    padding: .8rem 1.1rem;
+    background: #fff;
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 1px 0 rgba(2, 6, 23, .03) inset
+}
+
+@media(min-width:900px) {
+    .log-toolbar {
+        grid-template-columns: 1fr 1fr 1fr 1fr auto auto;
+        align-items: end
+    }
+}
+
+.log-field .lbl {
+    margin-bottom: .25rem;
+    font-size: .8rem;
+    color: #475569;
+    font-weight: 600
+}
+
+.log-select,
+.log-input {
+    height: 2.4rem;
+    border: 1px solid var(--line);
+    border-radius: .6rem;
+    padding: .35rem .6rem;
+    background: #fff;
+    width: 100%;
+    box-shadow: 0 1px 0 rgba(2, 6, 23, .02) inset
+}
+
+.log-select:focus,
+.log-input:focus {
+    outline: 3px solid color-mix(in oklab, var(--accent-form) 22%, transparent);
+    border-color: color-mix(in oklab, var(--accent-form) 45%, var(--line));
+    box-shadow: 0 0 0 2px color-mix(in oklab, var(--accent-form) 12%, transparent)
+}
+
+.log-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    border: 1px solid var(--line);
+    background: #fff;
+    border-radius: .6rem;
+    padding: .45rem .65rem;
+    cursor: pointer
+}
+
+.log-btn--primary {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: #fff
+}
+
+.log-btn:disabled {
+    opacity: .6;
+    cursor: not-allowed
+}
+
+/* Table */
+.log-wrap {
+    overflow-x: auto;
+    background: #fff;
+    border-top: 1px solid var(--line)
+}
+
+.log-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: .92rem
+}
+
+.log-table thead th {
+    position: sticky;
+    top: 0;
+    background: #fff;
+    z-index: 1;
+    border-bottom: 1px solid var(--line);
+    font-weight: 700;
+    box-shadow: 0 1px 0 rgba(2, 6, 23, .06)
+}
+
+.log-table th,
+.log-table td {
+    padding: .55rem .75rem;
+    text-align: left
+}
+
+.log-table tbody tr:nth-child(even) {
+    background: #fafcff
+}
+
+.log-row {
+    transition: background .12s ease, box-shadow .12s ease, transform .06s ease
+}
+
+.log-row:hover {
+    background: #f5f8ff;
+    box-shadow: 0 1px 0 rgba(37, 99, 235, .10) inset
+}
+
+/* Bordino sinistro coerente con azione (se la riga ha data-action) */
+.log-table tbody tr[data-action="assign"] {
+    box-shadow: -3px 0 0 0 var(--blue-50) inset
+}
+
+.log-table tbody tr[data-action="note"] {
+    box-shadow: -3px 0 0 0 var(--note-bg) inset
+}
+
+.log-table tbody tr[data-action="close"] {
+    box-shadow: -3px 0 0 0 #e8f6ea inset
+}
+
+/* Bottone GEN-xxx compatto */
+.btn.btn-xs,
+.log-table [data-open-seg] {
+    padding: .18rem .45rem;
+    font-size: .78rem;
+    border-radius: .65rem;
+    line-height: 1.1;
+    border-color: color-mix(in oklab, var(--blue) 30%, var(--line));
+    background: color-mix(in oklab, var(--blue) 6%, #fff)
+}
+
+.log-table [data-open-seg]:hover {
+    background: color-mix(in oklab, var(--blue) 10%, #fff)
+}
+
+/* Testo nota */
+.log-note {
+    color: #0f172a;
+    font-size: .9rem;
+    line-height: 1.45
+}
+
+.log-muted {
+    color: var(--muted);
+    font-size: .85rem
+}
+
+/* === Badge azione (colori DIVERSI) === */
+/* Funziona sia con classi .badge-assign|note|close che con attributo data-act="..." */
+.badge-assign,
+.badge[data-act="assign"] {
+    background: var(--blue-50);
+    border-color: #bfdbfe;
+    color: #1e3a8a;
+}
+
+.badge-assign::before,
+.badge[data-act="assign"]::before {
+    content: "⇄";
+    font-weight: 700;
+    font-size: .9em
+}
+
+.badge-note,
+.badge[data-act="note"] {
+    background: var(--note-bg);
+    border-color: color-mix(in oklab, var(--accent-note) 28%, var(--line));
+    color: #1e3a8a;
+}
+
+.badge-note::before,
+.badge[data-act="note"]::before {
+    content: "📝";
+    font-size: .95em
+}
+
+/* Verde per CHIUSURA (diverso dagli altri) */
+.badge-close,
+.badge[data-act="close"] {
+    background: #e8f6ea;
+    /* verde chiaro */
+    border-color: #c6e9cf;
+    /* bordo verde */
+    color: #14532d;
+    /* testo verde scuro */
+}
+
+.badge-close::before,
+.badge[data-act="close"]::before {
+    content: "✓";
+    font-weight: 900;
+    font-size: .9em
+}
+
+.log-table td .badge {
+    vertical-align: middle
+}
+
+/* Timeline */
+.timeline {
+    position: relative;
+    padding: 1rem 1.1rem;
+    background: #fff
+}
+
+.timeline::before {
+    content: "";
+    position: absolute;
+    left: 1.3rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--line)
+}
+
+.t-item {
+    position: relative;
+    margin: 0 0 1rem 0;
+    padding-left: 2.6rem;
+    transition: background .12s ease
+}
+
+.t-item:hover {
+    background: #f8fafc;
+    border-radius: .6rem
+}
+
+.t-dot {
+    position: absolute;
+    left: .98rem;
+    top: .3rem;
+    width: .65rem;
+    height: .65rem;
+    border-radius: 999px;
+    background: var(--blue);
+    box-shadow: 0 0 0 3px var(--blue-50)
+}
+
+/* Dots per azione quando presente data-action */
+.t-item[data-action="assign"] .t-dot {
+    background: #1e3a8a;
+    box-shadow: 0 0 0 3px var(--blue-50)
+}
+
+.t-item[data-action="note"] .t-dot {
+    background: #2563eb;
+    box-shadow: 0 0 0 3px var(--note-bg)
+}
+
+.t-item[data-action="close"] .t-dot {
+    background: #15803d;
+    box-shadow: 0 0 0 3px #e8f6ea
+}
+
+.t-meta {
+    display: flex;
+    gap: .5rem;
+    align-items: center;
+    margin-bottom: .2rem
+}
+
+.t-note {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: .6rem;
+    padding: .6rem .7rem;
+    box-shadow: 0 1px 0 rgba(2, 6, 23, .03) inset
+}
+
+/* Separatori puntinati nella meta */
+.t-meta>*+* {
+    position: relative;
+    padding-left: .5rem
+}
+
+.t-meta>*+*::before {
+    content: "•";
+    position: absolute;
+    left: .15rem;
+    color: var(--muted)
+}
+
+/* Pager log */
+.log-pager {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .6rem;
+    padding: .7rem 1.1rem;
+    border-top: 1px solid var(--line);
+    background: #fff
+}
+
+.log-pager .log-btn {
+    border-radius: .7rem;
+    padding: .4rem .65rem
+}
+
+.log-pager .pager__label {
+    color: var(--muted);
+    font-size: .88rem
+}
+
+/* Badge azioni — colori distinti */
+.badge-assign,
+.badge[data-act="assign"] {
+    background: #e0f2fe;
+    /* azzurro chiaro */
+    border-color: #93c5fd;
+    color: #1e3a8a;
+}
+
+.badge-assign::before,
+.badge[data-act="assign"]::before {
+    content: "⇄";
+    font-weight: 700;
+    font-size: .9em;
+}
+
+.badge-note,
+.badge[data-act="note"] {
+    background: #fef9c3;
+    /* giallo pastello */
+    border-color: #fde68a;
+    color: #78350f;
+}
+
+.badge-note::before,
+.badge[data-act="note"]::before {
+    content: "📝";
+    font-size: .95em;
+}
+
+.badge-close,
+.badge[data-act="close"] {
+    background: #dcfce7;
+    /* verde chiaro */
+    border-color: #86efac;
+    color: #065f46;
+}
+
+.badge-close::before,
+.badge[data-act="close"]::before {
+    content: "✓";
+    font-weight: 900;
+    font-size: .9em;
+}
+
+/* Allineamento badge in tabella */
+.log-table td .badge {
+    vertical-align: middle;
+}
+
+/* --- Transizione Da → A (log) --- */
+.flow {
+    display: flex;
+    align-items: center;
+    gap: .35rem;
+    flex-wrap: wrap
+}
+
+.flow .arrow {
+    opacity: .7
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    padding: .15rem .45rem;
+    border: 1px solid var(--line);
+    border-radius: .5rem;
+    font-size: .78rem;
+    background: #fff;
+    line-height: 1
+}
+
+.chip strong {
+    font-weight: 800;
+    font-size: .78rem;
+    letter-spacing: .1px
+}
+
+.chip--from {
+    background: #fff7ed;
+    border-color: #fed7aa
+}
+
+/* “da” */
+.chip--to {
+    background: #ecfeff;
+    border-color: #a5f3fc
+}
+
+/* “a”  */
+
+/* colori stato dentro le chip */
+.st-queue {
+    color: #7c2d12
+}
+
+/* Aperta/In coda */
+.st-assigned {
+    color: #1e3a8a
+}
+
+/* In lavorazione  */
+.st-closed {
+    color: #334155
+}
+
+/* Chiusa          */

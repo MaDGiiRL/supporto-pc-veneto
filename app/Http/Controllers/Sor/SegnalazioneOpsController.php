@@ -16,7 +16,7 @@ class SegnalazioneOpsController extends Controller
     public function roles()
     {
         return response()->json([
-            ['slug' => 'coordinamento', 'label' => 'Coordinamento (Admin)', 'can_assign' => true, 'can_close' => true],
+            ['slug' => 'coordinamento', 'label' => 'Coordinamento', 'can_assign' => true, 'can_close' => true],
             ['slug' => 'volontariato', 'label' => 'Volontariato', 'can_assign' => false, 'can_close' => true],
             ['slug' => 'mezzi', 'label' => 'Mezzi e Materiali', 'can_assign' => false, 'can_close' => true],
             ['slug' => 'prociv', 'label' => 'Protezione Civile', 'can_assign' => false, 'can_close' => true],

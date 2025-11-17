@@ -70,8 +70,8 @@
                     <tr>
                         <th class="px-3 py-2">Data/Ora</th>
                         <th class="px-3 py-2">E/U</th>
-                        <th class="px-3 py-2">Ente/Tipologia</th>
-                        <th class="px-3 py-2">Comuni/Frazioni</th>
+                        <th class="px-3 py-2">Ente</th>
+                        <th class="px-3 py-2">Comuni</th>
                         <th class="px-3 py-2 w-sintesi">Sintesi</th>
                         <th class="px-3 py-2">Operatore</th>
                         <th class="px-3 py-2">Evento</th>
@@ -465,18 +465,20 @@
 <script type="module">
     /* ===== Utils ===== */
     const $ = (s) => document.querySelector(s);
-    const fmtDT = (d) => new Intl.DateTimeFormat("it-IT", {
-        dateStyle: "short",
-        timeStyle: "short"
-    }).format(d);
+    const fmtDT = (d) =>
+        new Intl.DateTimeFormat("it-IT", {
+            dateStyle: "short",
+            timeStyle: "short"
+        }).format(d);
     const PREVIEW_MAX = 500;
-    const truncate = (str = "", n = PREVIEW_MAX) => (str.length > n ? str.slice(0, n).trimEnd() + "…" : str);
+    const truncate = (str = "", n = PREVIEW_MAX) =>
+        (str.length > n ? str.slice(0, n).trimEnd() + "…" : str);
     const nowIT = () => {
         const d = new Date();
         const pad = (n) => String(n).padStart(2, "0");
         return {
             date: `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`,
-            time: `${pad(d.getHours())}:${pad(d.getMinutes())}`
+            time: `${pad(d.getHours())}:${pad(d.getMinutes())}`,
         };
     };
     const parseIT = (dateStr, timeStr = "00:00") => {
@@ -495,20 +497,22 @@
             position: "top-end",
             showConfirmButton: false,
             timer,
-            timerProgressBar: true
+            timerProgressBar: true,
         });
     };
-    const confirmDelete = (title = "Eliminare la segnalazione?", text = "Questa azione non può essere annullata.") =>
-        Swal.fire({
-            title,
-            text,
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Sì, elimina",
-            cancelButtonText: "Annulla",
-            confirmButtonColor: "#d33",
-            cancelButtonColor: "#3085d6"
-        });
+    const confirmDelete = (
+        title = "Eliminare la segnalazione?",
+        text = "Questa azione non può essere annullata."
+    ) => Swal.fire({
+        title,
+        text,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Sì, elimina",
+        cancelButtonText: "Annulla",
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+    });
 
     function fallbackCopy(text) {
         try {
@@ -541,7 +545,9 @@
         render() {
             this.root.classList.add("tag-input--wrap");
             this.root.innerHTML = `<div class="tags" role="list"></div>
-        <div class="tag-input__control"><input class="tag-input__field" ${this.datalistId?`list="${this.datalistId}"`:""} placeholder="${this.placeholder}"/></div>`;
+        <div class="tag-input__control"><input class="tag-input__field" ${
+          this.datalistId ? `list="${this.datalistId}"` : ""
+        } placeholder="${this.placeholder}"/></div>`;
             this.tagsEl = this.root.querySelector(".tags");
             this.inputEl = this.root.querySelector(".tag-input__field");
             this.inputEl.addEventListener("keydown", (e) => {
@@ -583,7 +589,10 @@
     }
 
     /* ===== Seed di base (puoi sostituire con API meta) ===== */
-    const COMUNI = ["Adria", "Affi", "Albignasego", "Bologna", "Bussolengo", "Farra di Soligo", "Milano", "Napoli", "Roma", "Rovigo", "Torino", "Verona", "Vicenza", "Venezia"];
+    const COMUNI = [
+        "Adria", "Affi", "Albignasego", "Bologna", "Bussolengo", "Farra di Soligo",
+        "Milano", "Napoli", "Roma", "Rovigo", "Torino", "Verona", "Vicenza", "Venezia",
+    ];
     COMUNI.forEach((c) => {
         const o = document.createElement("option");
         o.value = c;
@@ -599,9 +608,12 @@
         MI: ["Milano"],
         NA: ["Napoli"],
         RM: ["Roma"],
-        TO: ["Torino"]
+        TO: ["Torino"],
     };
-    const TYPES = ["sismico", "vulcanico", "idraulico", "idrogeologico", "maremoto", "deficit-idrico", "meteo-avverso", "aib", "uomo", "altro"];
+    const TYPES = [
+        "sismico", "vulcanico", "idraulico", "idrogeologico", "maremoto",
+        "deficit-idrico", "meteo-avverso", "aib", "uomo", "altro",
+    ];
     const TYPE_LABELS = {
         sismico: "Sismico",
         vulcanico: "Vulcanico",
@@ -612,132 +624,42 @@
         "meteo-avverso": "Meteo Avverso",
         aib: "AIB",
         uomo: "Prodotti dall'uomo",
-        altro: "Altro"
+        altro: "Altro",
     };
 
-    /* ===== Schemi specifici (GEN form) ===== */
-    const SPEC_SCHEMAS = {
-        /* come prima, identico */
-        sismico: [{
-            id: "magnitudo",
-            label: "Magnitudo (se disponibile)"
-        }, {
-            id: "intensita",
-            label: "Intensità MCS/EMS"
-        }, {
-            id: "coordinate",
-            label: "Coordinate epicentro"
-        }, {
-            id: "danni",
-            label: "Danni segnalati (testo)",
-            type: "textarea"
-        }],
-        vulcanico: [{
-            id: "tremore",
-            label: "Tremore vulcanico (trend)"
-        }, {
-            id: "cenere",
-            label: "Ricaduta ceneri (aree)"
-        }, {
-            id: "dpi",
-            label: "DPI distribuiti (qtà)"
-        }],
-        idraulico: [{
-            id: "livello",
-            label: "Livello idrometrico (m)"
-        }, {
-            id: "argine",
-            label: "Criticità arginale (sì/no)"
-        }, {
-            id: "sottopassi",
-            label: "Sottopassi allagati (#)"
-        }],
-        idrogeologico: [{
-            id: "tipologia_frana",
-            label: "Tipologia frana"
-        }, {
-            id: "volume",
-            label: "Volume stimato (mc)"
-        }, {
-            id: "viabilita",
-            label: "Interferenza viabilità (testo)",
-            type: "textarea"
-        }],
-        maremoto: [{
-            id: "allerta",
-            label: "Livello allerta"
-        }, {
-            id: "aree_costiere",
-            label: "Aree costiere interessate"
-        }],
-        "deficit-idrico": [{
-            id: "pressione",
-            label: "Riduzione pressione (%)"
-        }, {
-            id: "autobotti",
-            label: "Autobotti in servizio (#)"
-        }],
-        "meteo-avverso": [{
-            id: "fenomeno",
-            label: "Fenomeno prevalente (vento, grandine…)"
-        }, {
-            id: "intensita",
-            label: "Intensità"
-        }, {
-            id: "danni_diffusi",
-            label: "Danni diffusi? (sì/no)"
-        }],
-        aib: [{
-            id: "superficie",
-            label: "Superficie percorsa dal fuoco (ha)"
-        }, {
-            id: "combustibile",
-            label: "Tipo combustibile (bosco, sterpaglie…)"
-        }, {
-            id: "coordinate",
-            label: "Coordinate/Località puntuale"
-        }, {
-            id: "mezzi",
-            label: "Mezzi impiegati (AIB/VVF/CAI…)"
-        }, {
-            id: "meteo",
-            label: "Condizioni meteo (vento, umidità…)"
-        }],
-        uomo: [{
-            id: "tipologia",
-            label: "Tipologia incidente (sversamento, industriale…)"
-        }, {
-            id: "ente_coinvolto",
-            label: "Ente/Azienda coinvolta"
-        }, {
-            id: "impatti",
-            label: "Impatti su servizi/ambiente",
-            type: "textarea"
-        }],
-        altro: [{
-            id: "descrizione",
-            label: "Descrizione dettagli (testo)",
-            type: "textarea"
-        }]
-    };
-
-    function renderSpecific(container, type, prefix) {
-        container.innerHTML = "";
-        const schema = SPEC_SCHEMAS[type] || [];
-        if (!schema.length) {
-            container.innerHTML = `<div class="text-xs opacity-70">Nessun campo aggiuntivo per questa tipologia.</div>`;
-            return;
+    /* ===== Helpers di mapping robusto ===== */
+    const pick = (obj, ...candidates) => {
+        for (const c of candidates) {
+            if (typeof c === "string") {
+                if (obj && obj[c] != null) return obj[c];
+            } else if (Array.isArray(c)) {
+                let cur = obj,
+                    ok = true;
+                for (const k of c) {
+                    if (cur && Object.prototype.hasOwnProperty.call(cur, k)) {
+                        cur = cur[k];
+                    } else {
+                        ok = false;
+                        break;
+                    }
+                }
+                if (ok && cur != null) return cur;
+            }
         }
-        const grid = document.createElement("div");
-        grid.className = "grid md:grid-cols-2 gap-3";
-        schema.forEach((f) => {
-            const wrap = document.createElement("label");
-            wrap.className = "grid gap-1.5";
-            wrap.innerHTML = `<span class="label">${f.label}</span>` + (f.type === "textarea" ? `<textarea class="input" id="${prefix}-${f.id}"></textarea>` : `<input class="input" id="${prefix}-${f.id}"/>`);
-            grid.appendChild(wrap);
-        });
-        container.appendChild(grid);
-    }
+        return undefined;
+    };
+    const normalizeISO = (v) => {
+        if (!v) return undefined;
+        if (typeof v === "number") {
+            return (v > 1e12 ? new Date(v) : new Date(v * 1000)).toISOString();
+        }
+        if (typeof v === "string" && /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(v)) {
+            return new Date(v.replace(" ", "T")).toISOString();
+        }
+        const d = new Date(v);
+        if (isNaN(d.getTime())) return undefined;
+        return d.toISOString();
+    };
 
     /* ===== Stato app ===== */
     const state = {
@@ -761,7 +683,7 @@
         _last: {
             genKey: "",
             ongoingKey: ""
-        }
+        },
     };
 
     /* ===== Helpers UI ===== */
@@ -820,7 +742,6 @@
         });
         selectEl.value = selectedId ? String(selectedId) : "";
     }
-
     (function ensureReadMoreModal() {
         if ($("#modal-readmore")) return;
         const wrap = document.createElement("div");
@@ -865,7 +786,7 @@
     }
 
     function topmostOpenModal() {
-        const opens = Array.from(document.querySelectorAll('.c-modal.is-open'));
+        const opens = Array.from(document.querySelectorAll(".c-modal.is-open"));
         return opens.length ? opens[opens.length - 1] : null;
     }
 
@@ -922,7 +843,6 @@
             const ctype = res.headers.get("content-type") || "";
             return ctype.includes("application/json") ? res.json() : res;
         },
-        // Segnalazioni
         listSegnalazioni(params) {
             return this._req("/segnalazioni", {
                 params
@@ -950,7 +870,7 @@
                 params
             });
         },
-        // Eventi
+
         listEventi(params) {
             return this._req("/eventi", {
                 params
@@ -982,96 +902,145 @@
             });
         },
     };
-
     document.addEventListener("api:write:success", () => {
         closeTopModal();
     });
 
-    /* ===== Mappers ===== */
-    const mapSegToUI = (s) => ({
-        id: s.id,
-        created_at: s.creata_il,
-        direzione: s.direzione,
-        tipologia: s.tipologia,
-        aree: s.aree || [],
-        sintesi: s.sintesi || "",
-        operatore: s.operatore || "",
-        event_id: s.evento_id ? String(s.evento_id) : "",
-        priorita: s.priorita || "Nessuna"
-    });
-    const mapEvToUI = (e) => ({
-        id: e.id,
-        tipo: e.tipologia,
-        descrizione: e.descrizione || "",
-        aggiornamento: e.aggiornato_il,
-        operatore: e.operatore || "",
-        aree: e.aree || [],
-        open: !!e.aperto
-    });
-    const mapComToUI = (c) => {
-        const dt = c.comunicata_il ? new Date(c.comunicata_il) : null;
-        const itDate = dt ? dt.toLocaleDateString("it-IT") : "";
-        const itTime = dt ? dt.toTimeString().slice(0, 5) : "";
+    /* ===== Mappers robusti ===== */
+    const mapSegToUI = (s = {}) => {
+        const created = pick(s, "creata_il", "created_at", "createdAt", "data_creazione", "data");
+        const dtISO = normalizeISO(created);
+        const evId = pick(s, "evento_id", "event_id", "eventId", ["evento", "id"], ["event", "id"]);
+        const rawTipo = pick(s, "tipologia", "tipo") || "";
         return {
-            data: itDate,
-            ora: itTime,
-            tipo: c.tipo || "—",
-            verso: c.verso || "Entrata",
-            mitt: c.mitt_dest || "",
-            tel: c.telefono || "",
-            mail: c.email || "",
-            indirizzo: c.indirizzo || "",
-            provincia: c.provincia || "",
-            comune: c.comune || "",
-            aree: c.aree || [],
-            oggetto: c.oggetto || "",
-            priorita: c.priorita || "Nessuna",
-            contenuto: c.contenuto || "",
-        };
-    };
-    const mapGenToUI = (s) => {
-        const dt = s.creata_il ? new Date(s.creata_il) : null;
-        const itDate = dt ? dt.toLocaleDateString("it-IT") : "";
-        const itTime = dt ? dt.toTimeString().slice(0, 5) : "";
-        return {
-            id: s.id,
-            data: itDate,
-            ora: itTime,
-            direzione: (s.direzione || "E").toUpperCase(),
-            tipologia: TYPE_LABELS[s.tipologia] || s.tipologia || "",
-            areeText: (s.aree || []).join(", "),
-            sintesi: s.sintesi || "",
-            operatore: s.operatore || "",
-            priorita: s.priorita || "Nessuna",
+            id: pick(s, "id", "uuid"),
+            created_at: dtISO,
+            direzione: (pick(s, "direzione", "verso") || "E").toString().toUpperCase(),
+            tipologia: rawTipo,
+            aree: pick(s, "aree", "areas") || [],
+            sintesi: pick(s, "sintesi", "note", "descrizione", "oggetto") || "",
+            operatore: pick(s, "operatore", "user", "utente", "created_by") || "",
+            event_id: evId ? String(evId) : "",
+            priorita: pick(s, "priorita", "priority") || "Nessuna",
+            ente: pick(s, "ente", "ente_nome", "enteName"),
         };
     };
 
-    /* ===== Loaders (con filtri corretti) ===== */
+    const mapEvToUI = (e = {}) => {
+        const updatedRaw = pick(e, "aggiornato_il", "updated_at", "updatedAt", "ultima_comunicazione", "last_report_at", "created_at", "data");
+        const updatedISO = normalizeISO(updatedRaw);
+        return {
+            id: e.id,
+            tipo: e.tipologia || e.tipo || "altro",
+            descrizione: e.descrizione || "",
+            aggiornamento: updatedISO || null,
+            operatore: e.operatore || "",
+            aree: e.aree || [],
+            open: e.aperto ?? e.is_open ?? true,
+        };
+    };
+
+    const mapComToUI = (c = {}) => {
+        const when = pick(c, "comunicata_il", "created_at", "createdAt", "data");
+        const iso = normalizeISO(when);
+        const dt = iso ? new Date(iso) : null;
+        return {
+            data: dt ? dt.toLocaleDateString("it-IT") : (c.data || ""),
+            ora: dt ? dt.toTimeString().slice(0, 5) : (c.ora || ""),
+            tipo: c.tipo || "—",
+            verso: c.verso || "Entrata",
+            mitt: pick(c, "mitt_dest", "mittente", "destinatario") || "",
+            tel: pick(c, "telefono", "phone") || "",
+            mail: pick(c, "email", "mail") || "",
+            indirizzo: pick(c, "indirizzo", "address") || "",
+            provincia: c.provincia || "",
+            comune: c.comune || "",
+            aree: c.aree || [],
+            oggetto: pick(c, "oggetto", "subject") || "",
+            priorita: pick(c, "priorita", "priority") || "Nessuna",
+            contenuto: pick(c, "contenuto", "content", "testo") || "",
+        };
+    };
+
+    // *** QUI: mapper robusto della segnalazione generica collegata all’evento
+    const mapGenToUI = (s = {}) => {
+        // Data/Ora
+        let itDate = "",
+            itTime = "";
+        const created = pick(s, "creata_il", "created_at", "createdAt", "data_creazione", "data");
+        if (created) {
+            const d = new Date(normalizeISO(created));
+            if (!isNaN(d)) {
+                itDate = d.toLocaleDateString("it-IT");
+                itTime = d.toTimeString().slice(0, 5);
+            }
+        } else {
+            itDate = (s.data || "").toString();
+            itTime = (s.ora || "").toString();
+        }
+
+        // Direzione: E/U o Entrata/Uscita
+        const rawDir = (pick(s, "direzione", "verso") || "E").toString().trim().toUpperCase();
+        const direzione = rawDir.startsWith("U") ? "U" : "E";
+
+        // Tipologia
+        const rawTipo = pick(s, "tipologia", "tipo") || "";
+        const tipologia = TYPE_LABELS[rawTipo] || rawTipo || "";
+
+        // Aree
+        const areeArr = Array.isArray(s.aree) ? s.aree :
+            typeof s.aree_text === "string" ? s.aree_text.split(",").map(x => x.trim()).filter(Boolean) :
+            [];
+        const areeText = areeArr.join(", ");
+
+        // Sintesi
+        const sintesi = pick(s, "sintesi", "note", "descrizione", "oggetto") || "";
+
+        return {
+            id: pick(s, "id", "uuid", "segnalazione_id", "pk"),
+            data: itDate,
+            ora: itTime,
+            direzione,
+            tipologia,
+            areeText,
+            sintesi,
+            operatore: pick(s, "operatore", "user", "utente", "created_by") || "",
+            priorita: pick(s, "priorita", "priority") || "Nessuna",
+        };
+    };
+
+    function extractGenericReportsFromEvent(full = {}) {
+        const list = pick(full, "segnalazioni", "segnalazioni_generiche", "generic_reports", ["relations", "segnalazioni"]) || [];
+        return (Array.isArray(list) ? list : []).map(mapGenToUI);
+    }
+
+    /* ===== Loaders ===== */
     async function refreshGEN() {
         try {
             const params = {
                 page: state.page.gen,
                 per_page: 10,
-                // global
                 q: state.global.q || null,
                 date: state.global.date || null,
                 time: state.global.time || null,
-                // per-tabella (con fallback al globale per Comune)
                 comune: $("#gen-filter-comune").value || state.global.comune || null,
                 dal: $("#gen-filter-dal").value || null,
                 al: $("#gen-filter-al").value || null,
             };
             const res = await API.listSegnalazioni(params);
-            state.gen = (res.data || []).map(mapSegToUI);
+            const rows = Array.isArray(res) ? res : (res.data || []);
+            state.gen = rows.map(mapSegToUI);
 
-            // chiave per evitare re-render inutili
             state._last.genKey = JSON.stringify({
-                ids: state.gen.map(x => x.id),
+                ids: state.gen.map((x) => x.id),
                 meta: res.meta
             });
-            $("#gen-page").textContent = `Pagina ${res.meta?.current_page ?? 1} di ${res.meta?.last_page ?? 1}`;
-            $("#gen-prev").disabled = (res.meta?.current_page ?? 1) <= 1;
-            $("#gen-next").disabled = (res.meta?.current_page ?? 1) >= (res.meta?.last_page ?? 1);
+            const cur = res.meta?.current_page ?? 1;
+            const last = res.meta?.last_page ?? 1;
+            $("#gen-page").textContent = `Pagina ${cur} di ${last}`;
+            $("#gen-prev").disabled = cur <= 1;
+            $("#gen-next").disabled = cur >= last;
+
             renderGEN();
         } catch (err) {
             console.error("Errore /segnalazioni:", err);
@@ -1088,33 +1057,27 @@
         const baseParams = {
             page: state.page.ongoing,
             per_page: 10,
-            // global
             q: state.global.q || null,
-            // per-tabella (fallback globale)
             comune: $("#ongoing-filter-comune").value || state.global.comune || null,
             dal: $("#ongoing-filter-dal").value || null,
-            al: $("#ongoing-filter-al").value || null
+            al: $("#ongoing-filter-al").value || null,
         };
-
         try {
             const res = await API.listEventi(baseParams);
             const rows = Array.isArray(res) ? res : (res.data || []);
             let items = rows.map(mapEvToUI);
 
-            if (state.ui.ongoingStatus === "open") {
-                items = items.filter(e => e.open);
-            } else if (state.ui.ongoingStatus === "closed") {
-                items = items.filter(e => !e.open);
-            }
+            if (state.ui.ongoingStatus === "open") items = items.filter((e) => e.open);
+            else if (state.ui.ongoingStatus === "closed") items = items.filter((e) => !e.open);
 
             state.ongoing = items;
             state._last.ongoingKey = JSON.stringify({
-                ids: items.map(x => x.id),
+                ids: items.map((x) => x.id),
                 meta: res.meta
             });
 
-            const cur = (res.meta?.current_page ?? 1);
-            const last = (res.meta?.last_page ?? 1);
+            const cur = res.meta?.current_page ?? 1;
+            const last = res.meta?.last_page ?? 1;
             $("#ongoing-page").textContent = `Pagina ${cur} di ${last}`;
             $("#ongoing-prev").disabled = cur <= 1;
             $("#ongoing-next").disabled = cur >= last;
@@ -1131,10 +1094,10 @@
         }
     }
 
-    /* ===== Polling “realtime” solo front-end ===== */
+    /* ===== Polling ===== */
     (function setupPolling() {
         let timer = null;
-        const INTERVAL = 8000; // 8s
+        const INTERVAL = 8000;
         const tick = async () => {
             if (document.hidden) return;
             try {
@@ -1142,8 +1105,7 @@
             } catch {}
         };
         const start = () => {
-            if (timer) return;
-            timer = setInterval(tick, INTERVAL);
+            if (!timer) timer = setInterval(tick, INTERVAL);
         };
         const stop = () => {
             if (timer) {
@@ -1151,7 +1113,6 @@
                 timer = null;
             }
         };
-
         document.addEventListener("visibilitychange", () => {
             if (document.hidden) stop();
             else {
@@ -1164,8 +1125,6 @@
             start();
         });
         window.addEventListener("blur", stop);
-
-        // avvio iniziale
         start();
     })();
 
@@ -1183,30 +1142,39 @@
             tr.className = "border-t border-slate-200";
             tr.dataset.id = r.id;
             tr.classList.add("prio-row", prioClass(r.priorita));
+
             const tdDt = Object.assign(document.createElement("td"), {
                 className: "px-3 py-2",
-                textContent: r.created_at ? fmtDT(new Date(r.created_at)) : "—"
+                textContent: r.created_at ? fmtDT(new Date(r.created_at)) : "—",
             });
+
             const tdDir = Object.assign(document.createElement("td"), {
                 className: "px-3 py-2"
             });
             tdDir.appendChild(makeDirBadge(r.direzione));
+
+            // Ente/Tipologia (come richiesto dall'header)
+            const typeLabel = TYPE_LABELS[r.tipologia] || r.tipologia || "";
             const tdTp = Object.assign(document.createElement("td"), {
                 className: "px-3 py-2",
-                textContent: TYPE_LABELS[r.tipologia] || r.tipologia || ""
+                textContent: r.ente ? `${r.ente} — ${typeLabel}` : typeLabel,
             });
+
             const tdAr = Object.assign(document.createElement("td"), {
                 className: "px-3 py-2",
-                textContent: (r.aree || []).join(", ")
+                textContent: (r.aree || []).join(", "),
             });
+
             const tdSy = Object.assign(document.createElement("td"), {
-                className: "px-3 py-2 w-sintesi"
+                className: "px-3 py-2 w-sintesi",
             });
             addReadMoreCell(tdSy, r.sintesi || "", "Segnalazione");
+
             const tdOp = Object.assign(document.createElement("td"), {
                 className: "px-3 py-2",
-                textContent: r.operatore || ""
+                textContent: r.operatore || "",
             });
+
             const tdEv = Object.assign(document.createElement("td"), {
                 className: "px-3 py-2"
             });
@@ -1218,6 +1186,7 @@
                 btn.textContent = `Evento #${r.event_id}`;
                 tdEv.appendChild(btn);
             } else tdEv.textContent = "—";
+
             const tdAc = document.createElement("td");
             tdAc.className = "px-3 py-2";
             tdAc.innerHTML = `<div class="actions">
@@ -1225,6 +1194,7 @@
         <button class="btn-xs btn-ghost" title="Modifica" data-action="edit" data-type="gen" data-id="${r.id}">✏️</button>
         <button class="btn-xs btn-danger" title="Elimina" data-action="del" data-type="gen" data-id="${r.id}">🗑️</button>
       </div>`;
+
             tr.append(tdDt, tdDir, tdTp, tdAr, tdSy, tdOp, tdEv, tdAc);
             root.appendChild(tr);
         });
@@ -1237,7 +1207,9 @@
         const legend = document.createElement("div");
         legend.id = "ongoing-legend";
         legend.className = "ongoing-legend";
-        legend.innerHTML = TYPES.map((t) => `<span class="ol-item" data-type="${t}"><i class="ol-dot" aria-hidden="true"></i>${TYPE_LABELS[t]}</span>`).join("");
+        legend.innerHTML = TYPES.map(
+            (t) => `<span class="ol-item" data-type="${t}"><i class="ol-dot" aria-hidden="true"></i>${TYPE_LABELS[t]}</span>`
+        ).join("");
         const cards = $("#ongoing-cards");
         cards.parentNode.insertBefore(legend, cards);
     }
@@ -1259,6 +1231,7 @@
             const isOpen = ev.open !== false;
             const quando = ev.aggiornamento ? fmtDT(new Date(ev.aggiornamento)) : "—";
             const aree = (ev.aree || []).join(", ");
+
             const card = document.createElement("article");
             card.className = "ev-card";
             card.dataset.type = typeKey;
@@ -1294,18 +1267,25 @@
         }
     }
 
+    /* ===== Modale Evento ===== */
     async function openEventModal(eventId) {
         state.ui.currentEventId = eventId;
         const full = await API.getEvento(eventId);
         const ev = mapEvToUI(full);
-        ev.reports = (full.comunicazioni || []).map(mapComToUI);
-        ev.genericReports = (full.segnalazioni || []).map(mapGenToUI);
+
+        // Comunicazioni (tecniche)
+        const commsRaw = pick(full, "comunicazioni", "reports") || [];
+        ev.reports = (Array.isArray(commsRaw) ? commsRaw : []).map(mapComToUI);
+
+        // Segnalazioni generiche collegate (normalizzazione robusta)
+        ev.genericReports = extractGenericReportsFromEvent(full);
 
         $("#ev-title").textContent = ev.descrizione || "—";
         const subtitle = $("#ev-subtitle");
-        subtitle.textContent = `${TYPE_LABELS[ev.tipo]||ev.tipo} • Ultimo agg.: ${fmtDT(new Date(ev.aggiornamento))} `;
+        const whenTxt = ev.aggiornamento ? fmtDT(new Date(ev.aggiornamento)) : "—";
+        subtitle.textContent = `${TYPE_LABELS[ev.tipo] || ev.tipo} • Ultimo agg.: ${whenTxt} `;
         const st = document.createElement("span");
-        st.className = `ev-inline-status ${ev.open!==false?"is-open":"is-closed"}`;
+        st.className = `ev-inline-status ${ev.open !== false ? "is-open" : "is-closed"}`;
         st.textContent = ev.open !== false ? "Aperto" : "Chiuso";
         subtitle.appendChild(st);
 
@@ -1316,6 +1296,12 @@
         updateEventStatusUI(ev);
         $("#ev-id").value = ev.id;
         openModal("#modal-event");
+
+        // debug utile
+        console.debug("Evento", ev.id, {
+            genericReportsCount: ev.genericReports.length,
+            sampleGeneric: ev.genericReports[0],
+        });
     }
 
     function renderEventAreas(ev) {
@@ -1356,35 +1342,39 @@
                 openModal("#modal-ev-form");
                 $("#ev-save").textContent = "Salva modifiche";
             });
-            const tdData = document.createElement("td");
-            tdData.className = "px-3 py-2";
-            tdData.textContent = r.data || "";
-            tr.appendChild(tdData);
-            const tdOra = document.createElement("td");
-            tdOra.className = "px-3 py-2";
-            tdOra.textContent = r.ora || "";
-            tr.appendChild(tdOra);
-            const tdTipo = document.createElement("td");
-            tdTipo.className = "px-3 py-2";
-            tdTipo.textContent = r.tipo || "";
-            tr.appendChild(tdTipo);
+
+            const tdData = Object.assign(document.createElement("td"), {
+                className: "px-3 py-2",
+                textContent: r.data || ""
+            });
+            const tdOra = Object.assign(document.createElement("td"), {
+                className: "px-3 py-2",
+                textContent: r.ora || ""
+            });
+            const tdTipo = Object.assign(document.createElement("td"), {
+                className: "px-3 py-2",
+                textContent: r.tipo || ""
+            });
+
             const tdVerso = document.createElement("td");
             tdVerso.className = "px-3 py-2 text-center";
             tdVerso.dataset.verso = "1";
             const raw = (r.verso || "").trim().toUpperCase();
             const dir = raw.startsWith("U") ? "U" : "E";
             tdVerso.appendChild(makeDirBadge(dir));
-            tr.appendChild(tdVerso);
-            [r.mitt, r.tel, r.mail, (r.aree || []).join(", "), r.oggetto].forEach((v) => {
+
+            const restVals = [r.mitt, r.tel, r.mail, (r.aree || []).join(", "), r.oggetto];
+            const restTds = restVals.map((v) => {
                 const td = document.createElement("td");
                 td.className = "px-3 py-2";
                 td.textContent = v || "";
-                tr.appendChild(td);
+                return td;
             });
             const tdPr = document.createElement("td");
             tdPr.className = "px-3 py-2";
             tdPr.appendChild(makePrioBadge(r.priorita || "Nessuna"));
-            tr.appendChild(tdPr);
+
+            tr.append(tdData, tdOra, tdTipo, tdVerso, ...restTds, tdPr);
             tbody.appendChild(tr);
         });
     }
@@ -1398,10 +1388,23 @@
         sec.className = "rounded-2xl border border-slate-200 bg-white p-4";
         sec.innerHTML = `<h4 class="text-sm font-semibold mb-3">Segnalazioni generiche collegate</h4>
       <div class="overflow-x-auto">
-        <table class="w-full text-sm"><thead class="text-left"><tr>
-          <th class="px-3 py-2">Data</th><th class="px-3 py-2">Ora</th><th class="px-3 py-2">E/U</th><th class="px-3 py-2">Tipologia</th>
-          <th class="px-3 py-2">Aree</th><th class="px-3 py-2 w-sintesi">Sintesi</th><th class="px-3 py-2">Operatore</th><th class="px-3 py-2">Priorità</th>
-        </tr></thead><tbody id="ev-gen-tbody"><tr><td colspan="8" class="px-3 py-3 opacity-70">Nessuna segnalazione generica collegata.</td></tr></tbody></table>
+        <table class="w-full text-sm">
+          <thead class="text-left">
+            <tr>
+              <th class="px-3 py-2">Data</th>
+              <th class="px-3 py-2">Ora</th>
+              <th class="px-3 py-2">E/U</th>
+              <th class="px-3 py-2">Tipologia</th>
+              <th class="px-3 py-2">Aree</th>
+              <th class="px-3 py-2 w-sintesi">Sintesi</th>
+              <th class="px-3 py-2">Operatore</th>
+              <th class="px-3 py-2">Priorità</th>
+            </tr>
+          </thead>
+          <tbody id="ev-gen-tbody">
+            <tr><td colspan="8" class="px-3 py-3 opacity-70">Nessuna segnalazione generica collegata.</td></tr>
+          </tbody>
+        </table>
       </div>`;
         parent.appendChild(sec);
         return sec;
@@ -1423,6 +1426,7 @@
             const tr = document.createElement("tr");
             tr.className = "border-t border-slate-200";
             tr.classList.add("prio-row", prioClass(r.priorita));
+
             const tdData = Object.assign(document.createElement("td"), {
                 className: "px-3 py-2",
                 textContent: r.data || ""
@@ -1431,28 +1435,34 @@
                 className: "px-3 py-2",
                 textContent: r.ora || ""
             });
+
             const tdDir = Object.assign(document.createElement("td"), {
                 className: "px-3 py-2"
             });
             tdDir.appendChild(makeDirBadge(r.direzione));
+
             const tdTp = Object.assign(document.createElement("td"), {
                 className: "px-3 py-2",
                 textContent: r.tipologia || ""
             });
             const tdAr = Object.assign(document.createElement("td"), {
                 className: "px-3 py-2",
-                textContent: r.areeText || ""
+                textContent: r.areeText || "—"
             });
+
             const tdSy = document.createElement("td");
             tdSy.className = "px-3 py-2 w-sintesi";
             addReadMoreCell(tdSy, r.sintesi || "", "Segnalazione");
+
             const tdOp = Object.assign(document.createElement("td"), {
                 className: "px-3 py-2",
                 textContent: r.operatore || ""
             });
+
             const tdPr = document.createElement("td");
             tdPr.className = "px-3 py-2";
             tdPr.appendChild(makePrioBadge(r.priorita || "Nessuna"));
+
             tr.append(tdData, tdOra, tdDir, tdTp, tdAr, tdSy, tdOp, tdPr);
             tbody.appendChild(tr);
         });
@@ -1484,7 +1494,7 @@
         container.innerHTML = "";
         const hint = document.createElement("div");
         hint.className = "text-xs opacity-70";
-        hint.textContent = `Tipologia evento: ${TYPE_LABELS[type]||type||"—"}. Aggiungi eventuali dettagli nella comunicazione.`;
+        hint.textContent = `Tipologia evento: ${TYPE_LABELS[type] || type || "—"}. Aggiungi eventuali dettagli nella comunicazione.`;
         container.appendChild(hint);
     }
 
@@ -1532,6 +1542,7 @@
     }
     $("#f-provincia").addEventListener("change", (e) => populateComuniSelect(e.target.value));
 
+    /* ===== Reset forms ===== */
     document.getElementById("form-gen").addEventListener("reset", () => {
         genAree.setValues([]);
         const tipSel = $("#gen-tipologia");
@@ -1560,6 +1571,7 @@
         evAreeInput.setValues([]);
     });
 
+    /* ===== Click handler globale ===== */
     document.addEventListener("click", (e) => {
         const evBtn = e.target.closest("[data-open-event]");
         if (evBtn) {
@@ -1613,7 +1625,9 @@
             const data = state.ui.genInfoJson ?? {};
             const text = JSON.stringify(data, null, 2);
             if (navigator.clipboard?.writeText) {
-                navigator.clipboard.writeText(text).then(() => toast("Copiato negli appunti", "JSON della segnalazione copiato.")).catch(() => fallbackCopy(text));
+                navigator.clipboard.writeText(text)
+                    .then(() => toast("Copiato negli appunti", "JSON della segnalazione copiato."))
+                    .catch(() => fallbackCopy(text));
             } else {
                 fallbackCopy(text);
             }
@@ -1630,6 +1644,7 @@
         openModal("#modal-ev-form");
     });
 
+    /* ===== Paginazione ===== */
     $("#gen-prev").addEventListener("click", async () => {
         state.page.gen = Math.max(1, state.page.gen - 1);
         await refreshGEN();
@@ -1687,9 +1702,9 @@
         if (chosenEvent === "__new__") {
             const ev = await API.createEvento({
                 tipologia,
-                descrizione: fd.note || `Evento ${TYPE_LABELS[tipologia]||tipologia}`,
+                descrizione: fd.note || `Evento ${TYPE_LABELS[tipologia] || tipologia}`,
                 aree,
-                aperto: true
+                aperto: true,
             });
             evento_id = ev.id;
         } else if (chosenEvent) {
@@ -1702,10 +1717,11 @@
             aree,
             sintesi: fd.note || "",
             priorita,
-            evento_id
+            // inviamo entrambi per compatibilità
+            event_id: evento_id ?? null,
+            evento_id: evento_id ?? null,
         });
 
-        // refresh immediato (effetto realtime)
         await Promise.all([refreshGEN(), refreshONGOING()]);
         e.currentTarget.reset();
         genAree.setValues([]);
@@ -1752,15 +1768,12 @@
             sintesi: fd.sintesi,
             operatore: fd.operatore,
             priorita: fd.priorita,
+            event_id: evento_id ? Number(evento_id) : null,
             evento_id: evento_id ? Number(evento_id) : null,
         };
-        if (fd.created_at) {
-            payload.creata_il = new Date(fd.created_at).toISOString();
-        }
+        if (fd.created_at) payload.creata_il = new Date(fd.created_at).toISOString();
 
         await API.updateSegnalazione(id, payload);
-
-        // refresh immediato
         await Promise.all([refreshGEN(), refreshONGOING()]);
         toast("Modifica salvata!", "Aggiornata su backend.");
     });
@@ -1790,13 +1803,12 @@
         };
         await API.addComunicazione(id, payload);
 
-        // refresh immediato + aggiorna modale
         await refreshONGOING();
         await openEventModal(id);
         toast("Comunicazione salvata!", "Registrata su backend.");
     });
 
-    /* ===== Aree evento (UI only) ===== */
+    /* ===== Aree evento (solo UI) ===== */
     $("#ev-areas-edit").addEventListener("click", () => {
         Swal.fire({
             title: "Modifica Aree interessate",
@@ -1841,11 +1853,10 @@
             time: state.global.time || null,
             comune: $("#gen-filter-comune").value || state.global.comune || null,
             dal: $("#gen-filter-dal").value || null,
-            al: $("#gen-filter-al").value || null
+            al: $("#gen-filter-al").value || null,
         });
         location.href = url.toString();
     });
-
     $("#ongoing-export").addEventListener("click", () => {
         const url = new URL(API.base + "/eventi/export.csv", location.origin);
         appendQuery(url, {
@@ -1854,11 +1865,10 @@
             q: state.global.q || null,
             comune: $("#ongoing-filter-comune").value || state.global.comune || null,
             dal: $("#ongoing-filter-dal").value || null,
-            al: $("#ongoing-filter-al").value || null
+            al: $("#ongoing-filter-al").value || null,
         });
         location.href = url.toString();
     });
-
     $("#ev-export").addEventListener("click", () => {
         const id = state.ui.currentEventId;
         if (!id) return;
@@ -1878,6 +1888,7 @@
         toast("Pronto per la stampa", "La finestra di stampa è stata aperta.", "info", 1400);
     });
 
+    /* ===== TagInput istanze ===== */
     let genAree, editAree, evAreeInput;
     genAree = new TagInput($("#gen-aree"), {
         datalistId: "comuni-datalist"
@@ -1896,15 +1907,19 @@
         $("#edit-aree-hidden").value = JSON.stringify(e.detail || []);
     });
 
-    /* ===== Filtri: attiva tutto ===== */
-    ["#gen-filter-comune", "#gen-filter-dal", "#gen-filter-al"].forEach((s) => $(s).addEventListener("input", async () => {
-        state.page.gen = 1;
-        await refreshGEN();
-    }));
-    ["#ongoing-filter-comune", "#ongoing-filter-dal", "#ongoing-filter-al"].forEach((s) => $(s).addEventListener("input", async () => {
-        state.page.ongoing = 1;
-        await refreshONGOING();
-    }));
+    /* ===== Filtri ===== */
+    ["#gen-filter-comune", "#gen-filter-dal", "#gen-filter-al"].forEach((s) =>
+        $(s).addEventListener("input", async () => {
+            state.page.gen = 1;
+            await refreshGEN();
+        })
+    );
+    ["#ongoing-filter-comune", "#ongoing-filter-dal", "#ongoing-filter-al"].forEach((s) =>
+        $(s).addEventListener("input", async () => {
+            state.page.ongoing = 1;
+            await refreshONGOING();
+        })
+    );
     ["#global-q", "#global-date", "#global-time", "#global-comune"].forEach((sel) => {
         $(sel).addEventListener("input", async () => {
             state.global.q = $("#global-q").value.trim();
@@ -1924,13 +1939,18 @@
 
     function updateToggleBtn() {
         if (!toggleBtn) return;
-        toggleBtn.textContent = state.ui.ongoingStatus === "all" ? "Tutti" : state.ui.ongoingStatus === "open" ? "Solo aperti" : "Solo chiusi";
+        toggleBtn.textContent =
+            state.ui.ongoingStatus === "all" ?
+            "Tutti" : state.ui.ongoingStatus === "open" ?
+            "Solo aperti" : "Solo chiusi";
         toggleBtn.title = toggleBtn.textContent;
     }
     if (toggleBtn) {
         updateToggleBtn();
         toggleBtn.addEventListener("click", async () => {
-            state.ui.ongoingStatus = state.ui.ongoingStatus === "all" ? "open" : state.ui.ongoingStatus === "open" ? "closed" : "all";
+            state.ui.ongoingStatus =
+                state.ui.ongoingStatus === "all" ? "open" :
+                state.ui.ongoingStatus === "open" ? "closed" : "all";
             state.page.ongoing = 1;
             updateToggleBtn();
             await refreshONGOING();
@@ -1956,15 +1976,21 @@
         head.innerHTML = `<h5 class="ev-preview__title">Comunicazioni evento</h5><div class="ev-preview__meta text-xs opacity-70"></div>`;
         box.appendChild(head);
         if (!evId || evId === "__new__") {
-            box.appendChild(document.createElement("div")).outerHTML = `<div class="ev-preview__empty">Nessun evento selezionato. Se scegli “Crea nuovo evento”, questa segnalazione diventerà la prima comunicazione.</div>`;
+            box.appendChild(document.createElement("div")).outerHTML =
+                `<div class="ev-preview__empty">Nessun evento selezionato. Se scegli “Crea nuovo evento”, questa segnalazione diventerà la prima comunicazione.</div>`;
             return;
         }
         const ev = state.ongoing.find((e) => String(e.id) === String(evId));
         if (!ev) {
-            box.appendChild(document.createElement("div")).outerHTML = `<div class="ev-preview__empty">Evento #${evId} non presente nella pagina corrente.</div>`;
+            box.appendChild(document.createElement("div")).outerHTML =
+                `<div class="ev-preview__empty">Evento #${evId} non presente nella pagina corrente.</div>`;
             return;
         }
-        head.querySelector(".ev-preview__meta").innerHTML = `<strong>${TYPE_LABELS[ev.tipo]||ev.tipo}</strong> — ${(ev.aree||[]).join(", ")||"—"} <span class="ev-inline-status ${ev.open!==false?"is-open":"is-closed"}" style="margin-left:.35rem">${ev.open!==false?"Aperto":"Chiuso"}</span>`;
+        head.querySelector(".ev-preview__meta").innerHTML =
+            `<strong>${TYPE_LABELS[ev.tipo] || ev.tipo}</strong> — ${(ev.aree || []).join(", ") || "—"}
+       <span class="ev-inline-status ${ev.open !== false ? "is-open" : "is-closed"}" style="margin-left:.35rem">
+         ${ev.open !== false ? "Aperto" : "Chiuso"}
+       </span>`;
         const wrap = document.createElement("div");
         wrap.className = "ev-preview__empty text-xs opacity-70";
         wrap.textContent = "Le comunicazioni complete sono visibili nel dettaglio evento.";
@@ -2007,7 +2033,7 @@
     /* ===== Dettagli segnalazione (modal) ===== */
     function genInfoRows(rec) {
         const typeLabel = TYPE_LABELS[rec.tipologia] || rec.tipologia || "—";
-        const created = new Date(rec.created_at || Date.now());
+        const created = rec.created_at ? new Date(rec.created_at) : new Date();
         const when = fmtDT(created);
         const evText = rec.event_id ? `Evento #${rec.event_id}` : "—";
         return [
@@ -2019,7 +2045,7 @@
             ["Operatore", rec.operatore || "—"],
             ["Priorità", rec.priorita || "Nessuna"],
             ["Evento associato", evText],
-            ["Sintesi", rec.sintesi || "—"]
+            ["Sintesi", rec.sintesi || "—"],
         ];
     }
 
@@ -2031,8 +2057,11 @@
         const rows = genInfoRows(rec);
         const tbl = document.createElement("table");
         tbl.className = "w-full text-sm";
-        tbl.innerHTML = `<tbody>${rows.map(([k,v])=>`<tr class="border-t border-slate-200"><td class="px-3 py-2 font-semibold w-44">${k}</td><td class="px-3 py-2">${v}</td></tr>`).join("")}</tbody>`;
+        tbl.innerHTML = `<tbody>${rows
+      .map(([k, v]) => `<tr class="border-t border-slate-200"><td class="px-3 py-2 font-semibold w-44">${k}</td><td class="px-3 py-2">${v}</td></tr>`)
+      .join("")}</tbody>`;
         body.replaceChildren(tbl);
+
         const pr = rec.priorita || "Nessuna";
         const dir = (rec.direzione || "E").toUpperCase() === "U" ? "U" : "E";
         const prBadge = makePrioBadge(pr);
@@ -2046,6 +2075,7 @@
             tds[6].textContent = "";
             tds[6].appendChild(prBadge);
         }
+
         const payload = {
             id: rec.id,
             created_at: rec.created_at,
@@ -2061,4 +2091,159 @@
         state.ui.genInfoJson = payload;
         openModal("#modal-gen-info");
     }
+
+    /* ===== Specific form renderer ===== */
+    const SPEC_SCHEMAS = {
+        sismico: [{
+                id: "magnitudo",
+                label: "Magnitudo (se disponibile)"
+            },
+            {
+                id: "intensita",
+                label: "Intensità MCS/EMS"
+            },
+            {
+                id: "coordinate",
+                label: "Coordinate epicentro"
+            },
+            {
+                id: "danni",
+                label: "Danni segnalati (testo)",
+                type: "textarea"
+            },
+        ],
+        vulcanico: [{
+                id: "tremore",
+                label: "Tremore vulcanico (trend)"
+            },
+            {
+                id: "cenere",
+                label: "Ricaduta ceneri (aree)"
+            },
+            {
+                id: "dpi",
+                label: "DPI distribuiti (qtà)"
+            },
+        ],
+        idraulico: [{
+                id: "livello",
+                label: "Livello idrometrico (m)"
+            },
+            {
+                id: "argine",
+                label: "Criticità arginale (sì/no)"
+            },
+            {
+                id: "sottopassi",
+                label: "Sottopassi allagati (#)"
+            },
+        ],
+        idrogeologico: [{
+                id: "tipologia_frana",
+                label: "Tipologia frana"
+            },
+            {
+                id: "volume",
+                label: "Volume stimato (mc)"
+            },
+            {
+                id: "viabilita",
+                label: "Interferenza viabilità (testo)",
+                type: "textarea"
+            },
+        ],
+        maremoto: [{
+                id: "allerta",
+                label: "Livello allerta"
+            },
+            {
+                id: "aree_costiere",
+                label: "Aree costiere interessate"
+            },
+        ],
+        "deficit-idrico": [{
+                id: "pressione",
+                label: "Riduzione pressione (%)"
+            },
+            {
+                id: "autobotti",
+                label: "Autobotti in servizio (#)"
+            },
+        ],
+        "meteo-avverso": [{
+                id: "fenomeno",
+                label: "Fenomeno prevalente (vento, grandine…)"
+            },
+            {
+                id: "intensita",
+                label: "Intensità"
+            },
+            {
+                id: "danni_diffusi",
+                label: "Danni diffusi? (sì/no)"
+            },
+        ],
+        aib: [{
+                id: "superficie",
+                label: "Superficie percorsa dal fuoco (ha)"
+            },
+            {
+                id: "combustibile",
+                label: "Tipo combustibile (bosco, sterpaglie…)"
+            },
+            {
+                id: "coordinate",
+                label: "Coordinate/Località puntuale"
+            },
+            {
+                id: "mezzi",
+                label: "Mezzi impiegati (AIB/VVF/CAI…)"
+            },
+            {
+                id: "meteo",
+                label: "Condizioni meteo (vento, umidità…)"
+            },
+        ],
+        uomo: [{
+                id: "tipologia",
+                label: "Tipologia incidente (sversamento, industriale…)"
+            },
+            {
+                id: "ente_coinvolto",
+                label: "Ente/Azienda coinvolta"
+            },
+            {
+                id: "impatti",
+                label: "Impatti su servizi/ambiente",
+                type: "textarea"
+            },
+        ],
+        altro: [{
+            id: "descrizione",
+            label: "Descrizione dettagli (testo)",
+            type: "textarea"
+        }],
+    };
+
+    function renderSpecific(container, type, prefix) {
+        container.innerHTML = "";
+        const schema = SPEC_SCHEMAS[type] || [];
+        if (!schema.length) {
+            container.innerHTML = `<div class="text-xs opacity-70">Nessun campo aggiuntivo per questa tipologia.</div>`;
+            return;
+        }
+        const grid = document.createElement("div");
+        grid.className = "grid md:grid-cols-2 gap-3";
+        schema.forEach((f) => {
+            const wrap = document.createElement("label");
+            wrap.className = "grid gap-1.5";
+            wrap.innerHTML = `<span class="label">${f.label}</span>` +
+                (f.type === "textarea" ?
+                    `<textarea class="input" id="${prefix}-${f.id}"></textarea>` :
+                    `<input class="input" id="${prefix}-${f.id}"/>`);
+            grid.appendChild(wrap);
+        });
+        container.appendChild(grid);
+    }
+
 </script>
