@@ -1,7 +1,135 @@
+/* ========== GLOBAL BASE ========== */
+
 body {
-    font-family: "Inter";
+    font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
+/* ATTENZIONE: imposta tutto il testo delle tabelle centrato ovunque.
+   Se vuoi solo su alcune pagine, sposta questa regola lì. */
 table {
     text-align: center;
 }
+
+/* ========== VARIABILI GLOBALI ========== */
+
+:root {
+    --primary: #2563eb;
+    --primary-50: #eff6ff;
+    --primary-600: #1d4ed8;
+    --primary-700: #1e40af;
+
+    --muted: #64748b;
+    --muted-50: #f1f5f9;
+    --line: #e2e8f0;
+}
+
+/* ========== BOTTONI GLOBALI ========== */
+
+/* Base comune (.btn e .btn-xs) */
+.btn,
+.btn-xs {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .35rem;
+    border-radius: .7rem;
+    border: 1px solid #cbd5f5;
+    background: #f8fafc;
+    color: #0f172a;
+    font-size: .875rem;
+    font-weight: 500;
+    line-height: 1.2;
+    padding: .45rem .9rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition:
+        background-color .12s ease-out,
+        border-color .12s ease-out,
+        color .12s ease-out,
+        transform .06s ease-out,
+        box-shadow .12s ease-out;
+}
+
+/* Variante piccola */
+.btn-xs {
+    padding: .3rem .65rem;
+    font-size: .76rem;
+    border-radius: .55rem;
+}
+
+/* Hover sobrio */
+.btn:hover,
+.btn-xs:hover {
+    background: #e5edf9;
+    border-color: #b7c5ee;
+}
+
+/* Click: niente salti vistosi */
+.btn:active,
+.btn-xs:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+/* Disabled */
+.btn[disabled],
+.btn-xs[disabled],
+.btn:disabled,
+.btn-xs:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* ========== VARIANTE PRIMARIA (BLU) ========== */
+
+.btn-primary,
+.btn.btn-primary,
+.btn-xs.btn-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.18);
+}
+
+.btn-primary:hover,
+.btn.btn-primary:hover,
+.btn-xs.btn-primary:hover {
+    background-color: var(--primary-600);
+    border-color: var(--primary-600);
+    box-shadow: 0 3px 10px rgba(15, 23, 42, 0.20);
+    color: #ffffff;
+}
+
+.btn-primary:active,
+.btn.btn-primary:active,
+.btn-xs.btn-primary:active {
+    background-color: var(--primary-700);
+    border-color: var(--primary-700);
+    box-shadow: none;
+}
+
+/* ========== VARIANTI UTILI ========== */
+
+.btn-ghost {
+    background: transparent;
+    border-color: transparent;
+    color: #0f172a;
+}
+
+.btn-ghost:hover {
+    background: #f1f5f9;
+    border-color: #e2e8f0;
+}
+
+.btn-danger {
+    background: #fee2e2;
+    border-color: #fecaca;
+    color: #b91c1c;
+}
+
+.btn-danger:hover {
+    background: #fecaca;
+    border-color: #fca5a5;
+}
+

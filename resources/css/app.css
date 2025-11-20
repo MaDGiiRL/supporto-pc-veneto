@@ -2,6 +2,7 @@
 @import './style.css';
 @import './applicativi_informatici/segnalazioni/dashboard.css';
 @import './applicativi_informatici/segnalazioni/coordinamento.css';
+@import './applicativi_informatici/segnalazioni/log.css';
 
 @tailwind base;
 @tailwind components;

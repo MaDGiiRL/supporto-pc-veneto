@@ -17,7 +17,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    {{-- Carica prima SweetAlert2, così è disponibile quando lo usi --}}
+    {{-- SweetAlert2 --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     {{-- SheetJS per esportare gli excel --}}
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -31,7 +31,6 @@
     <x-banner-avviso dataLimite="01/01/2026" />
 
     <x-navbar />
-
 
     <main class="min-h-screen">
         {{ $slot }}
@@ -101,11 +100,9 @@
             });
     </script>
 
-
     <script>
         if (!res.ok) {
             const txt = await res.text().catch(() => "");
-            // 👇 aggiungi un toast chiaro
             Swal.fire({
                 title: "Errore",
                 text: txt || `HTTP ${res.status}`,

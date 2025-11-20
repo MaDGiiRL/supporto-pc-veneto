@@ -5,11 +5,19 @@ namespace App\Http\Controllers\Sor;
 use App\Http\Controllers\Controller;
 use App\Models\Evento;
 use App\Models\SegnalazioneGenerica;
+use App\Services\Sor\DashboardLogService;   // ⬅️ IMPORT SERVIZIO
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SegnalazioneController extends Controller
 {
+    protected DashboardLogService $dashLog;
+
+    public function __construct(DashboardLogService $dashLog)
+    {
+        $this->dashLog = $dashLog;
+    }
+
     // normalizza e accetta sia event_id che evento_id
     protected function normalizeEventoId(Request $r): ?int
     {
@@ -40,11 +48,11 @@ class SegnalazioneController extends Controller
 
             $q->where(function ($w) use ($needle) {
                 $w->whereRaw('LOWER(sintesi) LIKE ?', ["%{$needle}%"])
-                  ->orWhereRaw('LOWER(operatore) LIKE ?', ["%{$needle}%"])
-                  ->orWhereRaw('LOWER(ente) LIKE ?', ["%{$needle}%"])
-                  ->orWhereRaw('LOWER(oggetto) LIKE ?', ["%{$needle}%"])
-                  ->orWhereRaw('LOWER(contenuto) LIKE ?', ["%{$needle}%"])
-                  ->orWhereRaw("
+                    ->orWhereRaw('LOWER(operatore) LIKE ?', ["%{$needle}%"])
+                    ->orWhereRaw('LOWER(ente) LIKE ?', ["%{$needle}%"])
+                    ->orWhereRaw('LOWER(oggetto) LIKE ?', ["%{$needle}%"])
+                    ->orWhereRaw('LOWER(contenuto) LIKE ?', ["%{$needle}%"])
+                    ->orWhereRaw("
                     EXISTS (
                       SELECT 1
                       FROM jsonb_array_elements_text(COALESCE(aree, '[]'::jsonb)) a
@@ -60,7 +68,7 @@ class SegnalazioneController extends Controller
 
             $q->where(function ($w) use ($c) {
                 $w->whereRaw('LOWER(comune) LIKE ?', ["%{$c}%"])
-                  ->orWhereRaw("
+                    ->orWhereRaw("
                     EXISTS (
                       SELECT 1
                       FROM jsonb_array_elements_text(COALESCE(aree, '[]'::jsonb)) a
@@ -153,6 +161,13 @@ class SegnalazioneController extends Controller
 
         $sg = SegnalazioneGenerica::create($data);
 
+        // ⬇️ LOG DASHBOARD: creazione segnalazione
+        $this->dashLog->log('created_segnalazione', [
+            'segnalazione_id' => $sg->id,
+            'evento_id'       => $evento_id,
+            'details'         => $sg->oggetto ?: $sg->sintesi ?: null,
+        ]);
+
         return response()->json($sg, 201);
     }
 
@@ -160,6 +175,11 @@ class SegnalazioneController extends Controller
     {
         $sg        = SegnalazioneGenerica::findOrFail($id);
         $evento_id = $this->normalizeEventoId($r);
+
+        // snapshot BEFORE per capire cosa è cambiato
+        $beforeEvento = $sg->evento_id;
+        $beforeStatus = $sg->status;
+        $beforeAss    = $sg->assigned_to;
 
         $data = $r->validate([
             'creata_il' => 'nullable|date',
@@ -203,15 +223,47 @@ class SegnalazioneController extends Controller
             }
         }
 
-        $sg->fill(array_filter($data, fn ($v) => $v !== null));
+        $sg->fill(array_filter($data, fn($v) => $v !== null));
         $sg->save();
+
+        // ⬇️ LOG DASHBOARD: modifica segnalazione
+        $detailsParts = ['Modifica segnalazione da dashboard'];
+
+        if ($beforeEvento !== $sg->evento_id) {
+            if ($sg->evento_id && !$beforeEvento) {
+                $detailsParts[] = "Collegata all'evento #{$sg->evento_id}";
+            } elseif (!$sg->evento_id && $beforeEvento) {
+                $detailsParts[] = "Scollegata dall'evento #{$beforeEvento}";
+            } elseif ($sg->evento_id && $beforeEvento) {
+                $detailsParts[] = "Ricollegata da evento #{$beforeEvento} a #{$sg->evento_id}";
+            }
+        }
+
+        $this->dashLog->log('updated_segnalazione', [
+            'segnalazione_id' => $sg->id,
+            'evento_id'       => $sg->evento_id,
+            'from_status'     => $beforeStatus,
+            'to_status'       => $sg->status,
+            'from_assignee'   => $beforeAss,
+            'to_assignee'     => $sg->assigned_to,
+            'details'         => implode(' | ', array_filter($detailsParts)),
+        ]);
 
         return response()->json($sg);
     }
 
     public function destroy(int $id)
     {
-        SegnalazioneGenerica::findOrFail($id)->delete();
+        $sg = SegnalazioneGenerica::findOrFail($id);
+
+        // ⬇️ LOG PRIMA DI CANCELLARE
+        $this->dashLog->log('deleted_segnalazione', [
+            'segnalazione_id' => $sg->id,
+            'evento_id'       => $sg->evento_id,
+            'details'         => $sg->oggetto ?: $sg->sintesi ?: 'Segnalazione eliminata',
+        ]);
+
+        $sg->delete();
 
         return response()->noContent();
     }

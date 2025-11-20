@@ -14,7 +14,7 @@
         </a>
 
         {{-- NAV DESKTOP --}}
-        <div class="hidden md:flex items-center gap-5">
+        <div class="flex items-center gap-5">
             <nav class="flex items-center gap-1 text-sm">
                 <a href="{{ url('/') }}"
                     class="inline-flex items-center gap-2 rounded-lg px-3 py-2 hover:bg-slate-100 transition
@@ -38,53 +38,53 @@
 
             {{-- AREA UTENTE --}}
             @auth
-            <div class="flex items-center gap-3">
-                {{-- Saluto --}}
-                <div class="hidden lg:flex items-center gap-1 text-sm text-slate-700">
-                    <span class="text-slate-500">Ciao,</span>
-                    <span class="font-semibold">{{ Str::of(auth()->user()->name ?? auth()->user()->email)->words(2, '…') }}</span>
-                </div>
+                <div class="flex items-center gap-3">
+                    {{-- Saluto --}}
+                    <div class="hidden lg:flex items-center gap-1 text-sm text-slate-700">
+                        <span class="text-slate-500">Ciao,</span>
+                        <span class="font-semibold">{{ Str::of(auth()->user()->name ?? auth()->user()->email)->words(2, '…') }}</span>
+                    </div>
 
-                {{-- Dropdown utente (NO Alpine) --}}
-                <div class="relative">
-                    <button id="user-menu-button"
-                        class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white/80 px-3 py-1.5 text-sm text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500"
-                        aria-haspopup="menu" aria-expanded="false" aria-controls="user-menu"
-                        type="button">
-                        <span class="inline-grid place-items-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 text-white h-7 w-7 ring-1 ring-indigo-500/30">
-                            <x-heroicon-o-user class="h-4 w-4" />
-                        </span>
-                        <x-heroicon-o-chevron-down id="user-menu-caret" class="h-4 w-4 text-slate-400 transition-transform duration-200" />
-                    </button>
+                    {{-- Dropdown utente (NO Alpine) --}}
+                    <div class="relative">
+                        <button id="user-menu-button"
+                            class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white/80 px-3 py-1.5 text-sm text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500"
+                            aria-haspopup="menu" aria-expanded="false" aria-controls="user-menu"
+                            type="button">
+                            <span class="inline-grid place-items-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 text-white h-7 w-7 ring-1 ring-indigo-500/30">
+                                <x-heroicon-o-user class="h-4 w-4" />
+                            </span>
+                            <x-heroicon-o-chevron-down id="user-menu-caret" class="h-4 w-4 text-slate-400 transition-transform duration-200" />
+                        </button>
 
-                    {{-- Menu --}}
-                    <div id="user-menu"
-                        class="hidden absolute right-0 mt-2 w-56 rounded-xl border border-slate-200 bg-white shadow-lg shadow-sky-100/50 overflow-hidden z-50"
-                        role="menu" aria-labelledby="user-menu-button">
-                        <div class="px-3 py-2 text-xs text-slate-500 bg-slate-50">Account</div>
-                        <div class="py-1">
-                            <form method="POST" action="{{ route('logout') }}" id="logout-form-desktop">
-                                @csrf
-                                <button type="submit" class="w-full flex items-center gap-2 px-3 py-2 text-left text-sm hover:bg-slate-50" role="menuitem">
-                                    <x-heroicon-o-arrow-right-on-rectangle class="h-4 w-4 text-slate-400" />
-                                    <span>Logout</span>
-                                </button>
-                            </form>
+                        {{-- Menu --}}
+                        <div id="user-menu"
+                            class="hidden absolute right-0 mt-2 w-56 rounded-xl border border-slate-200 bg-white shadow-lg shadow-sky-100/50 overflow-hidden z-50"
+                            role="menu" aria-labelledby="user-menu-button">
+                            <div class="px-3 py-2 text-xs text-slate-500 bg-slate-50">Account</div>
+                            <div class="py-1">
+                                <form method="POST" action="{{ route('logout') }}" id="logout-form-desktop">
+                                    @csrf
+                                    <button type="submit" class="w-full flex items-center gap-2 px-3 py-2 text-left text-sm hover:bg-slate-50" role="menuitem">
+                                        <x-heroicon-o-arrow-right-on-rectangle class="h-4 w-4 text-slate-400" />
+                                        <span>Logout</span>
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
             @else
-            <div class="flex items-center gap-2">
-                <a href="{{ route('login') }}"
-                    class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50">
-                    <x-heroicon-o-arrow-left-end-on-rectangle class="h-4 w-4" /> Accedi
-                </a>
-                <a href="{{ route('register') }}"
-                    class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-sky-500 to-cyan-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:from-sky-600 hover:to-cyan-700">
-                    <x-heroicon-o-user-plus class="h-4 w-4" /> Registrati
-                </a>
-            </div>
+                <div class="flex items-center gap-2">
+                    <a href="{{ route('login') }}"
+                        class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50">
+                        <x-heroicon-o-arrow-left-end-on-rectangle class="h-4 w-4" /> Accedi
+                    </a>
+                    <a href="{{ route('register') }}"
+                        class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-sky-500 to-cyan-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:from-sky-600 hover:to-cyan-700">
+                        <x-heroicon-o-user-plus class="h-4 w-4" /> Registrati
+                    </a>
+                </div>
             @endauth
         </div>
 
@@ -113,36 +113,35 @@
             </a>
 
             @auth
-            <div class="mt-1 pt-1 border-t border-slate-200/70">
-                <div class="flex items-center gap-2 px-3 py-2 text-slate-700">
-                    <span class="inline-grid place-items-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 text-white h-7 w-7 ring-1 ring-indigo-500/30">
-                        <x-heroicon-o-user class="h-4 w-4" />
-                    </span>
-                    <span class="text-sm">Ciao, <strong>{{ Str::of(auth()->user()->name ?? auth()->user()->email)->words(2, '…') }}</strong></span>
+                <div class="mt-1 pt-1 border-t border-slate-200/70">
+                    <div class="flex items-center gap-2 px-3 py-2 text-slate-700">
+                        <span class="inline-grid place-items-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 text-white h-7 w-7 ring-1 ring-indigo-500/30">
+                            <x-heroicon-o-user class="h-4 w-4" />
+                        </span>
+                        <span class="text-sm">Ciao, <strong>{{ Str::of(auth()->user()->name ?? auth()->user()->email)->words(2, '…') }}</strong></span>
+                    </div>
+                    <form method="POST" action="{{ route('logout') }}" class="px-1">
+                        @csrf
+                        <button type="submit" class="w-full flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 text-left text-sm">
+                            <x-heroicon-o-arrow-right-on-rectangle class="h-4 w-4 text-slate-400" />
+                            Logout
+                        </button>
+                    </form>
                 </div>
-                <form method="POST" action="{{ route('logout') }}" class="px-1">
-                    @csrf
-                    <button type="submit" class="w-full flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 text-left text-sm">
-                        <x-heroicon-o-arrow-right-on-rectangle class="h-4 w-4 text-slate-400" />
-                        Logout
-                    </button>
-                </form>
-            </div>
             @else
-            <div class="mt-1 pt-1 border-t border-slate-200/70 flex gap-2 px-1">
-                <a href="{{ route('login') }}" class="flex-1 inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 hover:bg-slate-50">
-                    <x-heroicon-o-arrow-left-end-on-rectangle class="h-4 w-4" /> Accedi
-                </a>
-                <a href="{{ route('register') }}" class="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-sky-500 to-cyan-600 px-3 py-2 text-sm font-semibold text-white hover:from-sky-600 hover:to-cyan-700">
-                    <x-heroicon-o-user-plus class="h-4 w-4" /> Registrati
-                </a>
-            </div>
+                <div class="mt-1 pt-1 border-t border-slate-200/70 flex gap-2 px-1">
+                    <a href="{{ route('login') }}" class="flex-1 inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                        <x-heroicon-o-arrow-left-end-on-rectangle class="h-4 w-4" /> Accedi
+                    </a>
+                    <a href="{{ route('register') }}" class="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-sky-500 to-cyan-600 px-3 py-2 text-sm font-semibold text-white hover:from-sky-600 hover:to-cyan-700">
+                        <x-heroicon-o-user-plus class="h-4 w-4" /> Registrati
+                    </a>
+                </div>
             @endauth
         </nav>
     </div>
 </header>
 
-{{-- JS: NO Alpine - gestione dropdown & mobile menu --}}
 <script>
     (function() {
         // Mobile menu toggle
@@ -199,10 +198,10 @@
                 if (e.key === 'Escape') closeMenu();
             });
 
-            // Chiudi su resize (per sicurezza)
+            // Chiudi su resize
             window.addEventListener('resize', closeMenu);
 
-            // Chiudi su submit logout (già sufficiente, ma esplicito)
+            // Chiudi su submit logout (desktop)
             const logoutFormDesktop = document.getElementById('logout-form-desktop');
             if (logoutFormDesktop) {
                 logoutFormDesktop.addEventListener('submit', closeMenu);

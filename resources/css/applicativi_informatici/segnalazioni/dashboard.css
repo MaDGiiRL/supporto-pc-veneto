@@ -160,68 +160,6 @@ textarea.input {
     color: #334155
 }
 
-.btn {
-    border: 1px solid var(--line);
-    border-radius: .75rem;
-    padding: .55rem .8rem;
-    font-size: .875rem;
-    background: #fff;
-    color: #0f172a;
-    cursor: pointer;
-    transition: background .15s, box-shadow .15s, transform .06s
-}
-
-
-.btn:active {
-    transform: translateY(1px)
-}
-
-.btn-primary {
-    background: var(--primary);
-    color: #fff;
-    border-color: var(--primary);
-    box-shadow: 0 1px 0 rgba(0, 0, 0, .04), 0 6px 16px rgba(37, 99, 235, .18)
-}
-
-
-
-.btn-primary:active {
-    background: var(--primary-700);
-    border-color: var(--primary-700)
-}
-
-.btn-xs {
-    border: 1px solid #e5e7eb;
-    border-radius: .5rem;
-    padding: .25rem .5rem;
-    font-size: .75rem;
-    background: #fff;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: .25rem
-}
-
-.btn-ghost {
-    background: transparent;
-    border-color: transparent
-}
-
-.btn-danger {
-    background: #fee2e2;
-    border-color: #fecaca
-}
-
-.actions {
-    display: flex;
-    gap: .25rem
-}
-
-.actions .hi {
-    display: inline-block;
-    vertical-align: middle
-}
-
 .sec {
     --accent: #64748b;
     --thead: #f1f5f9;
@@ -877,42 +815,6 @@ tbody tr.prio-row.prio--nessuna {
     gap: .4rem;
 }
 
-/* migliora il target del pulsante piccolo blu */
-#modal-event .btn.btn-xs {
-    min-height: 2rem;
-    padding: .35rem .6rem;
-}
-
-
-/* ===== FIX colore costante bottone blu ===== */
-
-#modal-event .btn.btn-xs.btn-primary,
-.btn.btn-xs.btn-primary {
-    background-color: var(--primary);
-    border-color: var(--primary);
-    color: #fff;
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04), 0 6px 16px rgba(37, 99, 235, 0.18);
-    transition: background-color .15s, border-color .15s, transform .06s, box-shadow .15s;
-}
-
-/* hover: più scuro ma sempre blu */
-#modal-event .btn.btn-xs.btn-primary:hover,
-.btn.btn-xs.btn-primary:hover {
-    background-color: var(--primary-600);
-    border-color: var(--primary-600);
-    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.05), 0 10px 24px rgba(29, 78, 216, 0.22);
-    color: #fff;
-}
-
-/* attivo: tono leggermente più profondo */
-#modal-event .btn.btn-xs.btn-primary:active,
-.btn.btn-xs.btn-primary:active {
-    background-color: var(--primary-700);
-    border-color: var(--primary-700);
-    transform: translateY(1px);
-    color: #fff;
-}
-
 /* =========================
    OVERRIDE: PRIORITÀ MODALE EV-FORM
    ========================= */
@@ -1105,15 +1007,15 @@ tbody tr.prio-row.prio--nessuna {
     padding: .25rem 0
 }
 
-/* Centra orizzontalmente il wrapper dei bottoni */
+/* Centra orizzontalmente il wrapper dei bottoni Azioni */
 .actions {
     display: flex;
     gap: .25rem;
-    justify-content: center;   /* ⬅️ centrati */
-    align-items: center;       /* opzionale ma carino */
+    justify-content: center;   /* centrati */
+    align-items: center;
 }
 
-/* Assicura che la cella "Azioni" sia centrata in tutte le tabelle */
+/* Assicura che la cella "Azioni" sia centrata in tutte le tabelle SOR */
 table tbody td:last-child {
     text-align: center;
 }

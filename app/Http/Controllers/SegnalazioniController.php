@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+// 👉 aggiungi i model per i log SOR
+use App\Models\Sor\SorLog;
+use App\Models\Sor\SorDashboardLog;
+
 class SegnalazioniController extends Controller
 {
     /** Elenco pagine + icone consentite */
@@ -35,104 +39,28 @@ class SegnalazioniController extends Controller
                 'icon'     => 'information-circle',
                 'view'     => 'apertura-chiusura-sor',
             ],
-            // 'ricerca' => [
-            //     'label'    => 'Ricerca',
-            //     'category' => 'Generale',
-            //     'icon'     => 'magnifying-glass',
-            //     'view'     => 'ricerca',
-            // ],
             'monitoraggio-coc' => [
                 'label'    => 'Monitoraggio COC',
                 'category' => 'Generale',
                 'icon'     => 'map',
                 'view'     => 'monitoraggio-coc',
             ],
+
+            // STORICO
+            'log' => [
+                'label'    => 'Log',
+                'category' => 'Storico',
+                'icon'     => 'clipboard-document-list',
+                'view'     => 'log',   // 👉 usa la tua sections/log.blade.php
+            ],
             'tabella-riassuntiva' => [
                 'label'    => 'Tabella riassuntiva',
-                'category' => 'Generale',
+                'category' => 'Storico',
                 'icon'     => 'list-bullet',
                 'view'     => 'tabella-riassuntiva',
             ],
 
-            // SEZIONI CHE NON HAI ANCORA → placeholder
-            // 'eventi-in-atto' => [
-            //     'label'    => 'Eventi in atto',
-            //     'category' => 'Generale',
-            //     'icon'     => 'bolt',
-            //     'view'     => 'placeholder',
-            // ],
-            'storico-chiamate' => [
-                'label'    => 'Storico chiamate',
-                'category' => 'Storico',
-                'icon'     => 'phone-arrow-down-left',
-                'view'     => 'placeholder',
-            ],
-            'storico-vvf-estrazione' => [
-                'label'    => 'Storico VVF Estrazione',
-                'category' => 'Storico',
-                'icon'     => 'arrow-down-tray',
-                'view'     => 'placeholder',
-            ],
-            'storico-vvf-mappatura' => [
-                'label'    => 'Storico VVF Mappatura interventi',
-                'category' => 'Storico',
-                'icon'     => 'rectangle-group',
-                'view'     => 'placeholder',
-            ],
-            'emergency-scenarios' => [
-                'label'    => 'Emergency scenarios',
-                'category' => 'Emergenze',
-                'icon'     => 'rectangle-stack',
-                'view'     => 'placeholder',
-            ],
-            'emergency-management' => [
-                'label'    => 'Emergency Management',
-                'category' => 'Emergenze',
-                'icon'     => 'clipboard-document-check',
-                'view'     => 'placeholder',
-            ],
-            'mappa-eventi' => [
-                'label'    => 'Mappa eventi',
-                'category' => 'Mappe',
-                'icon'     => 'map-pin',
-                'view'     => 'placeholder',
-            ],
-            'mappa-interventi-vvf' => [
-                'label'    => 'Mappa Interventi VVF',
-                'category' => 'Mappe',
-                'icon'     => 'map',
-                'view'     => 'placeholder',
-            ],
-            'mappa-cluster-vvf' => [
-                'label'    => 'Mappa cluster eventi VVF',
-                'category' => 'Mappe',
-                'icon'     => 'rectangle-stack',
-                'view'     => 'placeholder',
-            ],
-            'mappa-stato-coc' => [
-                'label'    => 'Mappa stato COC',
-                'category' => 'Mappe',
-                'icon'     => 'map',
-                'view'     => 'placeholder',
-            ],
-            'mappa-attivita-organizzazioni' => [
-                'label'    => "Mappa att.tà organizzazioni",
-                'category' => 'Mappe',
-                'icon'     => 'users',
-                'view'     => 'placeholder',
-            ],
-            'ricerca-recapiti' => [
-                'label'    => 'Ricerca recapiti',
-                'category' => 'Generale',
-                'icon'     => 'magnifying-glass',
-                'view'     => 'ricerca-recapiti',
-            ],
-            'reportistica' => [
-                'label'    => 'Reportistica',
-                'category' => 'Generale',
-                'icon'     => 'chart-pie',
-                'view'     => 'placeholder',
-            ],
+            // (altri item commentati vanno bene così come sono)
         ];
 
         // White-list icone
@@ -156,12 +84,14 @@ class SegnalazioniController extends Controller
             'users',
             'chart-pie'
         ];
+
         foreach ($pages as $k => $cfg) {
             $icon = $cfg['icon'] ?? 'document-text';
             if (!in_array($icon, $allowed, true)) {
                 $pages[$k]['icon'] = 'document-text';
             }
         }
+
         return $pages;
     }
 
@@ -178,6 +108,7 @@ class SegnalazioniController extends Controller
 
         // utile in blade
         $entry['_slug'] = $key;
+
         return $entry;
     }
 
@@ -187,6 +118,22 @@ class SegnalazioniController extends Controller
         $current    = $this->resolveCurrent($pages, $page ?? 'dashboard');
         $currentKey = $current['_slug'];
 
-        return view('applicativi.segnalazioni.index', compact('pages', 'current', 'currentKey'));
+        // base data per la view
+        $data = [
+            'pages'      => $pages,
+            'current'    => $current,
+            'currentKey' => $currentKey,
+        ];
+
+        // 🔹 SE SIAMO NELLA PAGINA LOG, CARICHIAMO I DUE Paginator
+        if (($current['view'] ?? null) === 'log') {
+            $data['coordLogs'] = SorLog::orderByDesc('created_at')
+                ->paginate(50, ['*'], 'coord_page');
+
+            $data['dashboardLogs'] = SorDashboardLog::orderByDesc('created_at')
+                ->paginate(50, ['*'], 'dash_page');
+        }
+
+        return view('applicativi.segnalazioni.index', $data);
     }
 }

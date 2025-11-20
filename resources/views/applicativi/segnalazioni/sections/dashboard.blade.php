@@ -351,204 +351,6 @@
     </div>
 </div>
 
-<!-- MODALE EVENTO -->
-<div class="c-modal hidden" id="modal-event" aria-hidden="true">
-    <div class="c-modal__backdrop" data-close-modal></div>
-    <div class="c-modal__dialog" role="dialog" aria-modal="true" style="max-width:72rem">
-        <button type="button" class="c-modal__close" data-close-modal>✕</button>
-
-        <header class="flex items-start justify-between gap-3 mb-3">
-            <div class="min-w-0">
-                <h3 id="ev-title" class="text-lg font-semibold truncate">Evento</h3>
-                <p id="ev-subtitle" class="text-xs opacity-70 mt-1 truncate">—</p>
-            </div>
-            <div class="flex items-center gap-2 shrink-0">
-                <button class="btn-xs" id="ev-areas-edit">Aree interessate</button>
-                <button class="btn-xs" id="ev-export" title="Esporta segnalazioni evento">⬇️ Scarica Excel</button>
-                <button class="btn-xs" id="ev-print" title="Stampa">🖨️ Stampa</button>
-                <button class="btn-xs" id="ev-toggle-open" title="Cambia stato evento">Chiudi evento</button>
-                <button class="btn btn-xs btn-primary" id="ev-open-form">➕ Nuova segnalazione</button>
-            </div>
-        </header>
-
-        <div id="ev-body" class="grid gap-4 max-h-[70vh] overflow-auto">
-            <section class="rounded-2xl border border-slate-200 bg-white p-4">
-                <h4 class="text-sm font-semibold mb-2">Aree interessate</h4>
-                <div id="ev-areas" class="tags"></div>
-            </section>
-
-            <section class="rounded-2xl border border-slate-200 bg-white p-4">
-                <h4 class="text-sm font-semibold mb-3">Segnalazioni relative all’evento</h4>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm">
-                        <thead class="text-left">
-                            <tr>
-                                <th class="px-3 py-2">Data</th>
-                                <th class="px-3 py-2">Ora</th>
-                                <th class="px-3 py-2">E/U</th>
-                                <th class="px-3 py-2 w-sintesi">Oggetto</th>
-                                <th class="px-3 py-2">Azioni</th>
-                            </tr>
-                        </thead>
-                        <tbody id="ev-reports-tbody">
-                            <tr>
-                                <td colspan="6" class="px-3 py-3 opacity-70">Nessuna segnalazione.</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-        </div>
-    </div>
-</div>
-
-<!-- MODALE SOVRAPPOSTA: Nuova/Modifica Comunicazione Evento -->
-<div class="c-modal c-modal--overlay hidden" id="modal-ev-form" aria-hidden="true">
-    <div class="c-modal__backdrop" data-close-modal></div>
-    <div class="c-modal__dialog" role="dialog" aria-modal="true" style="max-width:56rem">
-        <button type="button" class="c-modal__close" data-close-modal>✕</button>
-        <h4 class="mb-2 text-lg font-semibold">Inserisci Nuova Comunicazione</h4>
-
-        <form id="ev-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input type="hidden" id="ev-id" />
-            <input type="hidden" id="ev-edit-index" />
-            <input type="hidden" id="f-operatore" />
-
-            <label class="grid gap-1.5">
-                <span class="label">Data Comunicazione</span>
-                <input id="f-data" class="input" type="text" />
-            </label>
-            <label class="grid gap-1.5">
-                <span class="label">Ora Comunicazione</span>
-                <input id="f-ora" class="input" type="text" />
-            </label>
-
-            <label class="grid gap-1.5">
-                <span class="label">Tipo Comunicazione</span>
-                <select id="f-tipo" class="input">
-                    <option value="" selected>Seleziona...</option>
-                    <option>FAX</option>
-                    <option>Email</option>
-                    <option>Telefono</option>
-                    <option>PEC</option>
-                </select>
-            </label>
-
-            <div class="grid gap-1.5">
-                <span class="label">Verso</span>
-                <div class="flex items-center gap-4">
-                    <label class="inline-flex items-center gap-2"><input type="radio" name="f-verso" value="Entrata" checked /> Entrata</label>
-                    <label class="inline-flex items-center gap-2"><input type="radio" name="f-verso" value="Uscita" /> Uscita</label>
-                </div>
-            </div>
-
-            <label class="grid gap-1.5 md:col-span-2"><span class="label">Mittente/Destinatario</span><input id="f-mitt" class="input" /></label>
-            <label class="grid gap-1.5"><span class="label">Telefono</span><input id="f-tel" class="input" /></label>
-            <label class="grid gap-1.5"><span class="label">E-mail</span><input id="f-mail" class="input" type="email" /></label>
-            <label class="grid gap-1.5 md:col-span-2"><span class="label">Indirizzo zona colpita</span><input id="f-indirizzo" class="input" /></label>
-
-            <label class="grid gap-1.5">
-                <span class="label">Provincia</span>
-                <select id="f-provincia" class="input">
-                    <option value="">Tutte le province...</option>
-                </select>
-            </label>
-            <label class="grid gap-1.5">
-                <span class="label">Zona (Comune)</span>
-                <select id="f-comune" class="input" disabled>
-                    <option value="">Prima seleziona una provincia...</option>
-                </select>
-            </label>
-
-            <label class="grid gap-1.5 md:col-span-2">
-                <span class="label">Aree interessate (Comuni e Frazioni)</span>
-                <div class="tag-input" id="ev-aree-input" data-datalist="comuni-datalist"></div>
-            </label>
-
-            <label class="grid gap-1.5 md:col-span-2"><span class="label">Oggetto</span><input id="f-oggetto" class="input" /></label>
-            <label class="grid gap-1.5 md:col-span-2"><span class="label">Contenuto</span><textarea id="f-contenuto" class="input"></textarea></label>
-
-            <div class="md:col-span-2">
-                <span class="label">Priorità</span>
-                <div class="flex flex-wrap items-center gap-4 mt-1">
-                    <label class="inline-flex items-center gap-2"><input type="radio" name="f-priorita" value="Nessuna" checked /> Nessuna</label>
-                    <label class="inline-flex items-center gap-2"><input type="radio" name="f-priorita" value="Alta" /> Alta</label>
-                    <label class="inline-flex items-center gap-2"><input type="radio" name="f-priorita" value="Media" /> Media</label>
-                    <label class="inline-flex items-center gap-2"><input type="radio" name="f-priorita" value="Bassa" /> Bassa</label>
-                </div>
-            </div>
-
-            <div class="md:col-span-2">
-                <legend class="text-sm font-semibold mb-1">Campi specifici</legend>
-                <div id="ev-specific"></div>
-            </div>
-
-            <div class="md:col-span-2 flex justify-end gap-2 pt-2">
-                <button type="button" class="btn" data-close-modal>Annulla</button>
-                <button type="reset" class="btn">Reset</button>
-                <button type="submit" class="btn btn-primary" id="ev-save">💾 Salva Comunicazione</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- MODALE: Tutte le comunicazioni -->
-<div class="c-modal c-modal--top hidden" id="modal-all-reports" aria-hidden="true">
-    <div class="c-modal__backdrop" data-close-modal></div>
-    <div class="c-modal__dialog" role="dialog" aria-modal="true" style="max-width:90rem">
-        <button type="button" class="c-modal__close" data-close-modal>✕</button>
-        <h3 class="mb-3 text-lg font-semibold">Tutte le comunicazioni — Eventi in atto</h3>
-
-        <!-- wrapper per le prime 5 card evento -->
-        <div id="all-reports-top" class="grid md:grid-cols-2 xl:grid-cols-3 gap-3 mb-4"></div>
-
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-                <thead>
-                    <tr>
-                        <th class="px-3 py-2">Data</th>
-                        <th class="px-3 py-2">Ora</th>
-                        <th class="px-3 py-2">E/U</th>
-                        <th class="px-3 py-2">Comune</th>
-                        <th class="px-3 py-2 w-sintesi">Oggetto</th>
-                        <th class="px-3 py-2">Evento</th>
-                        <th class="px-3 py-2">Azioni</th>
-                    </tr>
-                </thead>
-                <tbody id="all-reports-tbody"></tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-
-
-<!-- MODALE: Dettagli Segnalazione Generica -->
-<div class="c-modal c-modal--overlay hidden" id="modal-gen-info" aria-hidden="true">
-    <div class="c-modal__backdrop" data-close-modal></div>
-    <div class="c-modal__dialog" role="dialog" aria-modal="true" style="max-width:48rem">
-        <button type="button" class="c-modal__close" data-close-modal>✕</button>
-        <h3 class="mb-2 text-lg font-semibold">Dettagli segnalazione</h3>
-        <div id="gen-info-body" class="grid gap-3"></div>
-        <div class="flex justify-end mt-3 gap-2">
-            <button type="button" class="btn" data-close-modal>Chiudi</button>
-            <button type="button" class="btn btn-primary" id="gen-info-copy">Copia JSON</button>
-        </div>
-    </div>
-</div>
-
-<!-- MODALE: Dettagli Comunicazione Evento -->
-<div class="c-modal c-modal--overlay hidden" id="modal-ev-info" aria-hidden="true">
-    <div class="c-modal__backdrop" data-close-modal></div>
-    <div class="c-modal__dialog" role="dialog" aria-modal="true" style="max-width:48rem">
-        <button type="button" class="c-modal__close" data-close-modal>✕</button>
-        <h3 class="mb-2 text-lg font-semibold">Dettagli comunicazione evento</h3>
-        <div id="ev-info-body" class="grid gap-3"></div>
-        <div class="flex justify-end mt-3 gap-2">
-            <button type="button" class="btn" data-close-modal>Chiudi</button>
-        </div>
-    </div>
-</div>
 
 
 <!-- Datalist Comuni -->
@@ -559,6 +361,7 @@
     window.VENETO_COMUNI = @json(config('comuni_veneto'));
 </script>
 
+@include('partials.sor-modals')
 
 <script type="module">
     /* ===== Utils ===== */
@@ -585,8 +388,15 @@
         return new Date(Number(yyyy), Number(mm) - 1, Number(dd), Number(HH), Number(MM));
     };
 
+    // espongo fmtDT per le modali
+    window.fmtDT = fmtDT;
+
     /* ===== Toast & confirm ===== */
     const toast = (title, text = "", icon = "success", timer = 1700) => {
+        if (!window.Swal) {
+            console.warn("Swal non disponibile:", title, text);
+            return;
+        }
         Swal.fire({
             title,
             text,
@@ -612,6 +422,9 @@
         cancelButtonColor: "#3085d6",
     });
 
+    // espongo toast per uso nelle modali
+    window.toast = toast;
+
     function fallbackCopy(text) {
         try {
             const ta = document.createElement("textarea");
@@ -634,6 +447,10 @@
             placeholder = "Aggiungi e premi Invio",
             datalistId = null
         } = {}) {
+            if (!root) {
+                console.warn("TagInput: root mancante, istanza ignorata");
+                return;
+            }
             this.root = root;
             this.values = [];
             this.placeholder = placeholder;
@@ -648,8 +465,8 @@
             if (!dl) return;
             this.allowedValues = new Set(
                 Array.from(dl.options)
-                .map(o => o.value)
-                .filter(Boolean)
+                    .map(o => o.value)
+                    .filter(Boolean)
             );
         }
 
@@ -657,8 +474,8 @@
             this.root.classList.add("tag-input--wrap");
             this.root.innerHTML = `<div class="tags" role="list"></div>
         <div class="tag-input__control"><input class="tag-input__field" ${
-          this.datalistId ? `list="${this.datalistId}"` : ""
-        } placeholder="${this.placeholder}"/></div>`;
+                this.datalistId ? `list="${this.datalistId}"` : ""
+            } placeholder="${this.placeholder}"/></div>`;
             this.tagsEl = this.root.querySelector(".tags");
             this.inputEl = this.root.querySelector(".tag-input__field");
 
@@ -807,9 +624,7 @@
     }
 
     /**
-     * Datalist per comuni + frazioni + zone:
-     * - se esiste VENETO_COMUNI_FLAT lo usiamo
-     * - altrimenti lo costruiamo da COMUNE_META + frazioni + zona_bollettino
+     * Datalist per comuni + frazioni + zone
      */
     (function buildDatalist() {
         const datalist = $("#comuni-datalist");
@@ -840,7 +655,6 @@
                     pushOption(label);
                 }
             });
-            // aggiungo anche le zone bollettino come "posti"
             if (c.zona && !seen.has(c.zona)) {
                 seen.add(c.zona);
                 pushOption(c.zona);
@@ -865,6 +679,9 @@
         uomo: "Prodotti dall'uomo",
         altro: "Altro",
     };
+
+    // espongo TYPE_LABELS per le modali
+    window.TYPE_LABELS = TYPE_LABELS;
 
     /* ===== Helpers di mapping robusto ===== */
     const pick = (obj, ...candidates) => {
@@ -918,7 +735,8 @@
             currentEventId: null,
             genInfoJson: null,
             ongoingStatus: "all",
-            currentEventReports: []
+            currentEventReports: [],
+            evInfoRecord: null,
         },
         _last: {
             genKey: "",
@@ -939,6 +757,9 @@
         return s;
     }
 
+    // espongo makePrioBadge
+    window.makePrioBadge = makePrioBadge;
+
     function makeDirBadge(val) {
         const v = (val || "").toString().trim().toUpperCase();
         const isIn = v === "E" || v === "ENTRATA";
@@ -949,6 +770,9 @@
         return s;
     }
 
+    // espongo makeDirBadge
+    window.makeDirBadge = makeDirBadge;
+
     function addReadMoreCell(td, fullText, title) {
         const preview = document.createElement("span");
         preview.textContent = truncate(fullText || "");
@@ -957,7 +781,9 @@
         btn.type = "button";
         btn.className = "link rm-link";
         btn.textContent = "Mostra di più";
-        btn.addEventListener("click", () => openReadMore(title || "Dettagli", fullText || ""));
+        btn.addEventListener("click", () =>
+            window.SORModals?.openReadMore?.(title || "Dettagli", fullText || "")
+        );
         td.append(preview, space, btn);
     }
 
@@ -982,75 +808,6 @@
         });
         selectEl.value = selectedId ? String(selectedId) : "";
     }
-
-    (function ensureReadMoreModal() {
-        if ($("#modal-readmore")) return;
-        const wrap = document.createElement("div");
-        wrap.className = "c-modal hidden";
-        wrap.id = "modal-readmore";
-        wrap.setAttribute("aria-hidden", "true");
-        wrap.innerHTML = `<div class="c-modal__backdrop" data-close-modal></div>
-      <div class="c-modal__dialog" role="dialog" aria-modal="true">
-        <button type="button" class="c-modal__close" data-close-modal>✕</button>
-        <h3 id="rm-title" class="mb-2 text-lg font-semibold">Dettagli</h3>
-        <div id="rm-body" class="rm-body text-sm"></div>
-        <div class="flex justify-end mt-4"><button type="button" class="btn" data-close-modal>Chiudi</button></div>
-      </div>`;
-        document.body.appendChild(wrap);
-    })();
-
-    function openReadMore(title, text) {
-        const t = $("#rm-title"),
-            b = $("#rm-body");
-        if (t) t.textContent = title || "Dettagli";
-        if (b) b.textContent = text || "—";
-        openModal("#modal-readmore");
-    }
-
-    function openModal(sel) {
-        const m = document.querySelector(sel);
-        if (!m) return;
-
-        if (sel === "#modal-gen") {
-            populateEventSelect($("#gen-event-select"), "", true);
-            renderEvPreview($("#gen-event-select").value, $("#gen-event-select"));
-
-            const {
-                date,
-                time
-            } = nowIT();
-            $("#g-data").value = date;
-            $("#g-ora").value = time;
-
-            const tipSel = $("#gen-tipologia");
-            if (tipSel) tipSel.value = "";
-            renderSpecific($("#gen-specific"), "", "gensp");
-
-            populateProvinceSelect("", "g-");
-        }
-
-        m.classList.remove("hidden");
-        m.classList.add("is-open");
-        document.body.style.overflow = "hidden";
-    }
-
-    function closeModal(el) {
-        if (!el) return;
-        el.classList.remove("is-open");
-        el.classList.add("hidden");
-        if (!document.querySelector(".c-modal.is-open")) document.body.style.overflow = "";
-    }
-
-    function topmostOpenModal() {
-        const opens = Array.from(document.querySelectorAll(".c-modal.is-open"));
-        return opens.length ? opens[opens.length - 1] : null;
-    }
-
-    function closeTopModal() {
-        const m = topmostOpenModal();
-        if (m) closeModal(m);
-    }
-    document.getElementById("modal-event")?.classList.add("c-modal--super");
 
     /* ===== API ===== */
     const API = {
@@ -1158,9 +915,6 @@
             });
         },
     };
-    document.addEventListener("api:write:success", () => {
-        closeTopModal();
-    });
 
     /* ===== Mappers ===== */
 
@@ -1306,9 +1060,9 @@
                 q: state.global.q || null,
                 date: state.global.date || null,
                 time: state.global.time || null,
-                comune: $("#gen-filter-comune").value || state.global.comune || null,
-                dal: $("#gen-filter-dal").value || null,
-                al: $("#gen-filter-al").value || null,
+                comune: $("#gen-filter-comune")?.value || state.global.comune || null,
+                dal: $("#gen-filter-dal")?.value || null,
+                al: $("#gen-filter-al")?.value || null,
             };
             const res = await API.listSegnalazioni(params);
             const rows = Array.isArray(res) ? res : (res.data || []);
@@ -1341,9 +1095,9 @@
             page: state.page.ongoing,
             per_page: 10,
             q: state.global.q || null,
-            comune: $("#ongoing-filter-comune").value || state.global.comune || null,
-            dal: $("#ongoing-filter-dal").value || null,
-            al: $("#ongoing-filter-al").value || null,
+            comune: $("#ongoing-filter-comune")?.value || state.global.comune || null,
+            dal: $("#ongoing-filter-dal")?.value || null,
+            al: $("#ongoing-filter-al")?.value || null,
         };
         try {
             const res = await API.listEventi(baseParams);
@@ -1419,6 +1173,7 @@
     /* ===== Render SEGNALAZIONI (data/ora separati) ===== */
     function renderGEN() {
         const root = $("#gen-body");
+        if (!root) return;
         root.replaceChildren();
 
         state.gen.forEach((r) => {
@@ -1500,12 +1255,14 @@
             (t) => `<span class="ol-item" data-type="${t}"><i class="ol-dot" aria-hidden="true"></i>${TYPE_LABELS[t]}</span>`
         ).join("");
         const cards = $("#ongoing-cards");
+        if (!cards || !cards.parentNode) return;
         cards.parentNode.insertBefore(legend, cards);
     }
 
     function renderONGOING() {
         ensureLegend();
         const root = $("#ongoing-cards");
+        if (!root) return;
         root.replaceChildren();
         if (!state.ongoing.length) {
             const empty = document.createElement("div");
@@ -1570,20 +1327,25 @@
 
         $("#ev-title").textContent = ev.descrizione || "—";
         const subtitle = $("#ev-subtitle");
-        const whenTxt = ev.aggiornamento ? fmtDT(new Date(ev.aggiornamento)) : "—";
-        subtitle.textContent = `${TYPE_LABELS[ev.tipo] || ev.tipo} • Ultimo agg.: ${whenTxt} `;
-        const st = document.createElement("span");
-        st.className = `ev-inline-status ${ev.open !== false ? "is-open" : "is-closed"}`;
-        st.textContent = ev.open !== false ? "Aperto" : "Chiuso";
-        subtitle.appendChild(st);
+        if (subtitle) {
+            subtitle.textContent = "";
+            const whenTxt = ev.aggiornamento ? fmtDT(new Date(ev.aggiornamento)) : "—";
+            subtitle.textContent = `${TYPE_LABELS[ev.tipo] || ev.tipo} • Ultimo agg.: ${whenTxt} `;
+            const st = document.createElement("span");
+            st.className = `ev-inline-status ${ev.open !== false ? "is-open" : "is-closed"}`;
+            st.textContent = ev.open !== false ? "Aperto" : "Chiuso";
+            subtitle.appendChild(st);
+        }
 
         renderEventAreas(ev);
         renderEventReports(ev);
         renderGenericReports(ev);
         resetEvForm(ev.tipo, ev.aree);
         updateEventStatusUI(ev);
-        $("#ev-id").value = ev.id;
-        openModal("#modal-event");
+        const evIdInput = $("#ev-id");
+        if (evIdInput) evIdInput.value = ev.id;
+
+        window.SORModals?.openModal?.("#modal-event");
 
         console.debug("Evento", ev.id, {
             genericReportsCount: ev.genericReports.length,
@@ -1593,6 +1355,7 @@
 
     function renderEventAreas(ev) {
         const wrap = $("#ev-areas");
+        if (!wrap) return;
         wrap.replaceChildren();
         (ev.aree || []).forEach((a) => {
             const tag = document.createElement("span");
@@ -1604,6 +1367,7 @@
 
     function renderEventReports(ev) {
         const tbody = $("#ev-reports-tbody");
+        if (!tbody) return;
         tbody.replaceChildren();
 
         const rows = (ev.reports || []).map((r, idx) => ({
@@ -1614,7 +1378,7 @@
         if (!rows.length) {
             const tr = document.createElement("tr");
             const td = document.createElement("td");
-            td.colSpan = 5; // 5 colonne totali
+            td.colSpan = 5;
             td.className = "px-3 py-3 opacity-70";
             td.textContent = "Nessuna segnalazione.";
             tr.appendChild(td);
@@ -1628,31 +1392,26 @@
             tr.classList.add("prio-row", prioClass(r.priorita));
             tr.dataset.idx = r._idx;
 
-            // Data
             const tdData = Object.assign(document.createElement("td"), {
                 className: "px-3 py-2",
                 textContent: r.data || ""
             });
 
-            // Ora
             const tdOra = Object.assign(document.createElement("td"), {
                 className: "px-3 py-2",
                 textContent: r.ora || ""
             });
 
-            // E/U (badge come nelle generiche)
             const tdVerso = document.createElement("td");
             tdVerso.className = "px-3 py-2";
             const raw = (r.verso || "").trim().toUpperCase();
             const dir = raw.startsWith("U") ? "U" : "E";
             tdVerso.appendChild(makeDirBadge(dir));
 
-            // Oggetto (troncato, come generiche)
             const tdOggetto = document.createElement("td");
             tdOggetto.className = "px-3 py-2 w-sintesi";
             tdOggetto.textContent = truncate(r.oggetto || "");
 
-            // Azioni
             const tdAc = document.createElement("td");
             tdAc.className = "px-3 py-2";
             tdAc.innerHTML = `
@@ -1663,75 +1422,16 @@
                     data-action="ev-edit" data-idx="${r._idx}">✏️</button>
             </div>`;
 
-            // 5 colonne: Data, Ora, E/U, Oggetto, Azioni
             tr.append(tdData, tdOra, tdVerso, tdOggetto, tdAc);
             tbody.appendChild(tr);
         });
-    }
-
-    function openEvReportInfo(idx) {
-        const list = state.ui.currentEventReports || [];
-        const r = list[Number(idx)];
-        if (!r) return;
-
-        const body = document.querySelector("#ev-info-body");
-        if (!body) return;
-
-        const rows = [
-            ["Data", r.data || "—"],
-            ["Ora", r.ora || "—"],
-            ["Tipo comunicazione", r.tipo || "—"],
-            ["Verso", (r.verso || "").toString()],
-            ["Mittente/Destinatario", r.mitt || "—"],
-            ["Telefono", r.tel || "—"],
-            ["E-mail", r.mail || "—"],
-            ["Indirizzo", r.indirizzo || "—"],
-            ["Provincia", r.provincia || "—"],
-            ["Comune", r.comune || "—"],
-            ["Aree interessate", (r.aree || []).join(", ") || "—"],
-            ["Oggetto", r.oggetto || "—"],
-            ["Priorità", r.priorita || "Nessuna"],
-            ["Contenuto", r.contenuto || "—"],
-        ];
-
-        const tbl = document.createElement("table");
-        tbl.className = "w-full text-sm";
-        tbl.innerHTML = `
-        <tbody>
-            ${rows.map(
-                ([k, v]) => `
-                    <tr class="border-t border-slate-200">
-                        <td class="px-3 py-2 font-semibold w-44">${k}</td>
-                        <td class="px-3 py-2">${v}</td>
-                    </tr>`
-            ).join("")}
-        </tbody>
-    `;
-
-        body.replaceChildren(tbl);
-
-        // Badge direzione (E/U)
-        const tds = body.querySelectorAll("tbody tr td:nth-child(2)");
-        const raw = (r.verso || "").toString().trim().toUpperCase();
-        const dir = raw.startsWith("U") ? "U" : "E";
-        if (tds[3]) { // riga "Verso"
-            tds[3].textContent = "";
-            tds[3].appendChild(makeDirBadge(dir));
-        }
-
-        // Badge priorità
-        if (tds[12]) { // riga "Priorità"
-            tds[12].textContent = "";
-            tds[12].appendChild(makePrioBadge(r.priorita || "Nessuna"));
-        }
-
-        openModal("#modal-ev-info");
     }
 
     function ensureGenericSection() {
         let sec = document.getElementById("ev-gen-sec");
         if (sec) return sec;
         const parent = $("#ev-body");
+        if (!parent) return null;
         sec = document.createElement("section");
         sec.id = "ev-gen-sec";
         sec.className = "rounded-2xl border border-slate-200 bg-white p-4";
@@ -1750,7 +1450,6 @@
           </thead>
           <tbody id="ev-gen-tbody">
             <tr>
-              <!-- ora 5 colonne -->
               <td colspan="5" class="px-3 py-3 opacity-70">
                 Nessuna segnalazione generica collegata.
               </td>
@@ -1763,7 +1462,8 @@
     }
 
     function renderGenericReports(ev) {
-        ensureGenericSection();
+        const sec = ensureGenericSection();
+        if (!sec) return;
         const tbody = $("#ev-gen-tbody");
         if (!tbody) return;
         tbody.replaceChildren();
@@ -1785,30 +1485,25 @@
             tr.classList.add("prio-row", prioClass(r.priorita));
             tr.dataset.id = r.id;
 
-            // Data
             const tdData = Object.assign(document.createElement("td"), {
                 className: "px-3 py-2",
                 textContent: r.data || ""
             });
 
-            // Ora
             const tdOra = Object.assign(document.createElement("td"), {
                 className: "px-3 py-2",
                 textContent: r.ora || ""
             });
 
-            // E/U (badge)
             const tdDir = document.createElement("td");
             tdDir.className = "px-3 py-2";
             tdDir.appendChild(makeDirBadge(r.direzione));
 
-            // Oggetto – SOLO tronca, niente "Mostra di più"
             const tdOggetto = document.createElement("td");
             tdOggetto.className = "px-3 py-2 w-sintesi";
             const fullText = r.oggetto || r.sintesi || "";
             tdOggetto.textContent = truncate(fullText);
 
-            // Azioni – bottone info (riusa openGenInfoModal)
             const tdAz = document.createElement("td");
             tdAz.className = "px-3 py-2";
             tdAz.innerHTML = `
@@ -1820,43 +1515,42 @@
             </button>
           </div>`;
 
-            // 5 colonne: Data, Ora, E/U, Oggetto, Azioni
             tr.append(tdData, tdOra, tdDir, tdOggetto, tdAz);
             tbody.appendChild(tr);
         });
     }
 
     function resetEvForm(type, areas) {
-        $("#ev-edit-index").value = "";
-        $("#ev-form").reset?.();
-        const {
-            date,
-            time
-        } = nowIT();
-        $("#f-data").value = date;
-        $("#f-ora").value = time;
-        $("#f-tipo").value = "";
-        document.querySelector('input[name="f-verso"][value="Entrata"]').checked = true;
-        $("#f-mitt").value = "";
-        $("#f-tel").value = "";
-        $("#f-mail").value = "";
-        $("#f-indirizzo").value = "";
-        $("#f-oggetto").value = "";
-        $("#f-contenuto").value = "";
-        document.querySelector('input[name="f-priorita"][value="Nessuna"]').checked = true;
-        evAreeInput.setValues(areas || []);
+        const idxInput = $("#ev-edit-index");
+        if (idxInput) idxInput.value = "";
+        const form = $("#ev-form");
+        form?.reset?.();
+        const { date, time } = nowIT();
+        const fData = $("#f-data");
+        const fOra = $("#f-ora");
+        if (fData) fData.value = date;
+        if (fOra) fOra.value = time;
+        if (evAreeInput && evAreeInput.setValues) {
+            evAreeInput.setValues(areas || []);
+        }
+        const versoRadio = document.querySelector('input[name="f-verso"][value="Entrata"]');
+        if (versoRadio) versoRadio.checked = true;
+
+        const container = $("#ev-specific");
+        if (container) {
+            container.innerHTML = "";
+            const hint = document.createElement("div");
+            hint.className = "text-xs opacity-70";
+            hint.textContent = `Tipologia evento: ${TYPE_LABELS[type] || type || "—"}. Aggiungi eventuali dettagli nella comunicazione`;
+            container.appendChild(hint);
+        }
+
         populateProvinceSelect("", "f-");
         const comuneSel = $("#f-comune");
         if (comuneSel) {
             comuneSel.innerHTML = `<option value="">Prima seleziona una provincia...</option>`;
             comuneSel.disabled = true;
         }
-        const container = $("#ev-specific");
-        container.innerHTML = "";
-        const hint = document.createElement("div");
-        hint.className = "text-xs opacity-70";
-        hint.textContent = `Tipologia evento: ${TYPE_LABELS[type] || type || "—"}. Aggiungi eventuali dettagli nella comunicazione`;
-        container.appendChild(hint);
     }
 
     function loadReportIntoForm(idx) {
@@ -1864,12 +1558,14 @@
         const r = list[Number(idx)];
         if (!r) return;
 
-        $("#ev-edit-index").value = idx;
+        const idxInput = $("#ev-edit-index");
+        if (idxInput) idxInput.value = idx;
         $("#f-data").value = r.data || "";
         $("#f-ora").value = r.ora || "";
         $("#f-tipo").value = r.tipo || "";
 
-        const verso = (r.verso || "").toString().toUpperCase().startsWith("U") ? "Uscita" : "Entrata";
+        const rawVerso = (r.verso || "").toString().toUpperCase();
+        const verso = rawVerso.startsWith("U") ? "Uscita" : "Entrata";
         const radio = document.querySelector(`input[name="f-verso"][value="${verso}"]`);
         if (radio) radio.checked = true;
 
@@ -1879,22 +1575,41 @@
         $("#f-indirizzo").value = r.indirizzo || "";
         $("#f-oggetto").value = r.oggetto || "";
         $("#f-contenuto").value = r.contenuto || "";
+
         populateProvinceSelect(r.provincia || "", "f-");
         populateComuniSelect(r.provincia || "", r.comune || "", "f-");
-        evAreeInput.setValues(r.aree || []);
-        document.querySelector(`input[name="f-priorita"][value="${r.priorita || "Nessuna"}"]`)?.click?.();
+
+        if (evAreeInput && evAreeInput.setValues) {
+            evAreeInput.setValues(r.aree || []);
+        }
+        const prioRadio = document.querySelector(`input[name="f-priorita"][value="${r.priorita || "Nessuna"}"]`);
+        prioRadio?.click?.();
     }
+
+    /* ===== Province & Comuni ===== */
 
     function populateProvinceSelect(selected = "", prefix = "f-") {
         const sel = document.getElementById(prefix + "provincia");
         if (!sel) return;
-        sel.innerHTML = "";
-        const first = new Option("Tutte le province...", "");
-        sel.add(first);
 
-        Object.keys(PROVINCE).sort().forEach((code) => {
-            sel.add(new Option(code, code));
-        });
+        sel.innerHTML = "";
+        sel.add(new Option("Tutte le province...", ""));
+
+        if (Array.isArray(PROVINCE)) {
+            // es: [{sigla: 'BL', nome: 'Belluno'}, ...]
+            PROVINCE.forEach((p) => {
+                if (!p) return;
+                const code = p.sigla || p.codice || p.code || p;
+                const label = p.nome || p.name || code;
+                if (!code) return;
+                sel.add(new Option(label, code));
+            });
+        } else {
+            // es: { BL: 'Belluno', PD: 'Padova', ... }
+            Object.entries(PROVINCE).forEach(([code, label]) => {
+                sel.add(new Option(label || code, code));
+            });
+        }
 
         sel.value = selected || "";
         const comuneSel = document.getElementById(prefix + "comune");
@@ -1918,19 +1633,20 @@
         comuneSel.value = selected || "";
     }
 
-    $("#f-provincia").addEventListener("change", (e) =>
+    $("#f-provincia")?.addEventListener("change", (e) =>
         populateComuniSelect(e.target.value, "", "f-")
     );
-    $("#g-provincia").addEventListener("change", (e) =>
+    $("#g-provincia")?.addEventListener("change", (e) =>
         populateComuniSelect(e.target.value, "", "g-")
     );
 
     /* ===== Reset forms ===== */
-    document.getElementById("form-gen").addEventListener("reset", () => {
-        genAree.setValues([]);
+    document.getElementById("form-gen")?.addEventListener("reset", () => {
+        if (genAree && genAree.setValues) genAree.setValues([]);
         const tipSel = $("#gen-tipologia");
         if (tipSel) tipSel.value = "";
-        $("#gen-specific").innerHTML = "";
+        const spec = $("#gen-specific");
+        if (spec) spec.innerHTML = "";
         const sel = $("#gen-event-select");
         if (sel) {
             sel.value = "";
@@ -1939,22 +1655,52 @@
         const hid = $("#gen-aree-hidden");
         if (hid) hid.value = "[]";
     });
-    document.getElementById("form-edit-gen").addEventListener("reset", (e) => {
+    document.getElementById("form-edit-gen")?.addEventListener("reset", (e) => {
         const form = e.currentTarget;
         try {
             const initial = JSON.parse(form.dataset.initialAree || "[]");
-            editAree.setValues(initial);
-            $("#edit-aree-hidden").value = JSON.stringify(initial);
+            if (editAree && editAree.setValues) {
+                editAree.setValues(initial);
+                const hid = $("#edit-aree-hidden");
+                if (hid) hid.value = JSON.stringify(initial);
+            }
         } catch {
-            editAree.setValues([]);
+            if (editAree) editAree.setValues([]);
         }
-        renderEvPreview($("#edit-gen-event").value, $("#edit-gen-event"));
+        renderEvPreview($("#edit-gen-event")?.value, $("#edit-gen-event"));
     });
-    document.getElementById("ev-form").addEventListener("reset", () => {
-        evAreeInput.setValues([]);
+    document.getElementById("ev-form")?.addEventListener("reset", () => {
+        if (evAreeInput && evAreeInput.setValues) evAreeInput.setValues([]);
     });
 
-    /* ===== Click handler globale ===== */
+    /* ===== Inizializzazione specifica modale GEN ===== */
+    function initGenModal() {
+        populateEventSelect($("#gen-event-select"), "", true);
+        renderEvPreview($("#gen-event-select")?.value, $("#gen-event-select"));
+
+        const { date, time } = nowIT();
+        const gData = $("#g-data");
+        const gOra = $("#g-ora");
+        if (gData) gData.value = date;
+        if (gOra) gOra.value = time;
+
+        const tipSel = $("#gen-tipologia");
+        if (tipSel) tipSel.value = "";
+        renderSpecific($("#gen-specific"), "", "gensp");
+
+        populateProvinceSelect("", "g-");
+    }
+
+    // intercetto click sul bottone "Nuova segnalazione generica"
+    document.querySelectorAll('[data-open-modal="#modal-gen"]').forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+            e.preventDefault();
+            initGenModal();
+            window.SORModals?.openModal?.("#modal-gen");
+        });
+    });
+
+    /* ===== Click handler globale (solo azioni app, NON modali base) ===== */
     document.addEventListener("click", (e) => {
         const evBtn = e.target.closest("[data-open-event]");
         if (evBtn) {
@@ -1962,16 +1708,10 @@
             if (!Number.isNaN(id)) {
                 const allModal = $("#modal-all-reports");
                 if (allModal && allModal.classList.contains("is-open")) {
-                    closeModal(allModal);
+                    window.SORModals?.closeModal?.(allModal);
                 }
                 openEventModal(id);
             }
-            return;
-        }
-        const opener = e.target.closest("[data-open-modal]");
-        if (opener) {
-            e.preventDefault();
-            openModal(opener.getAttribute("data-open-modal"));
             return;
         }
 
@@ -1987,7 +1727,11 @@
             // Azioni segnalazioni generiche
             if (type === "gen") {
                 if (action === "info") {
-                    openGenInfoModal(id);
+                    const item = state.gen.find((x) => String(x.id) === String(id));
+                    if (!item) return;
+                    if (window.SORModals?.showGenInfo) {
+                        window.SORModals.showGenInfo(item);
+                    }
                     return;
                 }
                 if (action === "edit") {
@@ -1998,10 +1742,12 @@
                         aree_json: JSON.stringify(item.aree || [])
                     });
                     populateEventSelect($("#edit-gen-event"), item.event_id || "", true);
-                    renderEvPreview($("#edit-gen-event").value, $("#edit-gen-event"));
-                    editAree.setValues(item.aree || []);
-                    $("#form-edit-gen").dataset.initialAree = JSON.stringify(item.aree || []);
-                    openModal("#modal-edit-gen");
+                    renderEvPreview($("#edit-gen-event")?.value, $("#edit-gen-event"));
+                    if (editAree && editAree.setValues) {
+                        editAree.setValues(item.aree || []);
+                        $("#form-edit-gen").dataset.initialAree = JSON.stringify(item.aree || []);
+                    }
+                    window.SORModals?.openModal?.("#modal-edit-gen");
                     return;
                 }
                 if (action === "del") {
@@ -2017,54 +1763,48 @@
 
             // Azioni comunicazioni evento
             if (action === "ev-info") {
-                openEvReportInfo(idx);
+                const list = state.ui.currentEventReports || [];
+                const r = list[Number(idx)];
+                if (!r) return;
+                if (window.SORModals?.showEvInfo) {
+                    window.SORModals.showEvInfo({
+                        ...r,
+                        event_id: state.ui.currentEventId || null,
+                    });
+                }
                 return;
             }
             if (action === "ev-edit") {
                 loadReportIntoForm(idx);
-                openModal("#modal-ev-form");
-                $("#ev-save").textContent = "Salva modifiche";
+                window.SORModals?.openModal?.("#modal-ev-form");
+                const btnSave = $("#ev-save");
+                if (btnSave) btnSave.textContent = "Salva modifiche";
                 return;
             }
         }
-
-        if (e.target.id === "gen-info-copy" || e.target.closest("#gen-info-copy")) {
-            const data = state.ui.genInfoJson ?? {};
-            const text = JSON.stringify(data, null, 2);
-            if (navigator.clipboard?.writeText) {
-                navigator.clipboard.writeText(text)
-                    .then(() => toast("Copiato negli appunti", "JSON della segnalazione copiato."))
-                    .catch(() => fallbackCopy(text));
-            } else {
-                fallbackCopy(text);
-            }
-            return;
-        }
-        if (e.target.closest("[data-close-modal]") || e.target.classList.contains("c-modal__backdrop")) {
-            closeModal(e.target.closest(".c-modal"));
-        }
     });
 
-    $("#ev-open-form").addEventListener("click", () => {
-        $("#ev-save").textContent = "💾 Salva Comunicazione";
+    $("#ev-open-form")?.addEventListener("click", () => {
+        const btnSave = $("#ev-save");
+        if (btnSave) btnSave.textContent = "💾 Salva Comunicazione";
         resetEvForm("altro", []);
-        openModal("#modal-ev-form");
+        window.SORModals?.openModal?.("#modal-ev-form");
     });
 
     /* ===== Paginazione ===== */
-    $("#gen-prev").addEventListener("click", async () => {
+    $("#gen-prev")?.addEventListener("click", async () => {
         state.page.gen = Math.max(1, state.page.gen - 1);
         await refreshGEN();
     });
-    $("#gen-next").addEventListener("click", async () => {
+    $("#gen-next")?.addEventListener("click", async () => {
         state.page.gen += 1;
         await refreshGEN();
     });
-    $("#ongoing-prev").addEventListener("click", async () => {
+    $("#ongoing-prev")?.addEventListener("click", async () => {
         state.page.ongoing = Math.max(1, state.page.ongoing - 1);
         await refreshONGOING();
     });
-    $("#ongoing-next").addEventListener("click", async () => {
+    $("#ongoing-next")?.addEventListener("click", async () => {
         state.page.ongoing = Math.max(1, state.page.ongoing + 1);
         await refreshONGOING();
     });
@@ -2079,14 +1819,15 @@
         toast("Stato evento aggiornato", "", "info", 1400);
     });
 
-    $("#gen-event-select").addEventListener("change", (e) => {
+    $("#gen-event-select")?.addEventListener("change", (e) => {
         renderEvPreview(e.target.value, e.target);
     });
-    $("#edit-gen-event").addEventListener("change", (e) => {
+    $("#edit-gen-event")?.addEventListener("change", (e) => {
         renderEvPreview(e.target.value, e.target);
     });
 
     function fillForm(form, obj) {
+        if (!form) return;
         for (const el of form.elements) {
             if (!el.name) continue;
             const v = obj[el.name];
@@ -2097,38 +1838,38 @@
     }
 
     /* ===== CREATE Segnalazione GENERICA ===== */
-    $("#form-gen").addEventListener("submit", async (e) => {
+    $("#form-gen")?.addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        const tipologia = $("#gen-tipologia").value || "altro";
+        const tipologia = $("#gen-tipologia")?.value || "altro";
         const priorita =
             document.querySelector('input[name="priorita"]:checked')?.value || "Nessuna";
-        const aree = genAree.values.slice();
-        const chosenEvent = $("#gen-event-select").value;
+        const aree = genAree && genAree.values ? genAree.values.slice() : [];
+        const chosenEvent = $("#gen-event-select")?.value;
 
-        const d = $("#g-data").value.trim() || nowIT().date;
-        const t = $("#g-ora").value.trim() || nowIT().time;
+        const d = $("#g-data")?.value.trim() || nowIT().date;
+        const t = $("#g-ora")?.value.trim() || nowIT().time;
         const dt = parseIT(d, t);
         const creata_il = dt.toISOString();
 
         const dirVal = document.querySelector('input[name="g-verso"]:checked')?.value || "E";
         const direzione = dirVal === "U" ? "U" : "E";
 
-        const tipoCom = $("#g-tipo").value || "";
-        const mitt = $("#g-mitt").value.trim();
-        const tel = $("#g-tel").value.trim();
-        const mail = $("#g-mail").value.trim();
-        const indirizzo = $("#g-indirizzo").value.trim();
-        const provincia = $("#g-provincia").value;
-        const comune = $("#g-comune").value;
-        const oggetto = $("#g-oggetto").value.trim();
-        const contenuto = $("#g-contenuto").value.trim();
+        const tipoCom = $("#g-tipo")?.value || "";
+        const mitt = $("#g-mitt")?.value.trim() || "";
+        const tel = $("#g-tel")?.value.trim() || "";
+        const mail = $("#g-mail")?.value.trim() || "";
+        const indirizzo = $("#g-indirizzo")?.value.trim() || "";
+        const provincia = $("#g-provincia")?.value || "";
+        const comune = $("#g-comune")?.value || "";
+        const oggetto = $("#g-oggetto")?.value.trim() || "";
+        const contenuto = $("#g-contenuto")?.value.trim() || "";
 
         const sintesi = oggetto || contenuto || "";
 
         const campi_specifici = {};
         $("#gen-specific")
-            .querySelectorAll("input, textarea, select")
+            ?.querySelectorAll("input, textarea, select")
             .forEach((el) => {
                 const id = el.id || "";
                 if (!id.startsWith("gensp-")) return;
@@ -2184,18 +1925,19 @@
         await Promise.all([refreshGEN(), refreshONGOING()]);
 
         e.currentTarget.reset();
-        genAree.setValues([]);
-        $("#gen-specific").innerHTML = "";
+        if (genAree && genAree.setValues) genAree.setValues([]);
+        const spec = $("#gen-specific");
+        if (spec) spec.innerHTML = "";
         toast("Segnalazione aggiunta!", "Salvata su backend.");
     });
 
-    $("#gen-tipologia").addEventListener("change", () => {
-        const t = $("#gen-tipologia").value || "";
+    $("#gen-tipologia")?.addEventListener("change", () => {
+        const t = $("#gen-tipologia")?.value || "";
         renderSpecific($("#gen-specific"), t, "gensp");
     });
 
     /* ===== EDIT Segnalazione ===== */
-    $("#form-edit-gen").addEventListener("submit", async (e) => {
+    $("#form-edit-gen")?.addEventListener("submit", async (e) => {
         e.preventDefault();
         const fd = Object.fromEntries(new FormData(e.currentTarget).entries());
         const id = fd.id;
@@ -2206,7 +1948,7 @@
             const evRes = await API.createEvento({
                 tipologia: base?.tipologia || "altro",
                 descrizione: fd.sintesi || base?.sintesi || "Evento",
-                aree: editAree.values.slice(),
+                aree: editAree && editAree.values ? editAree.values.slice() : [],
                 aperto: true,
             });
 
@@ -2221,7 +1963,7 @@
                     comunicata_il: new Date().toISOString(),
                     tipo: "—",
                     verso: (fd.direzione || "E").toUpperCase() === "U" ? "Uscita" : "Entrata",
-                    aree: editAree.values.slice(),
+                    aree: editAree && editAree.values ? editAree.values.slice() : [],
                     oggetto: fd.sintesi || base?.sintesi || "",
                     contenuto: fd.sintesi || base?.sintesi || "",
                     priorita: fd.priorita || "Nessuna",
@@ -2231,7 +1973,7 @@
 
         const payload = {
             direzione: fd.direzione,
-            aree: editAree.values.slice(),
+            aree: editAree && editAree.values ? editAree.values.slice() : [],
             sintesi: fd.sintesi,
             operatore: fd.operatore,
             priorita: fd.priorita,
@@ -2246,26 +1988,26 @@
     });
 
     /* ===== SAVE Comunicazione evento ===== */
-    $("#ev-form").addEventListener("submit", async (e) => {
+    $("#ev-form")?.addEventListener("submit", async (e) => {
         e.preventDefault();
         const id = state.ui.currentEventId;
         if (!id) return;
-        const d = $("#f-data").value.trim();
-        const t = $("#f-ora").value.trim();
+        const d = $("#f-data")?.value.trim();
+        const t = $("#f-ora")?.value.trim();
         const iso = d && t ? parseIT(d, t).toISOString() : null;
         const payload = {
             comunicata_il: iso,
-            tipo: $("#f-tipo").value || "—",
+            tipo: $("#f-tipo")?.value || "—",
             verso: document.querySelector('input[name="f-verso"]:checked')?.value || "Entrata",
-            mitt_dest: $("#f-mitt").value.trim(),
-            telefono: $("#f-tel").value.trim(),
-            email: $("#f-mail").value.trim(),
-            indirizzo: $("#f-indirizzo").value.trim(),
-            provincia: $("#f-provincia").value,
-            comune: $("#f-comune").value,
-            aree: evAreeInput.values.slice(),
-            oggetto: $("#f-oggetto").value.trim(),
-            contenuto: $("#f-contenuto").value.trim(),
+            mitt_dest: $("#f-mitt")?.value.trim() || "",
+            telefono: $("#f-tel")?.value.trim() || "",
+            email: $("#f-mail")?.value.trim() || "",
+            indirizzo: $("#f-indirizzo")?.value.trim() || "",
+            provincia: $("#f-provincia")?.value || "",
+            comune: $("#f-comune")?.value || "",
+            aree: evAreeInput && evAreeInput.values ? evAreeInput.values.slice() : [],
+            oggetto: $("#f-oggetto")?.value.trim() || "",
+            contenuto: $("#f-contenuto")?.value.trim() || "",
             priorita: document.querySelector('input[name="f-priorita"]:checked')?.value || "Nessuna",
         };
         await API.addComunicazione(id, payload);
@@ -2276,7 +2018,8 @@
     });
 
     /* ===== Aree evento (solo UI) ===== */
-    $("#ev-areas-edit").addEventListener("click", () => {
+    $("#ev-areas-edit")?.addEventListener("click", () => {
+        if (!window.Swal) return;
         Swal.fire({
             title: "Modifica Aree interessate",
             html: `<div class="tag-input" id="swal-areas" data-datalist="comuni-datalist"></div>`,
@@ -2285,7 +2028,7 @@
                 const ti = new TagInput(root, {
                     datalistId: "comuni-datalist"
                 });
-                ti.setValues([]);
+                ti?.setValues?.([]);
                 root.addEventListener("change", (e) => {
                     root.dataset.values = JSON.stringify(e.detail || []);
                 });
@@ -2297,7 +2040,7 @@
     });
 
     /* ===== MODALE: tutte le comunicazioni con top 5 eventi ===== */
-    $("#ongoing-all-reports").addEventListener("click", () => {
+    $("#ongoing-all-reports")?.addEventListener("click", () => {
         openAllReportsModal();
     });
 
@@ -2306,15 +2049,15 @@
         const topWrap = $("#all-reports-top");
         const tbody = $("#all-reports-tbody");
 
+        window.SORModals?.openModal?.(modalId);
+
         if (!topWrap || !tbody) {
-            openModal(modalId);
             return;
         }
 
         topWrap.replaceChildren();
         tbody.replaceChildren();
 
-        // ordino eventi per ultimo aggiornamento (più recenti in alto)
         const events = state.ongoing
             .slice()
             .sort((a, b) => {
@@ -2325,7 +2068,6 @@
 
         const topFive = events.slice(0, 5);
 
-        // card dei primi 5 eventi
         if (!topFive.length) {
             const empty = document.createElement("div");
             empty.className = "text-sm opacity-70";
@@ -2360,10 +2102,6 @@
             });
         }
 
-        // apro subito la modale
-        openModal(modalId);
-
-        // riga di caricamento nella tabella
         const loadingRow = document.createElement("tr");
         loadingRow.innerHTML =
             `<td colspan="7" class="px-3 py-3 opacity-70">Caricamento comunicazioni...</td>`;
@@ -2378,7 +2116,6 @@
                 const evLabel = mapped.descrizione || `Evento #${ev.id}`;
                 const evTypeLabel = TYPE_LABELS[mapped.tipo] || mapped.tipo;
 
-                // Comunicazioni evento
                 const commsRaw = pick(full, "comunicazioni", "reports") || [];
                 const comms = (Array.isArray(commsRaw) ? commsRaw : []).map(mapComToUI);
 
@@ -2396,7 +2133,6 @@
                     });
                 });
 
-                // Segnalazioni generiche collegate all'evento
                 const gens = extractGenericReportsFromEvent(full);
                 gens.forEach((g) => {
                     allRows.push({
@@ -2427,7 +2163,6 @@
             return;
         }
 
-        // ordino per data/ora desc
         allRows.sort((a, b) => {
             const dA = parseIT(a.data, a.ora);
             const dB = parseIT(b.data, b.ora);
@@ -2444,7 +2179,6 @@
                 (row.verso || "").toString().toUpperCase().startsWith("U") ? "U" : "E"
             );
 
-            // celle create "a mano" per usare correttamente il badge
             const tdData = document.createElement("td");
             tdData.className = "px-3 py-2";
             tdData.textContent = row.data || "";
@@ -2488,13 +2222,12 @@
         });
     }
 
-
     function appendQuery(url, obj) {
         Object.entries(obj).forEach(([k, v]) => {
             if (v !== null && v !== undefined && v !== "") url.searchParams.set(k, v);
         });
     }
-    $("#gen-export").addEventListener("click", () => {
+    $("#gen-export")?.addEventListener("click", () => {
         const url = new URL(API.base + "/segnalazioni/export.csv", location.origin);
         appendQuery(url, {
             page: state.page.gen,
@@ -2502,31 +2235,31 @@
             q: state.global.q || null,
             date: state.global.date || null,
             time: state.global.time || null,
-            comune: $("#gen-filter-comune").value || state.global.comune || null,
-            dal: $("#gen-filter-dal").value || null,
-            al: $("#gen-filter-al").value || null,
+            comune: $("#gen-filter-comune")?.value || state.global.comune || null,
+            dal: $("#gen-filter-dal")?.value || null,
+            al: $("#gen-filter-al")?.value || null,
         });
         location.href = url.toString();
     });
-    $("#ongoing-export").addEventListener("click", () => {
+    $("#ongoing-export")?.addEventListener("click", () => {
         const url = new URL(API.base + "/eventi/export.csv", location.origin);
         appendQuery(url, {
             page: state.page.ongoing,
             per_page: 10,
             q: state.global.q || null,
-            comune: $("#ongoing-filter-comune").value || state.global.comune || null,
-            dal: $("#ongoing-filter-dal").value || null,
-            al: $("#ongoing-filter-al").value || null,
+            comune: $("#ongoing-filter-comune")?.value || state.global.comune || null,
+            dal: $("#ongoing-filter-dal")?.value || null,
+            al: $("#ongoing-filter-al")?.value || null,
         });
         location.href = url.toString();
     });
-    $("#ev-export").addEventListener("click", () => {
+    $("#ev-export")?.addEventListener("click", () => {
         const id = state.ui.currentEventId;
         if (!id) return;
         const url = new URL(API.base + `/eventi/${id}/export.csv`, location.origin);
         location.href = url.toString();
     });
-    $("#ev-print").addEventListener("click", () => {
+    $("#ev-print")?.addEventListener("click", () => {
         const dlg = document.querySelector("#modal-event .c-modal__dialog");
         if (!dlg) return;
         const css = document.querySelector("style")?.textContent || "";
@@ -2541,28 +2274,36 @@
 
     /* ===== TagInput istanze ===== */
     let genAree, editAree, evAreeInput;
-    genAree = new TagInput($("#gen-aree"), {
-        datalistId: "comuni-datalist"
-    });
-    editAree = new TagInput($("#edit-aree"), {
-        datalistId: "comuni-datalist"
-    });
-    evAreeInput = new TagInput($("#ev-aree-input"), {
-        datalistId: "comuni-datalist"
-    });
 
-    $("#gen-aree").addEventListener("change", (e) => {
-        $("#gen-aree-hidden").value = JSON.stringify(e.detail || []);
+    const genAreeRoot = $("#gen-aree");
+    if (genAreeRoot) {
+        genAree = new TagInput(genAreeRoot, { datalistId: "comuni-datalist" });
+    }
+
+    const editAreeRoot = $("#edit-aree");
+    if (editAreeRoot) {
+        editAree = new TagInput(editAreeRoot, { datalistId: "comuni-datalist" });
+    }
+
+    const evAreeRoot = $("#ev-aree-input");
+    if (evAreeRoot) {
+        evAreeInput = new TagInput(evAreeRoot, { datalistId: "comuni-datalist" });
+    }
+
+    $("#gen-aree")?.addEventListener("change", (e) => {
+        const hid = $("#gen-aree-hidden");
+        if (hid) hid.value = JSON.stringify(e.detail || []);
     });
-    $("#edit-aree").addEventListener("change", (e) => {
-        $("#edit-aree-hidden").value = JSON.stringify(e.detail || []);
+    $("#edit-aree")?.addEventListener("change", (e) => {
+        const hid = $("#edit-aree-hidden");
+        if (hid) hid.value = JSON.stringify(e.detail || []);
     });
 
     /* ===== Auto-set area da comune (zona bollettino) ===== */
     function maybeAddZonaToAree(tagInputInstance, provSelId, comuneSelId) {
         const prov = $(provSelId)?.value;
         const comune = $(comuneSelId)?.value;
-        if (!prov || !comune || !tagInputInstance) return;
+        if (!prov || !comune || !tagInputInstance || !tagInputInstance.add) return;
 
         const meta = getComuneMeta(comune, prov);
         const zona = meta?.zona;
@@ -2573,35 +2314,33 @@
         }
     }
 
-    // Segnalazione generica -> aree da zona_bollettino
     $("#g-comune")?.addEventListener("change", () => {
         maybeAddZonaToAree(genAree, "#g-provincia", "#g-comune");
     });
 
-    // Comunicazione evento -> aree da zona_bollettino
     $("#f-comune")?.addEventListener("change", () => {
         maybeAddZonaToAree(evAreeInput, "#f-provincia", "#f-comune");
     });
 
     /* ===== Filtri ===== */
     ["#gen-filter-comune", "#gen-filter-dal", "#gen-filter-al"].forEach((s) =>
-        $(s).addEventListener("input", async () => {
+        $(s)?.addEventListener("input", async () => {
             state.page.gen = 1;
             await refreshGEN();
         })
     );
     ["#ongoing-filter-comune", "#ongoing-filter-dal", "#ongoing-filter-al"].forEach((s) =>
-        $(s).addEventListener("input", async () => {
+        $(s)?.addEventListener("input", async () => {
             state.page.ongoing = 1;
             await refreshONGOING();
         })
     );
     ["#global-q", "#global-date", "#global-time", "#global-comune"].forEach((sel) => {
-        $(sel).addEventListener("input", async () => {
-            state.global.q = $("#global-q").value.trim();
-            state.global.date = $("#global-date").value;
-            state.global.time = $("#global-time").value;
-            state.global.comune = $("#global-comune").value.trim();
+        $(sel)?.addEventListener("input", async () => {
+            state.global.q = $("#global-q")?.value.trim() || "";
+            state.global.date = $("#global-date")?.value || "";
+            state.global.time = $("#global-time")?.value || "";
+            state.global.comune = $("#global-comune")?.value.trim() || "";
             state.page = {
                 ...state.page,
                 gen: 1,
@@ -2617,10 +2356,10 @@
         if (!toggleBtn) return;
         toggleBtn.textContent =
             state.ui.ongoingStatus === "all" ?
-            "Tutti" :
-            state.ui.ongoingStatus === "open" ?
-            "Solo aperti" :
-            "Solo chiusi";
+                "Tutti" :
+                state.ui.ongoingStatus === "open" ?
+                    "Solo aperti" :
+                    "Solo chiusi";
         toggleBtn.title = toggleBtn.textContent;
     }
     if (toggleBtn) {
@@ -2628,10 +2367,10 @@
         toggleBtn.addEventListener("click", async () => {
             state.ui.ongoingStatus =
                 state.ui.ongoingStatus === "all" ?
-                "open" :
-                state.ui.ongoingStatus === "open" ?
-                "closed" :
-                "all";
+                    "open" :
+                    state.ui.ongoingStatus === "open" ?
+                        "closed" :
+                        "all";
             state.page.ongoing = 1;
             updateToggleBtn();
             await refreshONGOING();
@@ -2639,6 +2378,7 @@
     }
 
     function ensureEvPreviewBox(afterEl, boxId) {
+        if (!afterEl || !afterEl.parentElement) return null;
         let box = document.getElementById(boxId);
         if (!box) {
             box = document.createElement("section");
@@ -2650,7 +2390,9 @@
     }
 
     function renderEvPreview(evId, mountEl) {
+        if (!mountEl) return;
         const box = ensureEvPreviewBox(mountEl, mountEl.id + "-preview");
+        if (!box) return;
         box.replaceChildren();
         const head = document.createElement("div");
         head.className = "ev-preview__head";
@@ -2683,10 +2425,10 @@
     }
 
     async function resetGlobalFilters() {
-        $("#global-q").value = "";
-        $("#global-date").value = "";
-        $("#global-time").value = "";
-        $("#global-comune").value = "";
+        if ($("#global-q")) $("#global-q").value = "";
+        if ($("#global-date")) $("#global-date").value = "";
+        if ($("#global-time")) $("#global-time").value = "";
+        if ($("#global-comune")) $("#global-comune").value = "";
         state.global = {
             q: "",
             date: "",
@@ -2698,16 +2440,16 @@
         await Promise.all([refreshGEN(), refreshONGOING()]);
     }
     async function resetGenFilters() {
-        $("#gen-filter-comune").value = "";
-        $("#gen-filter-dal").value = "";
-        $("#gen-filter-al").value = "";
+        if ($("#gen-filter-comune")) $("#gen-filter-comune").value = "";
+        if ($("#gen-filter-dal")) $("#gen-filter-dal").value = "";
+        if ($("#gen-filter-al")) $("#gen-filter-al").value = "";
         state.page.gen = 1;
         await refreshGEN();
     }
     async function resetOngoingFilters() {
-        $("#ongoing-filter-comune").value = "";
-        $("#ongoing-filter-dal").value = "";
-        $("#ongoing-filter-al").value = "";
+        if ($("#ongoing-filter-comune")) $("#ongoing-filter-comune").value = "";
+        if ($("#ongoing-filter-dal")) $("#ongoing-filter-dal").value = "";
+        if ($("#ongoing-filter-al")) $("#ongoing-filter-al").value = "";
         state.page.ongoing = 1;
         await refreshONGOING();
     }
@@ -2715,225 +2457,61 @@
     document.getElementById("gen-filters-reset")?.addEventListener("click", resetGenFilters);
     document.getElementById("ongoing-filters-reset")?.addEventListener("click", resetOngoingFilters);
 
-    /* ===== Dettagli segnalazione (modal) ===== */
-    function genInfoRows(rec) {
-        const typeLabel =
-            TYPE_LABELS[rec.tipologia] || rec.tipologia || "—";
-        const created = rec.created_at ?
-            new Date(rec.created_at) :
-            null;
-        const when = created ? fmtDT(created) : "—";
-        const evText = rec.event_id ? `Evento #${rec.event_id}` : "—";
-
-        return [
-            ["ID", String(rec.id)],
-            ["Data/Ora", when],
-            [
-                "Direzione",
-                (rec.direzione || "E").toUpperCase() === "U" ?
-                "Uscita (U)" :
-                "Entrata (E)",
-            ],
-            ["Tipologia evento", typeLabel],
-            ["Tipo comunicazione", rec.tipo || "—"],
-            ["Comune", rec.comune || "—"],
-            ["Aree interessate", (rec.aree || []).join(", ") || "—"],
-            ["Mittente/Destinatario", rec.mitt_dest || "—"],
-            ["Telefono", rec.telefono || "—"],
-            ["E-mail", rec.email || "—"],
-            ["Indirizzo", rec.indirizzo || "—"],
-            ["Provincia", rec.provincia || "—"],
-            ["Operatore", rec.operatore || "—"],
-            ["Priorità", rec.priorita || "Nessuna"],
-            ["Evento associato", evText],
-            ["Oggetto", rec.oggetto || "—"],
-            ["Contenuto", rec.contenuto || "—"],
-        ];
-    }
-
-    function openGenInfoModal(id) {
-        const rec = state.gen.find((x) => String(x.id) === String(id));
-        if (!rec) return;
-        const body = document.querySelector("#gen-info-body");
-        if (!body) return;
-        const rows = genInfoRows(rec);
-        const tbl = document.createElement("table");
-        tbl.className = "w-full text-sm";
-        tbl.innerHTML = `<tbody>${rows
-      .map(([k, v]) => `<tr class="border-t border-slate-200"><td class="px-3 py-2 font-semibold w-44">${k}</td><td class="px-3 py-2">${v}</td></tr>`)
-      .join("")}</tbody>`;
-        body.replaceChildren(tbl);
-
-        const pr = rec.priorita || "Nessuna";
-        const dir = (rec.direzione || "E").toUpperCase() === "U" ? "U" : "E";
-        const prBadge = makePrioBadge(pr);
-        const dirBadge = makeDirBadge(dir);
-        const tds = body.querySelectorAll("tbody tr td:nth-child(2)");
-        if (tds[2]) {
-            tds[2].textContent = "";
-            tds[2].appendChild(dirBadge.cloneNode(true));
-        }
-        if (tds[12]) {
-            tds[12].textContent = "";
-            tds[12].appendChild(prBadge);
-        }
-
-        const payload = {
-            id: rec.id,
-            created_at: rec.created_at,
-            direzione: rec.direzione,
-            tipologia: rec.tipologia,
-            tipologia_label: TYPE_LABELS[rec.tipologia] || rec.tipologia || null,
-            aree: rec.aree || [],
-            operatore: rec.operatore || null,
-            priorita: rec.priorita || "Nessuna",
-            event_id: rec.event_id || null,
-            sintesi: rec.sintesi || "",
-            oggetto: rec.oggetto || "",
-            comune: rec.comune || "",
-            telefono: rec.telefono || "",
-            email: rec.email || "",
-            indirizzo: rec.indirizzo || "",
-            provincia: rec.provincia || "",
-        };
-        state.ui.genInfoJson = payload;
-        openModal("#modal-gen-info");
-    }
-
     /* ===== Specific form renderer ===== */
     const SPEC_SCHEMAS = {
-        sismico: [{
-                id: "magnitudo",
-                label: "Magnitudo (se disponibile)"
-            },
-            {
-                id: "intensita",
-                label: "Intensità MCS/EMS"
-            },
-            {
-                id: "coordinate",
-                label: "Coordinate epicentro"
-            },
-            {
-                id: "danni",
-                label: "Danni segnalati (testo)",
-                type: "textarea"
-            },
+        sismico: [
+            { id: "magnitudo", label: "Magnitudo (se disponibile)" },
+            { id: "intensita", label: "Intensità MCS/EMS" },
+            { id: "coordinate", label: "Coordinate epicentro" },
+            { id: "danni", label: "Danni segnalati (testo)", type: "textarea" },
         ],
-        vulcanico: [{
-                id: "tremore",
-                label: "Tremore vulcanico (trend)"
-            },
-            {
-                id: "cenere",
-                label: "Ricaduta ceneri (aree)"
-            },
-            {
-                id: "dpi",
-                label: "DPI distribuiti (qtà)"
-            },
+        vulcanico: [
+            { id: "tremore", label: "Tremore vulcanico (trend)" },
+            { id: "cenere", label: "Ricaduta ceneri (aree)" },
+            { id: "dpi", label: "DPI distribuiti (qtà)" },
         ],
-        idraulico: [{
-                id: "livello",
-                label: "Livello idrometrico (m)"
-            },
-            {
-                id: "argine",
-                label: "Criticità arginale (sì/no)"
-            },
-            {
-                id: "sottopassi",
-                label: "Sottopassi allagati (#)"
-            },
+        idraulico: [
+            { id: "livello", label: "Livello idrometrico (m)" },
+            { id: "argine", label: "Criticità arginale (sì/no)" },
+            { id: "sottopassi", label: "Sottopassi allagati (#)" },
         ],
-        idrogeologico: [{
-                id: "tipologia_frana",
-                label: "Tipologia frana"
-            },
-            {
-                id: "volume",
-                label: "Volume stimato (mc)"
-            },
-            {
-                id: "viabilita",
-                label: "Interferenza viabilità (testo)",
-                type: "textarea"
-            },
+        idrogeologico: [
+            { id: "tipologia_frana", label: "Tipologia frana" },
+            { id: "volume", label: "Volume stimato (mc)" },
+            { id: "viabilita", label: "Interferenza viabilità (testo)", type: "textarea" },
         ],
-        maremoto: [{
-                id: "allerta",
-                label: "Livello allerta"
-            },
-            {
-                id: "aree_costiere",
-                label: "Aree costiere interessate"
-            },
+        maremoto: [
+            { id: "allerta", label: "Livello allerta" },
+            { id: "aree_costiere", label: "Aree costiere interessate" },
         ],
-        "deficit-idrico": [{
-                id: "pressione",
-                label: "Riduzione pressione (%)"
-            },
-            {
-                id: "autobotti",
-                label: "Autobotti in servizio (#)"
-            },
+        "deficit-idrico": [
+            { id: "pressione", label: "Riduzione pressione (%)" },
+            { id: "autobotti", label: "Autobotti in servizio (#)" },
         ],
-        "meteo-avverso": [{
-                id: "fenomeno",
-                label: "Fenomeno prevalente (vento, grandine…)"
-            },
-            {
-                id: "intensita",
-                label: "Intensità"
-            },
-            {
-                id: "danni_diffusi",
-                label: "Danni diffusi? (sì/no)"
-            },
+        "meteo-avverso": [
+            { id: "fenomeno", label: "Fenomeno prevalente (vento, grandine…)" },
+            { id: "intensita", label: "Intensità" },
+            { id: "danni_diffusi", label: "Danni diffusi? (sì/no)" },
         ],
-        aib: [{
-                id: "superficie",
-                label: "Superficie percorsa dal fuoco (ha)"
-            },
-            {
-                id: "combustibile",
-                label: "Tipo combustibile (bosco, sterpaglie…)"
-            },
-            {
-                id: "coordinate",
-                label: "Coordinate/Località puntuale"
-            },
-            {
-                id: "mezzi",
-                label: "Mezzi impiegati (AIB/VVF/CAI…)"
-            },
-            {
-                id: "meteo",
-                label: "Condizioni meteo (vento, umidità…)"
-            },
+        aib: [
+            { id: "superficie", label: "Superficie percorsa dal fuoco (ha)" },
+            { id: "combustibile", label: "Tipo combustibile (bosco, sterpaglie…)" },
+            { id: "coordinate", label: "Coordinate/Località puntuale" },
+            { id: "mezzi", label: "Mezzi impiegati (AIB/VVF/CAI…)" },
+            { id: "meteo", label: "Condizioni meteo (vento, umidità…)" },
         ],
-        uomo: [{
-                id: "tipologia",
-                label: "Tipologia incidente (sversamento, industriale…)"
-            },
-            {
-                id: "ente_coinvolto",
-                label: "Ente/Azienda coinvolta"
-            },
-            {
-                id: "impatti",
-                label: "Impatti su servizi/ambiente",
-                type: "textarea"
-            },
+        uomo: [
+            { id: "tipologia", label: "Tipologia incidente (sversamento, industriale…)" },
+            { id: "ente_coinvolto", label: "Ente/Azienda coinvolta" },
+            { id: "impatti", label: "Impatti su servizi/ambiente", type: "textarea" },
         ],
-        altro: [{
-            id: "descrizione",
-            label: "Descrizione dettagli (testo)",
-            type: "textarea"
-        }, ],
+        altro: [
+            { id: "descrizione", label: "Descrizione dettagli (testo)", type: "textarea" },
+        ],
     };
 
     function renderSpecific(container, type, prefix) {
+        if (!container) return;
         container.innerHTML = "";
         const schema = SPEC_SCHEMAS[type] || [];
         if (!schema.length) {
@@ -2946,9 +2524,9 @@
             const wrap = document.createElement("label");
             wrap.className = "grid gap-1.5";
             wrap.innerHTML = `<span class="label">${f.label}</span>` +
-                (f.type === "textarea" ?
-                    `<textarea class="input" id="${prefix}-${f.id}"></textarea>` :
-                    `<input class="input" id="${prefix}-${f.id}"/>`);
+                (f.type === "textarea"
+                    ? `<textarea class="input" id="${prefix}-${f.id}"></textarea>`
+                    : `<input class="input" id="${prefix}-${f.id}"/>`);
             grid.appendChild(wrap);
         });
         container.appendChild(grid);

@@ -7,19 +7,18 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\ApplicativiController;
 use App\Http\Controllers\SegnalazioniController;
 
-// SOR controllers (API)
-use App\Http\Controllers\Sor\EventoController;
+// SOR controllers (pagine / API)
 use App\Http\Controllers\Sor\ComunicazioniController;
-use App\Http\Controllers\Sor\SegnalazioneController;
 use App\Http\Controllers\Sor\CoordinamentoController;
-use App\Http\Controllers\Sor\SegnalazioneOpsController;
-
+use App\Http\Controllers\Sor\EventoController;
+use App\Http\Controllers\Sor\SegnalazioneController;
 
 // Home pubblica
 Route::view('/', 'home')->name('home');
 
 // Rotte protette (pagine)
 Route::middleware('auth')->group(function () {
+
     Route::view('/cartografie', 'cartografie.index')->name('cartografie.index');
     Route::view('/percezione', 'percezione.index')->name('percezione.index');
 
@@ -28,13 +27,23 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [ApplicativiController::class, 'index'])->name('index');
         Route::get('{slug}', [ApplicativiController::class, 'show'])->name('show');
     });
-});
 
-// Segnalazioni (pagine Blade)
-Route::redirect('/segnalazioni', '/segnalazioni/dashboard')->name('segnalazioni.index');
-Route::get('/segnalazioni/{page?}', [SegnalazioniController::class, 'show'])
-    ->where('page', '[A-Za-z0-9\-\_]+')
-    ->name('segnalazioni.section');
+    // Segnalazioni (pagine Blade)
+    Route::redirect('/segnalazioni', '/segnalazioni/dashboard')->name('segnalazioni.index');
+
+    // 🔹 Pagina LOG dentro lo stesso layout Segnalazioni
+    Route::get('/segnalazioni/log', [SegnalazioniController::class, 'show'])
+        ->defaults('page', 'log')
+        ->name('segnalazioni.logs');
+
+    // 🔹 Alias /segnalazioni/logs → redirect a /segnalazioni/log (opzionale)
+    Route::get('/segnalazioni/logs', fn () => redirect()->route('segnalazioni.logs'));
+
+    // catch-all per le altre sezioni (dashboard, coordinamento, ecc.)
+    Route::get('/segnalazioni/{page?}', [SegnalazioniController::class, 'show'])
+        ->where('page', '[A-Za-z0-9\-\_]+')
+        ->name('segnalazioni.section');
+});
 
 // Logout
 Route::post('/logout', function (Request $request) {
@@ -47,19 +56,17 @@ Route::post('/logout', function (Request $request) {
         ->with('alert', [
             'type'    => 'success',
             'title'   => 'Logout effettuato',
-            'message' => 'Hai effettuato l’uscita correttamente.'
+            'message' => 'Hai effettuato l’uscita correttamente.',
         ]);
 })->name('logout');
 
 // Ping pubblico (facoltativo)
-Route::get('/api/ping', fn() => response()->json(['ok' => true]));
+Route::get('/api/ping', fn () => response()->json(['ok' => true]));
 
 /*
 |--------------------------------------------------------------------------
 | API SOR PUBBLICHE (se servono anche fuori dashboard)
 |--------------------------------------------------------------------------
-| Espongono gli stessi endpoint di coordinamento anche sotto /sor.
-| Lasciale se ti servono chiamate pubbliche (es. integrazioni esterne).
 */
 Route::prefix('sor')->group(function () {
     Route::get('roles',                       [CoordinamentoController::class, 'roles']);
@@ -67,15 +74,13 @@ Route::prefix('sor')->group(function () {
     Route::patch('segnalazioni/{id}/assign',  [CoordinamentoController::class, 'assign']);
     Route::patch('segnalazioni/{id}/close',   [CoordinamentoController::class, 'close']);
     Route::post('segnalazioni/{id}/notes',    [CoordinamentoController::class, 'addNote']);
-    Route::get('logs',                        [CoordinamentoController::class, 'logs']);
+    Route::get('logs',                        [CoordinamentoController::class, 'logs']); // log coordinamento (pubblici)
 });
 
 /*
 |--------------------------------------------------------------------------
 | API SOR PROTETTE (quelle che la dashboard chiama: /api/sor/…)
 |--------------------------------------------------------------------------
-| IMPORTANTISSIMO: usano ['web','auth'] così viaggi col cookie di sessione.
-| Qui mettiamo TUTTE le rotte che il JS del frontend invoca.
 */
 Route::middleware(['web', 'auth'])->prefix('api/sor')->group(function () {
 
@@ -97,14 +102,14 @@ Route::middleware(['web', 'auth'])->prefix('api/sor')->group(function () {
     Route::get('eventi/export.csv',               [EventoController::class, 'export']);
     Route::get('eventi/{id}/export.csv',          [EventoController::class, 'exportSingle']);
 
-    // Coordinamento / Ops (ruoli, assegnazioni, chiusure, note, logs)
+    // Coordinamento / Ops (ruoli, assegnazioni, chiusure, note, logs coordinamento)
     Route::get('roles',                      [CoordinamentoController::class, 'roles']);
     Route::get('segnalazioni-coord',         [CoordinamentoController::class, 'listSegnalazioni']); // alias se vuoi tener separate
     Route::patch('segnalazioni/{id}/assign', [CoordinamentoController::class, 'assign']);
     Route::patch('segnalazioni/{id}/close',  [CoordinamentoController::class, 'close']);
     Route::post('segnalazioni/{id}/notes',   [CoordinamentoController::class, 'addNote']);
-    Route::get('logs',                       [CoordinamentoController::class, 'logs']);
+    Route::get('logs',                       [CoordinamentoController::class, 'logs']); // log coordinamento (admin)
 
     // opzionale: chi sono
-    Route::get('me', fn() => auth()->user());
+    Route::get('me', fn () => auth()->user());
 });

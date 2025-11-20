@@ -20,7 +20,7 @@ class CoordinamentoController extends Controller
     public function roles()
     {
         return response()->json([
-            ['slug' => 'coordinamento', 'label' => 'Coordinamento (Admin)', 'can_assign' => true, 'can_close' => true],
+            ['slug' => 'coordinamento', 'label' => 'Coordinamento (Admin)', 'can_assign' => true,  'can_close' => true],
             ['slug' => 'volontariato',  'label' => 'Volontariato',          'can_assign' => false, 'can_close' => true],
             ['slug' => 'mezzi',         'label' => 'Mezzi e Materiali',     'can_assign' => false, 'can_close' => true],
             ['slug' => 'prociv',        'label' => 'Protezione Civile',     'can_assign' => false, 'can_close' => true],
@@ -53,41 +53,49 @@ class CoordinamentoController extends Controller
             ->orderByDesc('creata_il')
             ->orderByDesc('id');
 
-        if ($status->isNotEmpty()) $q->where('status', $status->toString());
-        if ($ass->isNotEmpty())    $q->where('assigned_to', $ass->toString());
+        if ($status->isNotEmpty()) {
+            $q->where('status', $status->toString());
+        }
+        if ($ass->isNotEmpty()) {
+            $q->where('assigned_to', $ass->toString());
+        }
 
-        $rows = $q->limit((int)$r->integer('per_page', 200))->get()->map(function ($s) {
-            return [
-                'id'           => $s->id,
-                'sintesi'      => $s->sintesi,
-                'tipologia'    => $s->tipologia ?? 'altro',
-                'aree'         => $s->aree ?? [],
-                'operatore'    => $s->operatore,
-                'created_at'   => $s->creata_il,
-                'status'       => $s->status ?? self::STATUS_OPEN,
-                'assigned_to'  => $s->assigned_to,
-                'instructions' => $s->instructions,
-                'last_note'    => $s->last_note_text ? [
-                    'text' => $s->last_note_text,
-                    'by'   => $s->last_note_by,
-                    'at'   => $s->last_note_at,
-                ] : null,
-            ];
-        });
+        $rows = $q->limit((int)$r->integer('per_page', 200))
+            ->get()
+            ->map(function ($s) {
+                return [
+                    'id'           => $s->id,
+                    'sintesi'      => $s->sintesi,
+                    'tipologia'    => $s->tipologia ?? 'altro',
+                    'aree'         => $s->aree ?? [],
+                    'operatore'    => $s->operatore,
+                    'created_at'   => $s->creata_il,
+                    'status'       => $s->status ?? self::STATUS_OPEN,
+                    'assigned_to'  => $s->assigned_to,
+                    'instructions' => $s->instructions,
+                    'last_note'    => $s->last_note_text ? [
+                        'text' => $s->last_note_text,
+                        'by'   => $s->last_note_by,
+                        'at'   => $s->last_note_at,
+                    ] : null,
+                ];
+            });
 
         return response()->json($rows);
     }
 
     /**
-     * Assegna una segnalazione (solo ruolo coordinamento)
+     * Assegna una segnalazione
+     * (per ora controllo solo che l'utente sia autenticato;
+     *  il blocco per ruolo è gestito lato UI / politiche future)
      */
     public function assign(Request $r, int $id)
     {
-        $me   = $r->user();
-        $role = $me->role ?? 'coordinamento';
+        $me = $r->user();
 
-        if ($role !== 'coordinamento') {
-            return response()->json(['message' => 'Operazione non permessa'], 403);
+        // opzionale: se vuoi evitare che un guest chiami direttamente l'endpoint /sor/*
+        if (!$me) {
+            return response()->json(['message' => 'Non autenticato'], 401);
         }
 
         $to = (string)$r->input('to');
@@ -130,6 +138,7 @@ class CoordinamentoController extends Controller
     public function addNote(Request $r, int $id)
     {
         $r->validate(['text' => ['required', 'string', 'min:1']]);
+
         $me   = $r->user();
         $text = trim($r->input('text'));
 
@@ -186,7 +195,7 @@ class CoordinamentoController extends Controller
     }
 
     /**
-     * Elenco dei log (visibile a coordinamento o ruoli autorizzati)
+     * Elenco dei log
      */
     public function logs(Request $r)
     {
