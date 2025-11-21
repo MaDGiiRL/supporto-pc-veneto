@@ -1,17 +1,16 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-
 use App\Http\Controllers\ApplicativiController;
 use App\Http\Controllers\SegnalazioniController;
-
-// SOR controllers (pagine / API)
 use App\Http\Controllers\Sor\ComunicazioniController;
 use App\Http\Controllers\Sor\CoordinamentoController;
 use App\Http\Controllers\Sor\EventoController;
+// SOR controllers (pagine / API)
 use App\Http\Controllers\Sor\SegnalazioneController;
+use App\Http\Controllers\SorController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 // Home pubblica
 Route::view('/', 'home')->name('home');
@@ -31,18 +30,35 @@ Route::middleware('auth')->group(function () {
     // Segnalazioni (pagine Blade)
     Route::redirect('/segnalazioni', '/segnalazioni/dashboard')->name('segnalazioni.index');
 
-    // 🔹 Pagina LOG dentro lo stesso layout Segnalazioni
+    // Pagina LOG dentro lo stesso layout Segnalazioni
     Route::get('/segnalazioni/log', [SegnalazioniController::class, 'show'])
         ->defaults('page', 'log')
         ->name('segnalazioni.logs');
 
-    // 🔹 Alias /segnalazioni/logs → redirect a /segnalazioni/log (opzionale)
+    // Alias /segnalazioni/logs → redirect a /segnalazioni/log (opzionale)
     Route::get('/segnalazioni/logs', fn () => redirect()->route('segnalazioni.logs'));
 
-    // catch-all per le altre sezioni (dashboard, coordinamento, ecc.)
+    /*
+    |--------------------------------------------------------------------------
+    | Pagina Apertura/Chiusura SOR
+    |--------------------------------------------------------------------------
+    | NON serve una route dedicata: viene gestita dalla catch-all sotto,
+    | con page = 'apertura-chiusura-sor'.
+    | In sidebar userai route('segnalazioni.section', ['page' => 'apertura-chiusura-sor'])
+    |--------------------------------------------------------------------------
+    */
+
+    // Catch-all per le altre sezioni (dashboard, coordinamento, ecc.)
     Route::get('/segnalazioni/{page?}', [SegnalazioniController::class, 'show'])
         ->where('page', '[A-Za-z0-9\-\_]+')
         ->name('segnalazioni.section');
+
+    /*
+    |--------------------------------------------------------------------------
+    | API interne per salvataggio stato SOR (chiamate via fetch dal JS)
+    |--------------------------------------------------------------------------
+    */
+    Route::post('/sor', [SorController::class, 'update'])->name('sor.update');
 });
 
 // Logout
@@ -104,11 +120,11 @@ Route::middleware(['web', 'auth'])->prefix('api/sor')->group(function () {
 
     // Coordinamento / Ops (ruoli, assegnazioni, chiusure, note, logs coordinamento)
     Route::get('roles',                      [CoordinamentoController::class, 'roles']);
-    Route::get('segnalazioni-coord',         [CoordinamentoController::class, 'listSegnalazioni']); // alias se vuoi tener separate
-    Route::patch('segnalazioni/{id}/assign', [CoordinamentoController::class, 'assign']);
-    Route::patch('segnalazioni/{id}/close',  [CoordinamentoController::class, 'close']);
-    Route::post('segnalazioni/{id}/notes',   [CoordinamentoController::class, 'addNote']);
-    Route::get('logs',                       [CoordinamentoController::class, 'logs']); // log coordinamento (admin)
+    Route::get('segnalazioni-coord',        [CoordinamentoController::class, 'listSegnalazioni']); // alias
+    Route::patch('segnalazioni/{id}/assign',[CoordinamentoController::class, 'assign']);
+    Route::patch('segnalazioni/{id}/close', [CoordinamentoController::class, 'close']);
+    Route::post('segnalazioni/{id}/notes',  [CoordinamentoController::class, 'addNote']);
+    Route::get('logs',                      [CoordinamentoController::class, 'logs']); // log coordinamento (admin)
 
     // opzionale: chi sono
     Route::get('me', fn () => auth()->user());

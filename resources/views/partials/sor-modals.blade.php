@@ -85,34 +85,62 @@
     <div class="c-modal__dialog" role="dialog" aria-modal="true" style="max-width:56rem">
         <button type="button" class="c-modal__close" data-close-modal>✕</button>
         <h4 class="mb-2 text-lg font-semibold">Inserisci Nuova Comunicazione</h4>
-        <!-- (form come ce l’hai già, non lo ripeto per non allungare troppo) -->
-        @includeIf('partials.sor-event-form') {{-- oppure incolla qui il form se non ce l’hai in partial --}}
+        @includeIf('partials.sor-event-form')
     </div>
 </div>
 
-<!-- MODALE: Tutte le comunicazioni -->
+<!-- TUTTE LE COMUNICAZIONI (top 5 eventi + tutte le segnalazioni) -->
 <div class="c-modal c-modal--top hidden" id="modal-all-reports" aria-hidden="true">
     <div class="c-modal__backdrop" data-close-modal></div>
-    <div class="c-modal__dialog" role="dialog" aria-modal="true" style="max-width:90rem">
+    <div class="c-modal__dialog c-modal__dialog--xl" role="dialog" aria-modal="true" style="max-width:90rem">
         <button type="button" class="c-modal__close" data-close-modal>✕</button>
-        <h3 class="mb-3 text-lg font-semibold">Tutte le comunicazioni — Eventi in atto</h3>
-        <div id="all-reports-top" class="grid md:grid-cols-2 xl:grid-cols-3 gap-3 mb-4"></div>
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-                <thead>
-                    <tr>
-                        <th class="px-3 py-2">Data</th>
-                        <th class="px-3 py-2">Ora</th>
-                        <th class="px-3 py-2">E/U</th>
-                        <th class="px-3 py-2">Comune</th>
-                        <th class="px-3 py-2 w-sintesi">Oggetto</th>
-                        <th class="px-3 py-2">Evento</th>
-                        <th class="px-3 py-2">Azioni</th>
-                    </tr>
-                </thead>
-                <tbody id="all-reports-tbody"></tbody>
-            </table>
-        </div>
+
+        <header class="mb-4">
+            <h3 class="text-lg font-semibold">Tutte le comunicazioni — Eventi in atto</h3>
+            <p class="text-xs opacity-70">
+                Qui vedi:
+                <br>- in alto i 5 eventi in atto più recenti (come card cliccabili)
+                <br>- sotto tutte le comunicazioni e segnalazioni generiche di tutti gli eventi.
+            </p>
+        </header>
+
+        <!-- TOP 5 EVENTI IN ATTO -->
+        <section class="mb-4">
+            <h4 class="text-sm font-semibold mb-2">Eventi in atto (ultimi 5)</h4>
+            <div id="all-reports-top" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+                <!-- riempito da JS -->
+            </div>
+        </section>
+
+        <!-- TUTTE LE SEGNALAZIONI DI TUTTI GLI EVENTI -->
+        <section class="rounded-2xl border border-slate-200 bg-white p-3">
+            <div class="flex items-center justify-between gap-3 mb-2">
+                <h4 class="text-sm font-semibold">Comunicazioni e segnalazioni</h4>
+                <div class="text-xs opacity-70">
+                    Ordinate dalla più recente alla meno recente.
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="text-left">
+                        <tr>
+                            <th class="px-3 py-2">Data</th>
+                            <th class="px-3 py-2">Ora</th>
+                            <th class="px-3 py-2">E/U</th>
+                            <th class="px-3 py-2">Tipo</th>
+                            <th class="px-3 py-2">Comune</th>
+                            <th class="px-3 py-2 w-sintesi">Oggetto / Sintesi</th>
+                            <th class="px-3 py-2">Evento</th>
+                            <th class="px-3 py-2">Azioni</th>
+                        </tr>
+                    </thead>
+                    <tbody id="all-reports-tbody">
+                        <!-- riempito da JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
     </div>
 </div>
 
@@ -187,8 +215,10 @@
             if (m) baseCloseModal(m);
         }
 
+        // evento principale "in sovra-livello"
         document.getElementById("modal-event")?.classList.add("c-modal--super");
 
+        // ========== MODALE "READ MORE" TESTO LUNGO ==========
         function ensureReadMoreModal() {
             if ($("#modal-readmore")) return;
             const wrap = document.createElement("div");
@@ -217,6 +247,7 @@
             baseOpenModal("#modal-readmore");
         }
 
+        // ========== DETTAGLI SEGNALAZIONE GENERICA ==========
         function genInfoRows(rec) {
             const typeLabel = TYPE_LABELS[rec.tipologia] || rec.tipologia || "—";
             const created = rec.created_at ? new Date(rec.created_at) : null;
@@ -277,10 +308,12 @@
             const dirBadge = makeDirBadge(dir);
             const tds = body.querySelectorAll("tbody tr td:nth-child(2)");
 
+            // direzione
             if (tds[2]) {
                 tds[2].textContent = "";
                 tds[2].appendChild(dirBadge.cloneNode(true));
             }
+            // priorità
             if (tds[12]) {
                 tds[12].textContent = "";
                 tds[12].appendChild(prBadge);
@@ -308,6 +341,7 @@
             baseOpenModal("#modal-gen-info");
         }
 
+        // ========== DETTAGLI COMUNICAZIONE EVENTO ==========
         function showEvInfo(r) {
             const body = document.querySelector("#ev-info-body");
             if (!body) return;
@@ -368,6 +402,7 @@
             baseOpenModal("#modal-ev-info");
         }
 
+        // ========== EXPORT / PRINT ==========
         function downloadCSVFromObject(obj, filename) {
             if (!obj) return;
             const headers = Object.keys(obj);
@@ -378,7 +413,7 @@
             const csv = headers.join(";") + "\n" + row.join(";");
 
             const blob = new Blob([csv], {
-                type: "text/csv;charset=utf-8;"
+                type: "text/csv;charset=utf-8;",
             });
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
@@ -438,6 +473,7 @@
             printElement("#ev-info-body", "Dettagli comunicazione evento");
         }
 
+        // ========== HANDLER CLICK / ESC ==========
         document.addEventListener("click", (e) => {
             const opener = e.target.closest("[data-open-modal]");
             if (opener && !e.defaultPrevented) {
@@ -487,6 +523,7 @@
             closeTopModal();
         });
 
+        // Espongo API modali
         const existing = window.SORModals || {};
         window.SORModals = {
             ...existing,

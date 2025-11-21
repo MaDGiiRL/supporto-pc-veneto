@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 // 👉 aggiungi i model per i log SOR
 use App\Models\Sor\SorLog;
@@ -27,11 +28,11 @@ class SegnalazioniController extends Controller
                 'icon'     => 'users',
                 'view'     => 'coordinamento',
             ],
-            'sinottico' => [
-                'label'    => 'Sinottico',
+             'segnalazioni-eventi' => [
+                'label'    => 'Segnalazioni Eventi',
                 'category' => 'Generale',
-                'icon'     => 'chart-bar',
-                'view'     => 'sinottico',
+                'icon'     => 'document-text',
+                'view'     => 'segnalazioni-eventi',
             ],
             'apertura-chiusura-sor' => [
                 'label'    => 'Apertura/Chiusura SOR',
@@ -51,7 +52,7 @@ class SegnalazioniController extends Controller
                 'label'    => 'Log',
                 'category' => 'Storico',
                 'icon'     => 'clipboard-document-list',
-                'view'     => 'log',   // 👉 usa la tua sections/log.blade.php
+                'view'     => 'log', 
             ],
             'tabella-riassuntiva' => [
                 'label'    => 'Tabella riassuntiva',
@@ -125,7 +126,99 @@ class SegnalazioniController extends Controller
             'currentKey' => $currentKey,
         ];
 
-        // 🔹 SE SIAMO NELLA PAGINA LOG, CARICHIAMO I DUE Paginator
+        /*
+    |--------------------------------------------------------------------------
+    | PAGINA: APERTURA / CHIUSURA SOR
+    |--------------------------------------------------------------------------
+    */
+        if (($current['view'] ?? null) === 'apertura-chiusura-sor') {
+
+            // TODO: sostituisci con il tuo controlla_ente()
+            $enteOriginario = 30000;
+
+            // Stato SOR attuale
+            $statoAttuale = DB::table('segnalazioni.stato_sala_operativa as s')
+                ->join('segnalazioni.tbl_stati_sale_operative as t', 's.stato_sala_op', '=', 't.id_stati_sale_operative')
+                ->select(
+                    's.*',
+                    't.descrizione as stato_descrizione'
+                )
+                ->where('s.codistat', $enteOriginario)
+                ->orderBy('s.data_ora', 'desc')
+                ->orderBy('s.segnalazione', 'desc')
+                ->first();
+
+            if (!$statoAttuale) {
+                $statoAttuale = (object)[
+                    'stato_sala_op'        => 0,
+                    'data_ora'             => now(),
+                    'nota_stato_sala_op'   => '',
+                    'stato_descrizione'    => 'N/D',
+                    'id_segnalazione_stato_sala_op' => null,
+                ];
+            }
+
+            // Stati sala
+            $statiSale = DB::table('segnalazioni.tbl_stati_sale_operative')
+                ->orderBy('id_stati_sale_operative')
+                ->get();
+
+            // Rischi
+            $rischi = DB::table('segnalazioni.tbl_rischio as r')
+                ->leftJoin('segnalazioni.corem_rischio as c', function ($join) use ($statoAttuale) {
+                    $join->on('r.id_rischio', '=', 'c.id_rischio')
+                        ->whereNull('c.data_fine')
+                        ->where('c.id_segnalazione_stato_sala_op', $statoAttuale->id_segnalazione_stato_sala_op);
+                })
+                ->select(
+                    'r.*',
+                    DB::raw('CASE WHEN c.id_segnalazione_stato_sala_op IS NULL THEN false ELSE true END as attivo')
+                )
+                ->orderBy('r.id_rischio')
+                ->get();
+
+            // Configurazioni
+            $configurazioni = DB::table('segnalazioni.tbl_configurazione as c')
+                ->leftJoin('segnalazioni.corem_configurazione as cc', function ($join) use ($statoAttuale) {
+                    $join->on('c.id_configurazione', '=', 'cc.id_configurazione')
+                        ->whereNull('cc.data_fine')
+                        ->where('cc.id_segnalazione_stato_sala_op', $statoAttuale->id_segnalazione_stato_sala_op);
+                })
+                ->select(
+                    'c.*',
+                    DB::raw('CASE WHEN cc.id_segnalazione_stato_sala_op IS NULL THEN false ELSE true END as attiva')
+                )
+                ->orderBy('c.id_configurazione')
+                ->get();
+
+            // Funzioni
+            $funzioni = DB::table('segnalazioni.tbl_funzioni as f')
+                ->leftJoin('segnalazioni.corem_funzioni as cf', function ($join) use ($statoAttuale) {
+                    $join->on('f.id_funzione', '=', 'cf.id_funzione')
+                        ->whereNull('cf.data_fine')
+                        ->where('cf.id_segnalazione_stato_sala_op', $statoAttuale->id_segnalazione_stato_sala_op);
+                })
+                ->select(
+                    'f.*',
+                    DB::raw('CASE WHEN cf.id_segnalazione_stato_sala_op IS NULL THEN false ELSE true END as attiva')
+                )
+                ->orderBy('f.id_funzione')
+                ->get();
+
+            $data = array_merge($data, [
+                'statoAttuale'   => $statoAttuale,
+                'statiSale'      => $statiSale,
+                'rischi'         => $rischi,
+                'configurazioni' => $configurazioni,
+                'funzioni'       => $funzioni,
+            ]);
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | PAGINA: LOG (come già avevi)
+    |--------------------------------------------------------------------------
+    */
         if (($current['view'] ?? null) === 'log') {
             $data['coordLogs'] = SorLog::orderByDesc('created_at')
                 ->paginate(50, ['*'], 'coord_page');
