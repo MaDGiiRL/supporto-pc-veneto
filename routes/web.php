@@ -1,16 +1,18 @@
 <?php
 
 use App\Http\Controllers\ApplicativiController;
+use App\Http\Controllers\CocMonitoringController;
 use App\Http\Controllers\SegnalazioniController;
 use App\Http\Controllers\Sor\ComunicazioniController;
+// SOR controllers (pagine / API)
 use App\Http\Controllers\Sor\CoordinamentoController;
 use App\Http\Controllers\Sor\EventoController;
-// SOR controllers (pagine / API)
 use App\Http\Controllers\Sor\SegnalazioneController;
 use App\Http\Controllers\SorController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+
 
 // Home pubblica
 Route::view('/', 'home')->name('home');
@@ -35,17 +37,22 @@ Route::middleware('auth')->group(function () {
         ->defaults('page', 'log')
         ->name('segnalazioni.logs');
 
+    // 👉 Pagina MONITORAGGIO COC dentro lo stesso layout Segnalazioni
+    Route::get('/segnalazioni/monitoraggio-coc', [SegnalazioniController::class, 'show'])
+        ->defaults('page', 'monitoraggio-coc')
+        ->name('segnalazioni.monitoraggio-coc');
+
     // Alias /segnalazioni/logs → redirect a /segnalazioni/log (opzionale)
     Route::get('/segnalazioni/logs', fn () => redirect()->route('segnalazioni.logs'));
 
     /*
-    |--------------------------------------------------------------------------
+    |----------------------------------------------------------------------
     | Pagina Apertura/Chiusura SOR
-    |--------------------------------------------------------------------------
+    |----------------------------------------------------------------------
     | NON serve una route dedicata: viene gestita dalla catch-all sotto,
     | con page = 'apertura-chiusura-sor'.
     | In sidebar userai route('segnalazioni.section', ['page' => 'apertura-chiusura-sor'])
-    |--------------------------------------------------------------------------
+    |----------------------------------------------------------------------
     */
 
     // Catch-all per le altre sezioni (dashboard, coordinamento, ecc.)
@@ -53,10 +60,17 @@ Route::middleware('auth')->group(function () {
         ->where('page', '[A-Za-z0-9\-\_]+')
         ->name('segnalazioni.section');
 
+    // Pagina standalone (se vuoi) per /coc/monitoraggio
+    Route::get('/coc/monitoraggio', [CocMonitoringController::class, 'index'])
+        ->name('coc.monitoraggio');
+
+    Route::post('/coc/monitoraggio', [CocMonitoringController::class, 'store'])
+        ->name('coc.monitoraggio.store');
+
     /*
-    |--------------------------------------------------------------------------
+    |----------------------------------------------------------------------
     | API interne per salvataggio stato SOR (chiamate via fetch dal JS)
-    |--------------------------------------------------------------------------
+    |----------------------------------------------------------------------
     */
     Route::post('/sor', [SorController::class, 'update'])->name('sor.update');
 });
@@ -80,9 +94,9 @@ Route::post('/logout', function (Request $request) {
 Route::get('/api/ping', fn () => response()->json(['ok' => true]));
 
 /*
-|--------------------------------------------------------------------------
+|----------------------------------------------------------------------
 | API SOR PUBBLICHE (se servono anche fuori dashboard)
-|--------------------------------------------------------------------------
+|----------------------------------------------------------------------
 */
 Route::prefix('sor')->group(function () {
     Route::get('roles',                       [CoordinamentoController::class, 'roles']);
@@ -94,9 +108,9 @@ Route::prefix('sor')->group(function () {
 });
 
 /*
-|--------------------------------------------------------------------------
+|----------------------------------------------------------------------
 | API SOR PROTETTE (quelle che la dashboard chiama: /api/sor/…)
-|--------------------------------------------------------------------------
+|----------------------------------------------------------------------
 */
 Route::middleware(['web', 'auth'])->prefix('api/sor')->group(function () {
 
@@ -121,9 +135,9 @@ Route::middleware(['web', 'auth'])->prefix('api/sor')->group(function () {
     // Coordinamento / Ops (ruoli, assegnazioni, chiusure, note, logs coordinamento)
     Route::get('roles',                      [CoordinamentoController::class, 'roles']);
     Route::get('segnalazioni-coord',        [CoordinamentoController::class, 'listSegnalazioni']); // alias
-    Route::patch('segnalazioni/{id}/assign',[CoordinamentoController::class, 'assign']);
-    Route::patch('segnalazioni/{id}/close', [CoordinamentoController::class, 'close']);
-    Route::post('segnalazioni/{id}/notes',  [CoordinamentoController::class, 'addNote']);
+    Route::patch('segnalazioni/{id}/assign', [CoordinamentoController::class, 'assign']);
+    Route::patch('segnalazioni/{id}/close',  [CoordinamentoController::class, 'close']);
+    Route::post('segnalazioni/{id}/notes',   [CoordinamentoController::class, 'addNote']);
     Route::get('logs',                      [CoordinamentoController::class, 'logs']); // log coordinamento (admin)
 
     // opzionale: chi sono

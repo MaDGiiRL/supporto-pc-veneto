@@ -5,9 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-// 👉 model per i log SOR
+// 👉 aggiungi i model per i log SOR
 use App\Models\Sor\SorLog;
 use App\Models\Sor\SorDashboardLog;
+
+// 👉 COC
+use App\Models\CocActivation;
+use Carbon\Carbon;
 
 class SegnalazioniController extends Controller
 {
@@ -125,9 +129,9 @@ class SegnalazioniController extends Controller
         ];
 
         /*
-        |--------------------------------------------------------------------------
+        |----------------------------------------------------------------------
         | PAGINA: APERTURA / CHIUSURA SOR
-        |--------------------------------------------------------------------------
+        |----------------------------------------------------------------------
         */
         if (($current['view'] ?? null) === 'apertura-chiusura-sor') {
 
@@ -203,28 +207,91 @@ class SegnalazioniController extends Controller
                 ->orderBy('f.id_funzione')
                 ->get();
 
-            // Log coordinamento + dashboard (inclusi i sor_open / sor_close / sor_update che hai scritto in SorController)
-            $coordLogs = SorLog::orderByDesc('created_at')
-                ->paginate(50, ['*'], 'coord_page');
-
-            $dashboardLogs = SorDashboardLog::orderByDesc('created_at')
-                ->paginate(50, ['*'], 'dash_page');
-
             $data = array_merge($data, [
                 'statoAttuale'   => $statoAttuale,
                 'statiSale'      => $statiSale,
                 'rischi'         => $rischi,
                 'configurazioni' => $configurazioni,
                 'funzioni'       => $funzioni,
-                'coordLogs'      => $coordLogs,
-                'dashboardLogs'  => $dashboardLogs,
             ]);
         }
 
         /*
-        |--------------------------------------------------------------------------
-        | PAGINA: LOG STORICO
-        |--------------------------------------------------------------------------
+        |----------------------------------------------------------------------
+        | PAGINA: MONITORAGGIO COC
+        |----------------------------------------------------------------------
+        */
+        if (($current['view'] ?? null) === 'monitoraggio-coc') {
+
+            // Valori di default per la form (formato datetime-local)
+            $dataInizio = request('data_inizio', now()->subDay()->format('Y-m-d\TH:i'));
+            $dataFine   = request('data_fine',   now()->addDay()->format('Y-m-d\TH:i'));
+            $provinciaSelezionata = request('provincia', 'ALL');
+
+            $start = Carbon::parse($dataInizio);
+            $end   = Carbon::parse($dataFine);
+
+            // Config comuni e province
+            $province     = array_keys(config('province'));
+            $comuniConfig = collect(config('comuni_veneto'));
+
+            // Query base per le attivazioni
+            $query = CocActivation::query()
+                ->whereBetween('opened_at', [$start, $end]);
+
+            if ($provinciaSelezionata !== 'ALL') {
+                $codistats = $comuniConfig
+                    ->where('provincia', $provinciaSelezionata)
+                    ->pluck('codistat')
+                    ->toArray();
+
+                if (count($codistats)) {
+                    $query->whereIn('codistat', $codistats);
+                } else {
+                    // nessun comune per quella provincia -> nessun risultato
+                    $query->whereRaw('1=0');
+                }
+            }
+
+            $activations = $query->get();
+
+            // Righe per tabella e mappa
+            $comuniRows = $activations->map(function ($act) use ($comuniConfig) {
+                $info = $comuniConfig->firstWhere('codistat', $act->codistat);
+
+                return (object)[
+                    'prov'      => $info['provincia'] ?? null,
+                    'comune'    => $info['comune'] ?? ("Comune {$act->codistat}"),
+                    'categoria' => $act->categoria,
+                    'data'      => optional($act->opened_at)->format('d/m/Y H:i'),
+                    'lat'       => $act->lat ?? ($info['lat'] ?? null),
+                    'lon'       => $act->lon ?? ($info['lon'] ?? null),
+                ];
+            });
+
+            // Statistiche per provincia
+            $stats = [];
+            foreach ($province as $p) {
+                $stats[$p] = $comuniRows->where('prov', $p)->count();
+            }
+
+            $totale = array_sum($stats);
+
+            $data = array_merge($data, [
+                'dataInizio'           => $dataInizio,
+                'dataFine'             => $dataFine,
+                'provinciaSelezionata' => $provinciaSelezionata,
+                'stats'                => $stats,
+                'totale'               => $totale,
+                'province'             => $province,
+                'comuniRows'           => $comuniRows,
+            ]);
+        }
+
+        /*
+        |----------------------------------------------------------------------
+        | PAGINA: LOG
+        |----------------------------------------------------------------------
         */
         if (($current['view'] ?? null) === 'log') {
             $data['coordLogs'] = SorLog::orderByDesc('created_at')
