@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-// 👉 aggiungi i model per i log SOR
+// 👉 model per i log SOR
 use App\Models\Sor\SorLog;
 use App\Models\Sor\SorDashboardLog;
 
@@ -28,7 +28,7 @@ class SegnalazioniController extends Controller
                 'icon'     => 'users',
                 'view'     => 'coordinamento',
             ],
-             'segnalazioni-eventi' => [
+            'segnalazioni-eventi' => [
                 'label'    => 'Segnalazioni Eventi',
                 'category' => 'Generale',
                 'icon'     => 'document-text',
@@ -52,7 +52,7 @@ class SegnalazioniController extends Controller
                 'label'    => 'Log',
                 'category' => 'Storico',
                 'icon'     => 'clipboard-document-list',
-                'view'     => 'log', 
+                'view'     => 'log',
             ],
             'tabella-riassuntiva' => [
                 'label'    => 'Tabella riassuntiva',
@@ -60,8 +60,6 @@ class SegnalazioniController extends Controller
                 'icon'     => 'list-bullet',
                 'view'     => 'tabella-riassuntiva',
             ],
-
-            // (altri item commentati vanno bene così come sono)
         ];
 
         // White-list icone
@@ -127,10 +125,10 @@ class SegnalazioniController extends Controller
         ];
 
         /*
-    |--------------------------------------------------------------------------
-    | PAGINA: APERTURA / CHIUSURA SOR
-    |--------------------------------------------------------------------------
-    */
+        |--------------------------------------------------------------------------
+        | PAGINA: APERTURA / CHIUSURA SOR
+        |--------------------------------------------------------------------------
+        */
         if (($current['view'] ?? null) === 'apertura-chiusura-sor') {
 
             // TODO: sostituisci con il tuo controlla_ente()
@@ -205,20 +203,29 @@ class SegnalazioniController extends Controller
                 ->orderBy('f.id_funzione')
                 ->get();
 
+            // Log coordinamento + dashboard (inclusi i sor_open / sor_close / sor_update che hai scritto in SorController)
+            $coordLogs = SorLog::orderByDesc('created_at')
+                ->paginate(50, ['*'], 'coord_page');
+
+            $dashboardLogs = SorDashboardLog::orderByDesc('created_at')
+                ->paginate(50, ['*'], 'dash_page');
+
             $data = array_merge($data, [
                 'statoAttuale'   => $statoAttuale,
                 'statiSale'      => $statiSale,
                 'rischi'         => $rischi,
                 'configurazioni' => $configurazioni,
                 'funzioni'       => $funzioni,
+                'coordLogs'      => $coordLogs,
+                'dashboardLogs'  => $dashboardLogs,
             ]);
         }
 
         /*
-    |--------------------------------------------------------------------------
-    | PAGINA: LOG (come già avevi)
-    |--------------------------------------------------------------------------
-    */
+        |--------------------------------------------------------------------------
+        | PAGINA: LOG STORICO
+        |--------------------------------------------------------------------------
+        */
         if (($current['view'] ?? null) === 'log') {
             $data['coordLogs'] = SorLog::orderByDesc('created_at')
                 ->paginate(50, ['*'], 'coord_page');

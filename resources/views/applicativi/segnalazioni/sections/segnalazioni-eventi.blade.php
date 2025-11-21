@@ -1,830 +1,508 @@
-<div class="p-6 space-y-4" id="app-segnalazioni-generiche">
-    <header class="mb-4 flex items-center justify-between">
-        <div>
-            <p class="text-xs font-medium uppercase tracking-[0.2em] text-slate-400">
-                Sala Operativa Regionale
-            </p>
-            <h2 class="text-2xl font-semibold text-slate-900">
-                Nuova segnalazione generica
-            </h2>
-            <p class="mt-1 text-sm text-slate-500 max-w-3xl">
-                Questo modulo replica la <strong>modale “Nuova segnalazione generica”</strong> della dashboard,
-                ma in una pagina dedicata. I dati vengono salvati tramite le API <code>/api/sor/segnalazioni</code>
-                con la stessa logica già in uso.
-            </p>
+
+<div id="sor-all-reports" class="space-y-4 p-5">
+
+    {{-- TOP 5 EVENTI IN ATTO --}}
+    <section class="mb-3">
+        <h4 class="text-sm font-semibold mb-2">Eventi in atto (ultimi 5)</h4>
+        <div id="all-reports-top"
+             class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+            <div class="text-xs opacity-60">
+                Caricamento eventi in atto…
+            </div>
         </div>
-    </header>
+    </section>
 
-    <div class="rounded-2xl border border-slate-200 bg-white shadow-card p-5">
-        <form id="form-gen" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input type="hidden" id="gen-id" />
-
-            {{-- Tipologia + Priorità --}}
-            <label class="grid gap-1.5">
-                <span class="label">Tipologia evento (opzionale)</span>
-                <select name="tipologia" id="gen-tipologia" class="input">
-                    <option value="" selected>— Non specificata —</option>
-                    <option value="sismico">Sismico</option>
-                    <option value="vulcanico">Vulcanico</option>
-                    <option value="idraulico">Idraulico</option>
-                    <option value="idrogeologico">Idrogeologico</option>
-                    <option value="maremoto">Maremoto</option>
-                    <option value="deficit-idrico">Deficit idrico</option>
-                    <option value="meteo-avverso">Fenomeni meteo avversi</option>
-                    <option value="aib">AIB (Incendi boschivi)</option>
-                    <option value="uomo">Evento prodotto dall’uomo</option>
-                    <option value="altro">Altro</option>
-                </select>
-            </label>
-
-            <label class="grid gap-1.5">
-                <span class="label">Priorità</span>
-                <div class="flex flex-wrap items-center gap-4 mt-1">
-                    <label class="inline-flex items-center gap-2">
-                        <input type="radio" name="priorita" value="Nessuna" checked /> Nessuna
-                    </label>
-                    <label class="inline-flex items-center gap-2">
-                        <input type="radio" name="priorita" value="Alta" /> Alta
-                    </label>
-                    <label class="inline-flex items-center gap-2">
-                        <input type="radio" name="priorita" value="Media" /> Media
-                    </label>
-                    <label class="inline-flex items-center gap-2">
-                        <input type="radio" name="priorita" value="Bassa" /> Bassa
-                    </label>
-                </div>
-            </label>
-
-            {{-- Associazione evento --}}
-            <label class="grid gap-1.5 md:col-span-2">
-                <span class="label">Associa a evento in atto</span>
-                <select name="event_id" id="gen-event-select" class="input">
-                    <option value="">— Nessuna associazione —</option>
-                    <option value="__new__">[+ Crea nuovo evento]</option>
-                </select>
-                <span class="text-xs opacity-70 mt-1">
-                    Se scegli “Crea nuovo evento”, verrà creato un evento in “Eventi in atto” con questa segnalazione.
-                </span>
-            </label>
-
-            {{-- Data / ora / tipo / verso --}}
-            <label class="grid gap-1.5">
-                <span class="label">Data comunicazione</span>
-                <input id="g-data" class="input" type="text" placeholder="gg/mm/aaaa" />
-            </label>
-            <label class="grid gap-1.5">
-                <span class="label">Ora comunicazione</span>
-                <input id="g-ora" class="input" type="text" placeholder="hh:mm" />
-            </label>
-
-            <label class="grid gap-1.5">
-                <span class="label">Tipo comunicazione</span>
-                <select id="g-tipo" class="input">
-                    <option value="" selected>Seleziona...</option>
-                    <option>FAX</option>
-                    <option>Email</option>
-                    <option>Telefono</option>
-                    <option>PEC</option>
-                </select>
-            </label>
-
-            <div class="grid gap-1.5">
-                <span class="label">Verso</span>
-                <div class="flex items-center gap-4">
-                    <label class="inline-flex items-center gap-2">
-                        <input type="radio" name="g-verso" value="E" checked /> Entrata (E)
-                    </label>
-                    <label class="inline-flex items-center gap-2">
-                        <input type="radio" name="g-verso" value="U" /> Uscita (U)
-                    </label>
-                </div>
+    {{-- TUTTE LE SEGNALAZIONI / COMUNICAZIONI --}}
+    <section class="rounded-2xl border border-slate-200 bg-white p-3">
+        <div class="flex items-center justify-between gap-3 mb-2">
+            <h4 class="text-sm font-semibold">Comunicazioni e segnalazioni</h4>
+            <div class="text-xs opacity-70">
+                Ordinate dalla più recente alla meno recente.
             </div>
+        </div>
 
-            {{-- Mitt/dest + contatti --}}
-            <label class="grid gap-1.5 md:col-span-2">
-                <span class="label">Mittente/Destinatario</span>
-                <input id="g-mitt" class="input" />
-            </label>
-
-            <label class="grid gap-1.5">
-                <span class="label">Telefono</span>
-                <input id="g-tel" class="input" />
-            </label>
-
-            <label class="grid gap-1.5">
-                <span class="label">E-mail</span>
-                <input id="g-mail" class="input" type="email" />
-            </label>
-
-            {{-- Localizzazione --}}
-            <label class="grid gap-1.5 md:col-span-2">
-                <span class="label">Indirizzo zona colpita</span>
-                <input id="g-indirizzo" class="input" />
-            </label>
-
-            <label class="grid gap-1.5">
-                <span class="label">Provincia</span>
-                <select id="g-provincia" class="input">
-                    <option value="">Tutte le province...</option>
-                </select>
-            </label>
-
-            <label class="grid gap-1.5">
-                <span class="label">Zona (Comune)</span>
-                <select id="g-comune" class="input" disabled>
-                    <option value="">Prima seleziona una provincia...</option>
-                </select>
-            </label>
-
-            <label class="grid gap-1.5 md:col-span-2">
-                <span class="label">Aree interessate (Comuni e Frazioni)</span>
-                <div class="tag-input" id="gen-aree" data-datalist="comuni-datalist"></div>
-                <input type="hidden" name="aree" id="gen-aree-hidden" />
-            </label>
-
-            {{-- Oggetto / contenuto --}}
-            <label class="grid gap-1.5 md:col-span-2">
-                <span class="label">Oggetto</span>
-                <input id="g-oggetto" class="input" />
-            </label>
-
-            <label class="grid gap-1.5 md:col-span-2">
-                <span class="label">Contenuto</span>
-                <textarea id="g-contenuto" class="input" rows="4"></textarea>
-            </label>
-
-            {{-- Campi specifici dinamici --}}
-            <div class="md:col-span-2">
-                <legend class="text-sm font-semibold mb-1">Campi specifici</legend>
-                <div id="gen-specific"></div>
-            </div>
-
-            <div class="md:col-span-2 flex justify-end gap-2 pt-4 border-t border-slate-100 mt-2">
-                <button type="reset" class="btn">Reset</button>
-                <button type="submit" class="btn btn-primary">💾 Salva segnalazione</button>
-            </div>
-        </form>
-    </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm all-reports-table">
+                <thead class="text-left">
+                    <tr>
+                        <th class="px-3 py-2">Data</th>
+                        <th class="px-3 py-2">Ora</th>
+                        <th class="px-3 py-2">E/U</th>
+                        <th class="px-3 py-2">Tipo</th>
+                        <th class="px-3 py-2">Comune</th>
+                        <th class="px-3 py-2 w-sintesi">Oggetto / Sintesi</th>
+                        <th class="px-3 py-2">Evento</th>
+                        <th class="px-3 py-2">Azioni</th>
+                    </tr>
+                </thead>
+                <tbody id="all-reports-tbody">
+                    <tr>
+                        <td colspan="8" class="px-3 py-3 text-xs opacity-60">
+                            Caricamento comunicazioni…
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
 </div>
 
-{{-- Datalist Comuni (come in dashboard) --}}
-<datalist id="comuni-datalist"></datalist>
-
-<script>
-    window.PROVINCE = @json(config('province.veneto'));
-    window.VENETO_COMUNI = @json(config('comuni_veneto'));
-</script>
-
-{{-- JS: copia logica della modale, ma per pagina --}}
+{{-- tutte le modali SOR (gen-info, ev-info, event, ecc.) --}}
+@include('partials.sor-modals')
 
 <script type="module">
-    const $ = (s) => document.querySelector(s);
+    (function () {
+        const $  = (s) => document.querySelector(s);
 
-    const nowIT = () => {
-        const d = new Date();
-        const pad = (n) => String(n).padStart(2, "0");
-        return {
-            date: `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`,
-            time: `${pad(d.getHours())}:${pad(d.getMinutes())}`,
-        };
-    };
-
-    const parseIT = (dateStr, timeStr = "00:00") => {
-        const [dd, mm, yyyy] = (dateStr || "").split("/");
-        const [HH, MM] = (timeStr || "00:00").split(":");
-        return new Date(Number(yyyy), Number(mm) - 1, Number(dd), Number(HH), Number(MM));
-    };
-
-    const PROVINCE = window.PROVINCE || {};
-    const COMUNI_RAW = window.VENETO_COMUNI || {};
-
-    /* === Toast basic (usa Swal se presente) === */
-    const toast = (title, text = "", icon = "success", timer = 1800) => {
-        if (!window.Swal) {
-            console.log(`[${icon}]`, title, text);
-            return;
-        }
-        Swal.fire({
-            title,
-            text,
-            icon,
-            toast: true,
-            position: "top-end",
-            showConfirmButton: false,
-            timer,
-            timerProgressBar: true,
-        });
-    };
-
-    /* === TagInput (come in dashboard) === */
-    class TagInput {
-        constructor(root, {
-            placeholder = "Aggiungi e premi Invio",
-            datalistId = null
-        } = {}) {
-            if (!root) return;
-            this.root = root;
-            this.values = [];
-            this.placeholder = placeholder;
-            this.datalistId = datalistId;
-            this.allowedValues = null;
-            this.render();
-        }
-
-        refreshAllowedFromDatalist() {
-            if (!this.datalistId) return;
-            const dl = document.getElementById(this.datalistId);
-            if (!dl) return;
-            this.allowedValues = new Set(
-                Array.from(dl.options)
-                .map(o => o.value)
-                .filter(Boolean)
-            );
-        }
-
-        render() {
-            this.root.classList.add("tag-input--wrap");
-            this.root.innerHTML = `
-                <div class="tags" role="list"></div>
-                <div class="tag-input__control">
-                    <input class="tag-input__field" ${this.datalistId ? `list="${this.datalistId}"` : ""} placeholder="${this.placeholder}" />
-                </div>`;
-            this.tagsEl = this.root.querySelector(".tags");
-            this.inputEl = this.root.querySelector(".tag-input__field");
-
-            if (this.datalistId) this.refreshAllowedFromDatalist();
-
-            this.inputEl.addEventListener("keydown", (e) => {
-                if (e.key === "Enter" && this.inputEl.value.trim()) {
-                    e.preventDefault();
-                    this.add(this.inputEl.value.trim());
-                    this.inputEl.value = "";
-                } else if (e.key === "Backspace" && !this.inputEl.value && this.values.length) {
-                    this.remove(this.values.length - 1);
+        const toast =
+            window.toast ||
+            function (title, text = "", icon = "info", timer = 2200) {
+                if (!window.Swal) {
+                    console.log(`[${icon}]`, title, text);
+                    return;
                 }
-            });
+                Swal.fire({
+                    title,
+                    text,
+                    icon,
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer,
+                    timerProgressBar: true,
+                });
+            };
+
+        /* ================= API ================= */
+
+        const API = {
+            base() {
+                return window.SOR_API_BASE || "/api/sor";
+            },
+            csrf() {
+                return document.querySelector('meta[name="csrf-token"]')?.content || "";
+            },
+            async _req(path, { method = "GET", params = null, body = null } = {}) {
+                const url = new URL(this.base() + path, location.origin);
+                if (params) {
+                    Object.entries(params).forEach(([k, v]) => {
+                        if (v !== undefined && v !== null && v !== "") {
+                            url.searchParams.set(k, v);
+                        }
+                    });
+                }
+                const isJSON = body && !(body instanceof FormData);
+                const res    = await fetch(url.toString(), {
+                    method,
+                    credentials: "include",
+                    headers: {
+                        Accept: "application/json",
+                        "X-Requested-With": "XMLHttpRequest",
+                        ...(isJSON ? { "Content-Type": "application/json" } : {}),
+                        ...(method !== "GET" ? { "X-CSRF-TOKEN": this.csrf() } : {}),
+                    },
+                    body: isJSON ? JSON.stringify(body) : body,
+                });
+                if (!res.ok) {
+                    const txt = await res.text().catch(() => "");
+                    toast("Errore", `HTTP ${res.status} ${res.statusText}`, "error");
+                    throw new Error(`HTTP ${res.status} ${res.statusText}\n${txt}`);
+                }
+                const ctype = res.headers.get("content-type") || "";
+                return ctype.includes("application/json") ? res.json() : res;
+            },
+            listEventi(params) {
+                return this._req("/eventi", { params });
+            },
+            listSegnalazioni(params) {
+                return this._req("/segnalazioni", { params });
+            },
+        };
+
+        /* ============== MAPPERS / HELPER ============== */
+
+        const TYPE_LABELS = {
+            sismico: "Sismico",
+            vulcanico: "Vulcanico",
+            idraulico: "Idraulico",
+            idrogeologico: "Idrogeologico",
+            maremoto: "Maremoto",
+            "deficit-idrico": "Deficit Idrico",
+            "meteo-avverso": "Meteo avverso",
+            aib: "AIB",
+            uomo: "Prodotti dall’uomo",
+            altro: "Altro",
+        };
+
+        function tipoLabel(key) {
+            if (!key) return "Altro";
+            return TYPE_LABELS[key] || key;
         }
 
-        setValues(arr) {
-            this.values = Array.isArray(arr) ? arr.filter(Boolean) : [];
-            this.refresh();
+        function fmtDateTimeISO(iso) {
+            if (!iso) return { date: "—", time: "—" };
+            const d = new Date(iso);
+            if (Number.isNaN(d.getTime())) return { date: "—", time: "—" };
+            const date = d.toLocaleDateString("it-IT");
+            const time = d.toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" });
+            return { date, time };
         }
 
-        add(v) {
-            if (!v) return;
+        function mapEvent(raw) {
+            return {
+                id:          raw.id,
+                tipologia:   raw.tipologia || raw.tipo || "altro",
+                descrizione: raw.descrizione || raw.titolo || raw.nome || `Evento #${raw.id}`,
+                aree:        raw.aree || raw.zone || [],
+                aperto:      raw.aperto ?? raw.open ?? true,
+                updated_at:  raw.ultima_comunicazione || raw.last_report_at || raw.updated_at || raw.created_at || null,
+            };
+        }
 
-            if (this.allowedValues && !this.allowedValues.has(v)) {
-                toast("Valore non valido", "Seleziona un'area dalla lista predefinita.", "error", 2200);
+        function mapSegnalazione(raw) {
+            return {
+                id:         raw.id,
+                creata_il:  raw.creata_il || raw.created_at || null,
+                created_at: raw.creata_il || raw.created_at || null,
+                direzione:  raw.direzione || raw.verso || "E",
+                tipologia:  raw.tipologia || raw.tipo_evento || "altro",
+                tipo:       raw.tipo || raw.tipo_comunicazione || "",
+                comune:     raw.comune || "",
+                aree:       raw.aree || [],
+                mitt_dest:  raw.mitt_dest || raw.mittente || raw.destinatario || "",
+                telefono:   raw.telefono || raw.tel || "",
+                email:      raw.email || raw.mail || "",
+                indirizzo:  raw.indirizzo || "",
+                provincia:  raw.provincia || "",
+                operatore:  raw.operatore || raw.user_name || "",
+                priorita:   raw.priorita || "Nessuna",
+                event_id:   raw.event_id || raw.evento_id || null,
+                sintesi:    raw.sintesi || raw.oggetto || "",
+                oggetto:    raw.oggetto || raw.sintesi || "",
+                contenuto:  raw.contenuto || raw.testo || "",
+            };
+        }
+
+        /* ============== RENDER UI ============== */
+
+        function renderEventCards(events, segnalazioniByEvent) {
+            const wrap = $("#all-reports-top");
+            if (!wrap) return;
+            wrap.replaceChildren();
+
+            if (!events.length) {
+                const div       = document.createElement("div");
+                div.className   = "text-xs opacity-70";
+                div.textContent = "Nessun evento in atto.";
+                wrap.appendChild(div);
                 return;
             }
 
-            if (!this.values.includes(v)) this.values.push(v);
-            this.refresh();
-        }
+            events.forEach((ev) => {
+                const countSeg = (segnalazioniByEvent[ev.id] || []).length;
+                const typeKey  = ev.tipologia || "altro";
+                const tlabel   = tipoLabel(typeKey);
+                const { date, time } = fmtDateTimeISO(ev.updated_at);
+                const when     = ev.updated_at ? `${date} ${time}` : "—";
+                const areeText = (ev.aree || []).join(", ") || "—";
 
-        remove(idx) {
-            this.values.splice(idx, 1);
-            this.refresh();
-        }
+                const card = document.createElement("article");
+                card.className       = "ev-card ev-card--compact";
+                card.dataset.type    = typeKey;
+                card.dataset.eventId = ev.id;
+                card.dataset.openEvent = ev.id; // intercettato dal listener globale
 
-        refresh() {
-            this.tagsEl.replaceChildren();
-            this.values.forEach((val, i) => {
-                const tag = document.createElement("span");
-                tag.className = "tag";
-                tag.innerHTML = `<span class="tag__text">${val}</span>
-                                 <button class="tag__x" type="button" title="Rimuovi">×</button>`;
-                tag.querySelector(".tag__x").addEventListener("click", () => this.remove(i));
-                this.tagsEl.appendChild(tag);
+                card.innerHTML = `
+                    <div class="ev-card__head">
+                        <h4 class="ev-card__title">${ev.descrizione || ("Evento #" + ev.id)}</h4>
+                        <div class="ev-card__chips">
+                            <span class="ev-card__status ${ev.aperto ? "is-open" : "is-closed"}">
+                                ${ev.aperto ? "Aperto" : "Chiuso"}
+                            </span>
+                            <span class="ev-card__badge">${tlabel}</span>
+                        </div>
+                    </div>
+                    <ul class="ev-card__meta">
+                        <li><strong>Ultimo agg.:</strong> ${when}</li>
+                        <li><strong>Aree:</strong> ${areeText}</li>
+                        <li><strong>Segnalazioni:</strong> ${countSeg}</li>
+                    </ul>
+                `;
+
+                // blocco click se era un drag reale (flag gestito su strip)
+                card.addEventListener("click", (e) => {
+                    const strip = document.getElementById("all-reports-top");
+                    if (strip && strip.classList.contains("is-dragging")) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return;
+                    }
+                    // il resto lo fa il listener globale sul [data-open-event]
+                });
+
+                wrap.appendChild(card);
             });
-            this.root.dispatchEvent(new CustomEvent("change", {
-                detail: this.values.slice()
-            }));
         }
-    }
 
-    /* === COMUNE_META + datalist === */
-    const COMUNE_META = {};
+        function renderAllSegnalazioniTable(segnalazioni) {
+            const tbody = $("#all-reports-tbody");
+            if (!tbody) return;
+            tbody.replaceChildren();
 
-    (function buildComuneMeta() {
-        Object.entries(COMUNI_RAW).forEach(([prov, list]) => {
-            if (Array.isArray(list)) {
-                list.forEach((raw) => {
-                    if (!raw) return;
-                    if (typeof raw === "string") {
-                        const key = `${prov}|${raw}`;
-                        if (!COMUNE_META[key]) {
-                            COMUNE_META[key] = {
-                                istat: null,
-                                nome: raw,
-                                provincia: prov,
-                                zona: null,
-                                frazioni: [],
-                            };
-                        }
-                    } else if (typeof raw === "object") {
-                        const nome = raw.nome || raw.comune || raw.name;
-                        if (!nome) return;
-                        const key = `${prov}|${nome}`;
-                        COMUNE_META[key] = {
-                            istat: raw.istat || null,
-                            nome,
-                            provincia: raw.provincia || prov,
-                            zona: raw.zona_bollettino || raw.zona || null,
-                            frazioni: Array.isArray(raw.frazioni) ? raw.frazioni : [],
-                        };
+            if (!segnalazioni.length) {
+                const tr     = document.createElement("tr");
+                tr.innerHTML =
+                    `<td colspan="8" class="px-3 py-3 text-xs opacity-70">Nessuna comunicazione/segnalazione trovata.</td>`;
+                tbody.appendChild(tr);
+                return;
+            }
+
+            segnalazioni.forEach((rec) => {
+                const { date, time } = fmtDateTimeISO(rec.created_at);
+                const tr             = document.createElement("tr");
+                tr.className         = "border-t border-slate-100 hover:bg-slate-50 all-reports-row";
+
+                const dir      = (rec.direzione || "E").toString().toUpperCase();
+                const isIn     = dir === "E";
+                const dirLabel = isIn ? "E" : "U";
+                const dirTitle = isIn ? "Entrata" : "Uscita";
+
+                const tdEvento = rec.event_id
+                    ? `<button type="button"
+                               class="link text-xs"
+                               data-open-event="${rec.event_id}">
+                           Evento #${rec.event_id}
+                       </button>`
+                    : "—";
+
+                tr.innerHTML = `
+                    <td class="px-3 py-2 whitespace-nowrap text-xs">${date}</td>
+                    <td class="px-3 py-2 whitespace-nowrap text-xs">${time}</td>
+                    <td class="px-3 py-2 whitespace-nowrap text-xs">
+                        <span class="inline-flex items-center justify-center rounded-full border border-slate-300 px-1.5 text-[0.65rem] font-semibold text-slate-700 bg-slate-50 all-reports-dir-chip" title="${dirTitle}">
+                            ${dirLabel}
+                        </span>
+                    </td>
+                    <td class="px-3 py-2 whitespace-nowrap text-xs">
+                        ${rec.tipo || "—"}
+                    </td>
+                    <td class="px-3 py-2 whitespace-nowrap text-xs">
+                        ${rec.comune || "—"}
+                    </td>
+                    <td class="px-3 py-2 text-xs max-w-xs">
+                        <div class="font-semibold text-slate-900 truncate">
+                            ${rec.oggetto || "—"}
+                        </div>
+                        <div class="text-[0.7rem] text-slate-500 line-clamp-2">
+                            ${rec.contenuto || rec.sintesi || ""}
+                        </div>
+                    </td>
+                    <td class="px-3 py-2 whitespace-nowrap text-xs">
+                        ${tdEvento}
+                    </td>
+                    <td class="px-3 py-2 whitespace-nowrap text-xs">
+                        <button type="button"
+                                class="btn btn-xs"
+                                data-all-reports-detail="${rec.id}">
+                            Dettagli
+                        </button>
+                    </td>
+                `;
+
+                tbody.appendChild(tr);
+            });
+
+            // bottone Dettagli → modale corretta del partial (modal-gen-info)
+            tbody.querySelectorAll("[data-all-reports-detail]").forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    const id  = btn.getAttribute("data-all-reports-detail");
+                    const rec = segnalazioni.find((r) => String(r.id) === String(id));
+                    if (!rec) return;
+
+                    if (window.SORModals && typeof window.SORModals.showGenInfo === "function") {
+                        window.SORModals.showGenInfo(rec);
+                    } else {
+                        console.warn("SORModals.showGenInfo non definito");
                     }
                 });
-            }
-        });
-    })();
-
-    function getComuniByProvincia(code) {
-        const names = new Set();
-        Object.values(COMUNE_META).forEach((c) => {
-            if (c.provincia === code) names.add(c.nome);
-        });
-        return Array.from(names).sort((a, b) => a.localeCompare(b, "it"));
-    }
-
-    function getComuneMeta(nome, prov) {
-        if (!nome || !prov) return null;
-        return COMUNE_META[`${prov}|${nome}`] || null;
-    }
-
-    (function buildDatalist() {
-        const datalist = $("#comuni-datalist");
-        if (!datalist) return;
-        const seen = new Set();
-        const push = (v) => {
-            if (!v || seen.has(v)) return;
-            seen.add(v);
-            const opt = document.createElement("option");
-            opt.value = v;
-            datalist.appendChild(opt);
-        };
-
-        Object.values(COMUNE_META).forEach((c) => {
-            push(c.nome);
-            (c.frazioni || []).forEach((f) => push(`${f} (${c.nome})`));
-            if (c.zona) push(c.zona);
-        });
-    })();
-
-    /* === API === */
-    const API = {
-        base: "/api/sor",
-        csrf() {
-            return document.querySelector('meta[name="csrf-token"]')?.content || "";
-        },
-        async _req(path, {
-            method = "GET",
-            params = null,
-            body = null
-        } = {}) {
-            const url = new URL(this.base + path, location.origin);
-            if (params) Object.entries(params).forEach(([k, v]) => (v ?? v === 0) && url.searchParams.set(k, v));
-            const isJSON = body && !(body instanceof FormData);
-            const res = await fetch(url.toString(), {
-                method,
-                credentials: "include",
-                headers: {
-                    Accept: "application/json",
-                    "X-Requested-With": "XMLHttpRequest",
-                    ...(isJSON ? {
-                        "Content-Type": "application/json"
-                    } : {}),
-                    ...(method !== "GET" ? {
-                        "X-CSRF-TOKEN": this.csrf()
-                    } : {}),
-                },
-                body: isJSON ? JSON.stringify(body) : body,
             });
-            if (!res.ok) {
-                const txt = await res.text().catch(() => "");
-                toast("Errore", `HTTP ${res.status} ${res.statusText}`, "error", 2200);
-                throw new Error(`HTTP ${res.status} ${res.statusText}\n${txt}`);
-            }
-            const ctype = res.headers.get("content-type") || "";
-            return ctype.includes("application/json") ? res.json() : res;
-        },
-        listEventi(params) {
-            return this._req("/eventi", {
-                params
-            });
-        },
-        createEvento(payload) {
-            return this._req("/eventi", {
-                method: "POST",
-                body: payload
-            });
-        },
-        createSegnalazione(payload) {
-            return this._req("/segnalazioni", {
-                method: "POST",
-                body: payload
-            });
-        },
-    };
-
-    /* === Tipologie & campi specifici === */
-    const TYPE_LABELS = {
-        sismico: "Sismico",
-        vulcanico: "Vulcanico",
-        idraulico: "Idraulico",
-        idrogeologico: "Idrogeologico",
-        maremoto: "Maremoto",
-        "deficit-idrico": "Deficit Idrico",
-        "meteo-avverso": "Meteo avverso",
-        aib: "AIB",
-        uomo: "Prodotti dall’uomo",
-        altro: "Altro",
-    };
-
-    const SPEC_SCHEMAS = {
-        sismico: [{
-                id: "magnitudo",
-                label: "Magnitudo (se disponibile)"
-            },
-            {
-                id: "intensita",
-                label: "Intensità MCS/EMS"
-            },
-            {
-                id: "coordinate",
-                label: "Coordinate epicentro"
-            },
-            {
-                id: "danni",
-                label: "Danni segnalati (testo)",
-                type: "textarea"
-            },
-        ],
-        vulcanico: [{
-                id: "tremore",
-                label: "Tremore vulcanico (trend)"
-            },
-            {
-                id: "cenere",
-                label: "Ricaduta ceneri (aree)"
-            },
-            {
-                id: "dpi",
-                label: "DPI distribuiti (qtà)"
-            },
-        ],
-        idraulico: [{
-                id: "livello",
-                label: "Livello idrometrico (m)"
-            },
-            {
-                id: "argine",
-                label: "Criticità arginale (sì/no)"
-            },
-            {
-                id: "sottopassi",
-                label: "Sottopassi allagati (#)"
-            },
-        ],
-        idrogeologico: [{
-                id: "tipologia_frana",
-                label: "Tipologia frana"
-            },
-            {
-                id: "volume",
-                label: "Volume stimato (mc)"
-            },
-            {
-                id: "viabilita",
-                label: "Interferenza viabilità (testo)",
-                type: "textarea"
-            },
-        ],
-        maremoto: [{
-                id: "allerta",
-                label: "Livello allerta"
-            },
-            {
-                id: "aree_costiere",
-                label: "Aree costiere interessate"
-            },
-        ],
-        "deficit-idrico": [{
-                id: "pressione",
-                label: "Riduzione pressione (%)"
-            },
-            {
-                id: "autobotti",
-                label: "Autobotti in servizio (#)"
-            },
-        ],
-        "meteo-avverso": [{
-                id: "fenomeno",
-                label: "Fenomeno prevalente (vento, grandine…)"
-            },
-            {
-                id: "intensita",
-                label: "Intensità"
-            },
-            {
-                id: "danni_diffusi",
-                label: "Danni diffusi? (sì/no)"
-            },
-        ],
-        aib: [{
-                id: "superficie",
-                label: "Superficie percorsa dal fuoco (ha)"
-            },
-            {
-                id: "combustibile",
-                label: "Tipo combustibile (bosco, sterpaglie…)"
-            },
-            {
-                id: "coordinate",
-                label: "Coordinate/Località puntuale"
-            },
-            {
-                id: "mezzi",
-                label: "Mezzi impiegati (AIB/VVF/CAI…)"
-            },
-            {
-                id: "meteo",
-                label: "Condizioni meteo (vento, umidità…)"
-            },
-        ],
-        uomo: [{
-                id: "tipologia",
-                label: "Tipologia incidente (sversamento, industriale…)"
-            },
-            {
-                id: "ente_coinvolto",
-                label: "Ente/Azienda coinvolta"
-            },
-            {
-                id: "impatti",
-                label: "Impatti su servizi/ambiente",
-                type: "textarea"
-            },
-        ],
-        altro: [{
-            id: "descrizione",
-            label: "Descrizione dettagli (testo)",
-            type: "textarea"
-        }, ],
-    };
-
-    function renderSpecific(container, type, prefix) {
-        if (!container) return;
-        container.innerHTML = "";
-        const schema = SPEC_SCHEMAS[type] || [];
-        if (!schema.length) {
-            container.innerHTML = `<div class="text-xs opacity-70">Nessun campo aggiuntivo per questa tipologia.</div>`;
-            return;
         }
-        const grid = document.createElement("div");
-        grid.className = "grid md:grid-cols-2 gap-3";
-        schema.forEach((f) => {
-            const wrap = document.createElement("label");
-            wrap.className = "grid gap-1.5";
-            wrap.innerHTML =
-                `<span class="label">${f.label}</span>` +
-                (f.type === "textarea" ?
-                    `<textarea class="input" id="${prefix}-${f.id}"></textarea>` :
-                    `<input class="input" id="${prefix}-${f.id}" />`);
-            grid.appendChild(wrap);
-        });
-        container.appendChild(grid);
-    }
 
-    function populateProvinceSelect(selected = "") {
-        const sel = $("#g-provincia");
-        if (!sel) return;
-        sel.innerHTML = "";
-        sel.add(new Option("Tutte le province...", ""));
-        if (Array.isArray(PROVINCE)) {
-            PROVINCE.forEach(p => {
-                if (!p) return;
-                const code = p.sigla || p.codice || p.code || p;
-                const label = p.nome || p.name || code;
-                if (!code) return;
-                sel.add(new Option(label, code));
+        /* ============== DRAG SCROLL TOP 5 EVENTI ============== */
+
+        function initDragScroll() {
+            const strip = document.getElementById("all-reports-top");
+            if (!strip) return;
+
+            let isDown     = false;
+            let startX     = 0;
+            let scrollLeft = 0;
+            let moved      = false;
+
+            const start = (pageX) => {
+                isDown        = true;
+                moved         = false;
+                strip.classList.add("is-dragging");
+                startX        = pageX - strip.offsetLeft;
+                scrollLeft    = strip.scrollLeft;
+            };
+
+            const end = () => {
+                if (!isDown) return;
+                isDown = false;
+                setTimeout(() => {
+                    strip.classList.remove("is-dragging");
+                }, 0);
+            };
+
+            const move = (pageX) => {
+                if (!isDown) return;
+                const x     = pageX - strip.offsetLeft;
+                const delta = x - startX;
+                if (Math.abs(delta) > 3) moved = true;
+                const walk  = delta * 1.2;
+                strip.scrollLeft = scrollLeft - walk;
+            };
+
+            // blocco i click nati da un drag vero (capturing)
+            strip.addEventListener("click", (e) => {
+                if (strip.classList.contains("is-dragging") && moved) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            }, true);
+
+            // mouse
+            strip.addEventListener("mousedown", (e) => {
+                start(e.pageX);
             });
+            strip.addEventListener("mouseleave", end);
+            strip.addEventListener("mouseup", end);
+            strip.addEventListener("mousemove", (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                move(e.pageX);
+            });
+
+            // touch
+            strip.addEventListener("touchstart", (e) => {
+                const t = e.touches[0];
+                start(t.pageX);
+            }, { passive: true });
+
+            strip.addEventListener("touchend", end);
+            strip.addEventListener("touchcancel", end);
+            strip.addEventListener("touchmove", (e) => {
+                if (!isDown) return;
+                const t = e.touches[0];
+                move(t.pageX);
+            }, { passive: false });
+        }
+
+        /* ============== LOAD DATI ============== */
+
+        let HAS_LOADED = false;
+
+        async function loadAllReports() {
+            if (HAS_LOADED) return;
+            try {
+                const segRes = await API.listSegnalazioni({ per_page: 1000, order: "desc" });
+                const segRaw = Array.isArray(segRes) ? segRes : (segRes.data || []);
+                const segs   = segRaw.map(mapSegnalazione);
+
+                const evRes  = await API.listEventi({ per_page: 50 });
+                const evRaw  = Array.isArray(evRes) ? evRes : (evRes.data || []);
+                const events = evRaw.map(mapEvent);
+
+                const segByEvent = {};
+                segs.forEach((s) => {
+                    const evId = s.event_id;
+                    if (!evId) return;
+                    if (!segByEvent[evId]) segByEvent[evId] = [];
+                    segByEvent[evId].push(s);
+                });
+
+                const topEvents = events
+                    .slice()
+                    .sort((a, b) => {
+                        const ta = a.updated_at ? new Date(a.updated_at).getTime() : 0;
+                        const tb = b.updated_at ? new Date(b.updated_at).getTime() : 0;
+                        return tb - ta;
+                    })
+                    .slice(0, 5);
+
+                segs.sort((a, b) => {
+                    const ta = a.created_at ? new Date(a.created_at).getTime() : 0;
+                    const tb = b.created_at ? new Date(b.created_at).getTime() : 0;
+                    return tb - ta;
+                });
+
+                renderEventCards(topEvents, segByEvent);
+                renderAllSegnalazioniTable(segs);
+
+                HAS_LOADED = true;
+            } catch (err) {
+                console.error("Errore caricamento tutte le comunicazioni:", err);
+                toast("Errore", "Impossibile caricare le comunicazioni.", "error", 2600);
+            }
+        }
+
+        function initAllReports() {
+            initDragScroll();
+            loadAllReports();
+        }
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", initAllReports, { once: true });
         } else {
-            Object.entries(PROVINCE).forEach(([code, label]) => {
-                sel.add(new Option(label || code, code));
-            });
+            initAllReports();
         }
-        sel.value = selected || "";
-        const comuneSel = $("#g-comune");
-        if (comuneSel) {
-            comuneSel.disabled = !sel.value;
-            if (!sel.value) {
-                comuneSel.innerHTML = `<option value="">Prima seleziona una provincia...</option>`;
-            }
-        }
-    }
 
-    function populateComuniSelect(prov, selected = "") {
-        const comuneSel = $("#g-comune");
-        if (!comuneSel) return;
-        comuneSel.innerHTML = "";
-        if (!prov) {
-            comuneSel.add(new Option("Prima seleziona una provincia...", ""));
-            comuneSel.disabled = true;
-            return;
-        }
-        const comuni = getComuniByProvincia(prov);
-        comuni.forEach((c) => comuneSel.add(new Option(c, c)));
-        comuneSel.disabled = false;
-        comuneSel.value = selected || "";
-    }
-
-    function maybeAddZonaToAree(tagInputInstance) {
-        const prov = $("#g-provincia")?.value;
-        const comune = $("#g-comune")?.value;
-        if (!prov || !comune || !tagInputInstance) return;
-        const meta = getComuneMeta(comune, prov);
-        const zona = meta?.zona;
-        if (!zona) return;
-        if (!tagInputInstance.values.includes(zona)) {
-            tagInputInstance.add(zona);
-        }
-    }
-
-    async function populateEventSelect(selectEl) {
-        if (!selectEl) return;
-        // pulisco, lascio le 2 di base
-        selectEl.innerHTML = `
-            <option value="">— Nessuna associazione —</option>
-            <option value="__new__">[+ Crea nuovo evento]</option>`;
-        try {
-            const res = await API.listEventi({
-                per_page: 50
-            });
-            const rows = Array.isArray(res) ? res : (res.data || []);
-            rows.forEach((ev) => {
-                const opt = document.createElement("option");
-                opt.value = ev.id;
-                const tipo = ev.tipologia || ev.tipo || "altro";
-                const labelTipo = TYPE_LABELS[tipo] || tipo;
-                const aree = (ev.aree || []).join(", ");
-                opt.textContent = `[${labelTipo}] ${aree || "Evento #"+ev.id}`;
-                selectEl.appendChild(opt);
-            });
-        } catch (err) {
-            console.error("Errore caricamento eventi:", err);
-        }
-    }
-
-    document.addEventListener("DOMContentLoaded", async () => {
-        const form = $("#form-gen");
-        if (!form) return;
-
-        // province/comuni
-        populateProvinceSelect("");
-        $("#g-provincia")?.addEventListener("change", (e) => {
-            populateComuniSelect(e.target.value, "");
-        });
-        $("#g-comune")?.addEventListener("change", () => {
-            maybeAddZonaToAree(genAree);
+        // se la modale "tutte le comunicazioni" è caricata via AJAX e poi aperta
+        document.addEventListener("modal:all-reports:opened", () => {
+            loadAllReports();
         });
 
-        // date/ora
-        const {
-            date,
-            time
-        } = nowIT();
-        $("#g-data").value = date;
-        $("#g-ora").value = time;
+        // ============== APERTURA MODALE EVENTO DA [data-open-event] ==============
+        document.addEventListener("click", (e) => {
+            const evOpener = e.target.closest("[data-open-event]");
+            if (!evOpener) return;
 
-        // tipologia specifica
-        const specContainer = $("#gen-specific");
-        renderSpecific(specContainer, "", "gensp");
-        $("#gen-tipologia")?.addEventListener("change", (e) => {
-            renderSpecific(specContainer, e.target.value || "", "gensp");
-        });
-
-        // tag input aree
-        const genAreeRoot = $("#gen-aree");
-        let genAree = null;
-        if (genAreeRoot) {
-            genAree = new TagInput(genAreeRoot, {
-                datalistId: "comuni-datalist"
-            });
-            genAreeRoot.addEventListener("change", (ev) => {
-                const hid = $("#gen-aree-hidden");
-                if (hid) hid.value = JSON.stringify(ev.detail || []);
-            });
-        }
-
-        // select eventi
-        await populateEventSelect($("#gen-event-select"));
-
-        // reset form -> pulisco aree e specifici
-        form.addEventListener("reset", () => {
-            setTimeout(() => {
-                const {
-                    date,
-                    time
-                } = nowIT();
-                $("#g-data").value = date;
-                $("#g-ora").value = time;
-                $("#gen-tipologia").value = "";
-                renderSpecific(specContainer, "", "gensp");
-                if (genAree && genAree.setValues) genAree.setValues([]);
-                const hid = $("#gen-aree-hidden");
-                if (hid) hid.value = "[]";
-                $("#gen-event-select").value = "";
-            }, 0);
-        });
-
-        // submit => stessa logica della modale
-        form.addEventListener("submit", async (e) => {
             e.preventDefault();
 
-            const tipologia = $("#gen-tipologia")?.value || "altro";
-            const priorita = document.querySelector('input[name="priorita"]:checked')?.value || "Nessuna";
-            const aree = genAree && genAree.values ? genAree.values.slice() : [];
-            const chosenEvent = $("#gen-event-select")?.value;
+            const evId = evOpener.getAttribute("data-open-event");
+            if (!evId) return;
 
-            const d = $("#g-data")?.value.trim() || nowIT().date;
-            const t = $("#g-ora")?.value.trim() || nowIT().time;
-            const dt = parseIT(d, t);
-            const creata_il = dt.toISOString();
-
-            const dirVal = document.querySelector('input[name="g-verso"]:checked')?.value || "E";
-            const direzione = dirVal === "U" ? "U" : "E";
-
-            const tipoCom = $("#g-tipo")?.value || "";
-            const mitt = $("#g-mitt")?.value.trim() || "";
-            const tel = $("#g-tel")?.value.trim() || "";
-            const mail = $("#g-mail")?.value.trim() || "";
-            const indirizzo = $("#g-indirizzo")?.value.trim() || "";
-            const provincia = $("#g-provincia")?.value || "";
-            const comune = $("#g-comune")?.value || "";
-            const oggetto = $("#g-oggetto")?.value.trim() || "";
-            const contenuto = $("#g-contenuto")?.value.trim() || "";
-            const sintesi = oggetto || contenuto || "";
-
-            const campi_specifici = {};
-            specContainer?.querySelectorAll("input, textarea, select").forEach((el) => {
-                const id = el.id || "";
-                if (!id.startsWith("gensp-")) return;
-                const key = id.replace(/^gensp-/, "");
-                const val = el.value.trim();
-                if (val) campi_specifici[key] = val;
-            });
-
-            let evento_id = null;
-
-            try {
-                if (chosenEvent === "__new__") {
-                    // crea evento
-                    const evRes = await API.createEvento({
-                        tipologia,
-                        descrizione: oggetto || `Evento ${TYPE_LABELS[tipologia] || tipologia}`,
-                        aree,
-                        aperto: true,
-                    });
-                    const newEvId = evRes?.id ?? evRes?.data?.id;
-                    if (!newEvId) {
-                        toast("Errore creazione evento", "Il server non ha restituito l'ID dell'evento.", "error", 2600);
-                    } else {
-                        evento_id = newEvId;
-                    }
-                } else if (chosenEvent) {
-                    evento_id = Number(chosenEvent);
-                }
-
-                const payload = {
-                    creata_il,
-                    direzione,
-                    tipologia,
-                    tipo: tipoCom,
-                    aree,
-                    sintesi,
-                    priorita,
-                    mitt_dest: mitt,
-                    telefono: tel,
-                    email: mail,
-                    indirizzo,
-                    provincia,
-                    comune,
-                    oggetto,
-                    contenuto,
-                    campi_specifici,
-                    event_id: evento_id,
-                    evento_id: evento_id,
-                };
-
-                await API.createSegnalazione(payload);
-
-                toast("Segnalazione aggiunta!", "Salvata su backend.");
-                form.reset();
-            } catch (err) {
-                console.error("Errore salvataggio segnalazione:", err);
-                toast("Errore salvataggio", "Impossibile salvare la segnalazione.", "error", 2600);
+            // se esiste un gestore globale per gli eventi, lo uso
+            if (window.SOREvents && typeof window.SOREvents.open === "function") {
+                window.SOREvents.open(evId);
+                return;
             }
+
+            // fallback: apro direttamente la modale evento
+            const modal = document.getElementById("modal-event");
+            if (!modal) {
+                console.warn("modal-event non trovata nel DOM");
+                return;
+            }
+
+            const titleEl = document.getElementById("ev-title");
+            if (titleEl) {
+                titleEl.textContent = `Evento #${evId}`;
+            }
+
+            if (window.SORModals && typeof window.SORModals.openModal === "function") {
+                window.SORModals.openModal("#modal-event");
+            } else {
+                modal.classList.remove("hidden");
+                modal.classList.add("is-open");
+                document.body.style.overflow = "hidden";
+            }
+
+            // evento custom per chi deve caricare i dettagli dell'evento
+            document.dispatchEvent(new CustomEvent("sor:event:open", {
+                detail: { id: evId }
+            }));
         });
-    });
+    })();
 </script>

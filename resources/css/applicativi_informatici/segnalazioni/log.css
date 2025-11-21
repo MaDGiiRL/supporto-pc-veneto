@@ -1116,3 +1116,9 @@
     color: var(--muted, #64748b);
     font-size: .88rem;
 }
+
+.src-pill--sor {
+    background: rgba(175, 30, 151, 0.08);
+    color: #d81d74;
+    border-color: rgba(235, 37, 232, 0.35);
+}

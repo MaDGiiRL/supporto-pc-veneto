@@ -4,6 +4,7 @@
 @import './applicativi_informatici/segnalazioni/coordinamento.css';
 @import './applicativi_informatici/segnalazioni/log.css';
 
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

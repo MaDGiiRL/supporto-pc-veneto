@@ -22,7 +22,11 @@
                     <option value="">Tutte…</option>
                     <option value="assign">Assegnazione</option>
                     <option value="note">Nota</option>
-                    <option value="close">Chiusura</option>
+                    <option value="close">Chiusura segnalazione</option>
+                    {{-- Azioni specifiche SOR --}}
+                    <option value="sor_open">Apertura SOR</option>
+                    <option value="sor_close">Chiusura SOR</option>
+                    <option value="sor_update">Aggiornamento SOR</option>
                 </select>
             </div>
             <div class="log-field">
@@ -43,6 +47,7 @@
                     <option value="">Tutte</option>
                     <option value="dashboard">Dashboard</option>
                     <option value="coordinamento">Coordinamento</option>
+                    <option value="sor">SOR</option>
                 </select>
             </div>
 
@@ -63,9 +68,9 @@
                     <tr>
                         <th style="width: 140px">Data/Ora</th>
                         <th style="width: 140px">Fonte</th>
-                        <th>Da → A</th>
+                        <th style="width: 220px">Azione</th>
                         <th style="width: 200px">Operatore</th>
-                        <th>Dettagli</th>
+                        <th style="width: 80px; text-align:center">Dettagli</th>
                     </tr>
                 </thead>
                 <tbody id="log-body">
@@ -88,14 +93,66 @@
     </section>
 </div>
 
+{{-- MODALE DETTAGLIO LOG --}}
+<div id="log-detail-modal-backdrop"
+    style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.45); z-index:50; align-items:center; justify-content:center;">
+    <div id="log-detail-modal"
+        style="background:white; border-radius:12px; max-width:640px; width:100%; margin:0 16px; box-shadow:0 20px 45px rgba(15,23,42,0.25);">
+        <div style="padding:12px 16px; border-bottom:1px solid #e5e7eb; display:flex; align-items:center; justify-content:space-between;">
+            <div>
+                <h2 id="log-detail-title" style="font-size:14px; font-weight:600; color:#0f172a;">
+                    Dettaglio evento
+                </h2>
+                <p id="log-detail-subtitle" style="font-size:11px; color:#6b7280; margin-top:2px;"></p>
+            </div>
+            <button type="button" id="log-detail-close"
+                style="border:none; background:transparent; cursor:pointer; font-size:16px; line-height:1; color:#6b7280;">
+                ×
+            </button>
+        </div>
+
+        <div style="padding:12px 16px; font-size:12px; color:#111827; max-height:60vh; overflow:auto;">
+            <dl style="display:grid; grid-template-columns:minmax(0,120px) minmax(0,1fr); row-gap:4px; column-gap:8px; margin-bottom:10px;">
+                <dt style="font-weight:600; color:#6b7280;">Data/Ora</dt>
+                <dd id="log-detail-when"></dd>
+
+                <dt style="font-weight:600; color:#6b7280;">Fonte</dt>
+                <dd id="log-detail-source"></dd>
+
+                <dt style="font-weight:600; color:#6b7280;">Azione</dt>
+                <dd id="log-detail-action"></dd>
+
+                <dt style="font-weight:600; color:#6b7280;">Operatore</dt>
+                <dd id="log-detail-operator"></dd>
+
+                <dt style="font-weight:600; color:#6b7280;">Da</dt>
+                <dd id="log-detail-from"></dd>
+
+                <dt style="font-weight:600; color:#6b7280;">A</dt>
+                <dd id="log-detail-to"></dd>
+            </dl>
+
+            <div>
+                <div style="font-weight:600; color:#6b7280; margin-bottom:4px;">Dettaglio</div>
+                <pre id="log-detail-body"
+                    style="white-space:pre-wrap; word-break:break-word; border-radius:8px; border:1px solid #e5e7eb; background:#f9fafb; padding:8px; font-size:11px; font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;"></pre>
+            </div>
+        </div>
+
+        <div style="padding:8px 16px; border-top:1px solid #e5e7eb; text-align:right;">
+            <button type="button" id="log-detail-close-bottom"
+                style="border-radius:999px; border:1px solid #d1d5db; padding:4px 12px; font-size:11px; cursor:pointer; background:#f9fafb;">
+                Chiudi
+            </button>
+        </div>
+    </div>
+</div>
+
 {{-- DUMP DATI DAL BACKEND (pagina corrente) --}}
 <script>
     window.SOR_DASHBOARD_LOGS = @json($dashboardLogs->items());
     window.SOR_COORD_LOGS = @json($coordLogs->items());
 </script>
-
-{{-- UNA SOLA VOLTA: HTML + JS modali (rimangono, ma non sono più usati dal log) --}}
-@include('partials.sor-modals')
 
 <script type="module">
     const $ = s => document.querySelector(s);
@@ -148,6 +205,14 @@
         ...RAW_COORD.map(mapCoordLog),
     ].sort((a, b) => ts(b.created_at) - ts(a.created_at));
 
+    // mappa id → log (con chiave di fallback se manca l'id)
+    const LOG_BY_ID = {};
+    ALL_LOGS.forEach((l, idx) => {
+        const key = l.id != null ? String(l.id) : `row-${idx}`;
+        l._key = key;
+        LOG_BY_ID[key] = l;
+    });
+
     const state = {
         all: ALL_LOGS,
         filtered: ALL_LOGS.slice(),
@@ -180,33 +245,12 @@
         return '';
     }
 
-    function formatTransition(fromStatus, toStatus, fromAssignee, toAssignee, action) {
-        const a = (action || '').toLowerCase();
-        if (a === 'note') {
-            return `<em class="log-muted">Inserita una nota</em>`;
-        }
-        if (!fromStatus && !toStatus && !fromAssignee && !toAssignee) {
-            return '—';
-        }
-        const fromHTML = `
-            <span class="chip chip--from">
-                <strong>Da</strong>
-                <span class="${statusClass(fromStatus)}">${labelStatus(fromStatus)}</span>
-                ${fromAssignee ? `<span class="log-muted">• ${fromAssignee}</span>` : ''}
-            </span>`;
-        const toHTML = `
-            <span class="chip chip--to">
-                <strong>A</strong>
-                <span class="${statusClass(toStatus)}">${labelStatus(toStatus)}</span>
-                ${toAssignee ? `<span class="log-muted">• ${toAssignee}</span>` : ''}
-            </span>`;
-        return `<div class="flow">${fromHTML}<span class="arrow">→</span>${toHTML}</div>`;
-    }
-
+    // === NORMALIZZAZIONE AZIONI ===
     function normalizeAction(a) {
         const raw = (a || '').toString();
         const t = raw.toLowerCase();
 
+        // CRUD generico
         if (t.startsWith('created_') || ['created', 'create'].includes(t)) {
             return {
                 key: 'create',
@@ -229,40 +273,67 @@
             };
         }
 
+        // Coordinamento segnalazioni
         if (t === 'assign' || t === 'assigned') {
             return {
                 key: 'assign',
-                label: 'Assign',
+                label: 'Assegnazione',
                 raw
             };
         }
         if (t === 'close' || t === 'closed') {
             return {
                 key: 'close',
-                label: 'Close',
+                label: 'Chiusura',
                 raw
             };
         }
         if (t === 'note') {
             return {
                 key: 'note',
-                label: 'Note',
+                label: 'Nota',
                 raw
             };
         }
 
-        if (!t) return {
-            key: 'other',
-            label: '—',
-            raw
-        };
+        // Azioni specifiche SOR
+        if (t === 'sor_open') {
+            return {
+                key: 'sor_open',
+                label: 'Apertura SOR',
+                raw
+            };
+        }
+        if (t === 'sor_close') {
+            return {
+                key: 'sor_close',
+                label: 'Chiusura SOR',
+                raw
+            };
+        }
+        if (t === 'sor_update') {
+            return {
+                key: 'sor_update',
+                label: 'Aggiornamento SOR',
+                raw
+            };
+        }
+
+        if (!t) {
+            return {
+                key: 'other',
+                label: '—',
+                raw
+            };
+        }
         return {
             key: 'other',
             label: raw.replace(/_/g, ' '),
-            raw
+            raw,
         };
     }
 
+    // Badge uniforme
     function actBadge(a) {
         const info = normalizeAction(a);
         return `
@@ -272,6 +343,142 @@
         `;
     }
 
+    // === TESTO UMANO PER LA COLONNA "AZIONE" ===
+    function humanActionLabel(log) {
+        const raw = (log.action || '').toString();
+        const t = raw.toLowerCase();
+
+        // Nuova segnalazione
+        if (
+            (t.startsWith('created_') || t.startsWith('create_')) &&
+            t.includes('segnalazione')
+        ) {
+            return 'Nuova segnalazione';
+        }
+
+        // Nuovo evento
+        if (
+            (t.startsWith('created_') || t.startsWith('create_')) &&
+            t.includes('evento')
+        ) {
+            return 'Nuovo evento';
+        }
+
+        // Fallback create generico
+        if (t === 'create' || t === 'created') {
+            return 'Creazione record';
+        }
+
+        if (t === 'assign' || t === 'assigned') {
+            return 'Assegnazione segnalazione';
+        }
+
+        if (t === 'close' || t === 'closed') {
+            return 'Chiusura segnalazione';
+        }
+
+        if (t === 'note') {
+            return 'Inserita nota';
+        }
+
+        if (t === 'sor_open') {
+            return 'Apertura Sala Operativa Regionale';
+        }
+
+        if (t === 'sor_close') {
+            return 'Chiusura Sala Operativa Regionale';
+        }
+
+        if (t === 'sor_update') {
+            return 'Aggiornamento configurazione / stato SOR';
+        }
+
+        // Ultimo fallback: etichetta normalizzata
+        return normalizeAction(raw).label;
+    }
+
+    // Contenuto della cella "Azione": badge + descrizione testuale
+    function formatActionCell(log) {
+        const desc = humanActionLabel(log);
+        return `
+            <div style="display:flex; flex-direction:column; align-items:center; gap:2px;">
+                ${actBadge(log.action)}
+                <div class="log-muted" style="font-size:.78rem; text-align:center;">
+                    ${desc}
+                </div>
+            </div>
+        `;
+    }
+
+    // === MODALE DETTAGLIO ===
+    const modalBackdrop = $('#log-detail-modal-backdrop');
+    const modalClose = $('#log-detail-close');
+    const modalClose2 = $('#log-detail-close-bottom');
+
+    function fillDetailModal(log) {
+        const info = normalizeAction(log.action);
+
+        $('#log-detail-title').textContent = humanActionLabel(log);
+        $('#log-detail-subtitle').textContent = log.id ? `ID #${log.id}` : '';
+
+        $('#log-detail-when').textContent = log.created_at ? FMT(log.created_at) : '—';
+
+        const a = (log.action || '').toLowerCase();
+        const isSor = a.startsWith('sor_');
+
+        $('#log-detail-source').textContent = isSor
+            ? 'SOR'
+            : (log.source === 'dashboard'
+                ? 'Dashboard'
+                : (log.source === 'coordinamento'
+                    ? 'Coordinamento'
+                    : 'Altro'));
+
+        $('#log-detail-action').textContent = info.raw || info.label;
+        $('#log-detail-operator').textContent = log.performed_by || '—';
+
+        const fromParts = [];
+        if (log.from_status) fromParts.push(`Stato: ${labelStatus(log.from_status)}`);
+        if (log.from_assignee) fromParts.push(`Operatore: ${log.from_assignee}`);
+        $('#log-detail-from').textContent = fromParts.length ? fromParts.join(' · ') : '—';
+
+        const toParts = [];
+        if (log.to_status) toParts.push(`Stato: ${labelStatus(log.to_status)}`);
+        if (log.to_assignee) toParts.push(`Operatore: ${log.to_assignee}`);
+        $('#log-detail-to').textContent = toParts.length ? toParts.join(' · ') : '—';
+
+        $('#log-detail-body').textContent = log.details || '—';
+    }
+
+    function openDetailModal(log) {
+        if (!modalBackdrop) return;
+        fillDetailModal(log);
+        modalBackdrop.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeDetailModal() {
+        if (!modalBackdrop) return;
+        modalBackdrop.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+
+    if (modalClose) modalClose.addEventListener('click', closeDetailModal);
+    if (modalClose2) modalClose2.addEventListener('click', closeDetailModal);
+    if (modalBackdrop) {
+        modalBackdrop.addEventListener('click', (e) => {
+            if (e.target === modalBackdrop) {
+                closeDetailModal();
+            }
+        });
+    }
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeDetailModal();
+        }
+    });
+
+    // === FILTRI ===
     function debounce(fn, ms = 300) {
         let t;
         return (...args) => {
@@ -286,7 +493,10 @@
 
         let rows = state.all;
 
-        if (f.source) {
+        // filtro Fonte: dashboard / coordinamento / SOR (su azione sor_*)
+        if (f.source === 'sor') {
+            rows = rows.filter(r => (r.action || '').toLowerCase().startsWith('sor_'));
+        } else if (f.source) {
             rows = rows.filter(r => r.source === f.source);
         }
 
@@ -336,6 +546,7 @@
         return state.filtered.slice(start, start + state.perPage);
     }
 
+    // === RENDER TABELLA / TIMELINE ===
     function renderLogsTable() {
         const tbody = $('#log-body');
         tbody.replaceChildren();
@@ -354,7 +565,7 @@
         const rows = getPageRows();
         if (!rows.length) {
             const tr = document.createElement('tr');
-            tr.innerHTML = `<td colspan="5" class="px-3 py-3 log-muted">Nessun log.</td>`;
+            tr.innerHTML = '<td colspan="5" class="px-3 py-3 log-muted">Nessun log.</td>';
             tbody.appendChild(tr);
             return;
         }
@@ -367,31 +578,84 @@
 
             const when = l.created_at ? FMT(l.created_at) : '—';
 
-            const fonteLabel = l.source === 'dashboard' ? 'Dashboard' : 'Coordinamento';
-            const fonteHTML = `<span class="src-pill src-pill--${l.source || 'unknown'}">
-                <span class="src-dot" aria-hidden="true"></span>
-                <span>${fonteLabel}</span>
-            </span>`;
+            const a = (l.action || '').toLowerCase();
+            const isSor = a.startsWith('sor_');
+            const fonteKey = isSor ? 'sor' : (l.source || 'unknown');
+            const fonteLabel = isSor
+                ? 'SOR'
+                : (l.source === 'dashboard'
+                    ? 'Dashboard'
+                    : (l.source === 'coordinamento'
+                        ? 'Coordinamento'
+                        : 'Altro'));
 
-            const chainHTML = formatTransition(
-                l.from_status,
-                l.to_status,
-                l.from_assignee,
-                l.to_assignee,
-                l.action
-            );
-            const op = l.performed_by || '—';
-            const det = (l.details || '').replace(/\n/g, '<br>');
+            const fonteHTML =
+                `<span class="src-pill src-pill--${fonteKey}">
+                    <span class="src-dot" aria-hidden="true"></span>
+                    <span>${fonteLabel}</span>
+                </span>`;
 
-            tr.innerHTML = `
-                <td>${when}</td>
-                <td>${fonteHTML}</td>
-                <td>${chainHTML}</td>
-                <td>${op}</td>
-                <td class="log-note">${det || '—'}</td>
-            `;
+            const actionHTML = formatActionCell(l);
+
+            tr.innerHTML =
+                `<td>${when}</td>
+                 <td>${fonteHTML}</td>
+                 <td>${actionHTML}</td>
+                 <td>${l.performed_by || '—'}</td>
+                 <td style="text-align:center;">
+                    <button type="button"
+                            class="log-btn log-btn--icon log-open-detail"
+                            data-key="${l._key}">
+                        i
+                    </button>
+                 </td>`;
+
             tbody.appendChild(tr);
         });
+
+        // bind tasto "i" → modale
+        tbody.querySelectorAll('.log-open-detail').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const key = btn.dataset.key;
+                const log = LOG_BY_ID[key];
+                if (log) {
+                    openDetailModal(log);
+                }
+            });
+        });
+    }
+
+    function formatTransition(fromStatus, toStatus, fromAssignee, toAssignee, action) {
+        const a = (action || '').toLowerCase();
+
+        // Azioni SOR nella timeline: descrizione generica
+        if (a === 'sor_open') return '<em class="log-muted">Apertura Sala Operativa Regionale</em>';
+        if (a === 'sor_close') return '<em class="log-muted">Chiusura Sala Operativa Regionale</em>';
+        if (a === 'sor_update') return '<em class="log-muted">Aggiornamento stato/configurazione SOR</em>';
+
+        if (a === 'note') {
+            return '<em class="log-muted">Inserita una nota</em>';
+        }
+
+        if (!fromStatus && !toStatus && !fromAssignee && !toAssignee) {
+            return '—';
+        }
+
+        const fromHTML =
+            '<span class="chip chip--from">' +
+            '<strong>Da</strong>' +
+            `<span class="${statusClass(fromStatus)}">${labelStatus(fromStatus)}</span>` +
+            (fromAssignee ? `<span class="log-muted">• ${fromAssignee}</span>` : '') +
+            '</span>';
+
+        const toHTML =
+            '<span class="chip chip--to">' +
+            '<strong>A</strong>' +
+            `<span class="${statusClass(toStatus)}">${labelStatus(toStatus)}</span>` +
+            (toAssignee ? `<span class="log-muted">• ${toAssignee}</span>` : '') +
+            '</span>';
+
+        return `<div class="flow">${fromHTML}<span class="arrow">→</span>${toHTML}</div>`;
     }
 
     function renderLogsTimeline() {
@@ -402,7 +666,7 @@
         if (!rows.length) {
             const div = document.createElement('div');
             div.className = 'log-muted';
-            div.textContent = 'Nessun log.'
+            div.textContent = 'Nessun log.';
             wrap.appendChild(div);
             return;
         }
@@ -414,12 +678,24 @@
             it.dataset.source = l.source || '';
 
             const when = l.created_at ? FMT(l.created_at) : '—';
-            const fonteLabel = l.source === 'dashboard' ? 'Dashboard' : 'Coordinamento';
-            const fonteHTML = `<span class="src-pill src-pill--${l.source || 'unknown'}">
-                <span class="src-dot" aria-hidden="true"></span>
-                <span>${fonteLabel}</span>
-            </span>`;
-            const op = l.performed_by || '—';
+
+            const a = (l.action || '').toLowerCase();
+            const isSor = a.startsWith('sor_');
+            const fonteKey = isSor ? 'sor' : (l.source || 'unknown');
+            const fonteLabel = isSor
+                ? 'SOR'
+                : (l.source === 'dashboard'
+                    ? 'Dashboard'
+                    : (l.source === 'coordinamento'
+                        ? 'Coordinamento'
+                        : 'Altro'));
+
+            const fonteHTML =
+                `<span class="src-pill src-pill--${fonteKey}">
+                    <span class="src-dot" aria-hidden="true"></span>
+                    <span>${fonteLabel}</span>
+                </span>`;
+
             const chainHTML = formatTransition(
                 l.from_status,
                 l.to_status,
@@ -429,19 +705,19 @@
             );
             const det = (l.details || '').replace(/\n/g, '<br>');
 
-            it.innerHTML = `
-                <span class="t-dot" aria-hidden="true"></span>
-                <div class="t-meta">
+            it.innerHTML =
+                `<span class="t-dot" aria-hidden="true"></span>
+                 <div class="t-meta">
                     <strong>${when}</strong>
                     <span>${actBadge(l.action)}</span>
                     ${fonteHTML}
-                    <span class="log-muted">${op}</span>
-                </div>
-                <div class="t-note">
+                    <span class="log-muted">${l.performed_by || '—'}</span>
+                 </div>
+                 <div class="t-note">
                     <div style="margin-bottom:.35rem">${chainHTML}</div>
                     <div class="log-note">${det || '—'}</div>
-                </div>
-            `;
+                 </div>`;
+
             wrap.appendChild(it);
         });
     }
@@ -476,8 +752,10 @@
 
         const lines = rows.map(l => [
             l.created_at ? FMT(l.created_at) : '',
-            l.source,
-            normalizeAction(l.action).label,
+            (l.action || '').toLowerCase().startsWith('sor_')
+                ? 'SOR'
+                : l.source,
+            humanActionLabel(l),
             l.from_status || '',
             l.to_status || '',
             l.from_assignee || '',
