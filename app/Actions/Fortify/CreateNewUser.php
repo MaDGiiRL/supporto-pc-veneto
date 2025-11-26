@@ -36,11 +36,16 @@ class CreateNewUser implements CreatesNewUsers
 
             // Usa le regole fornite dal trait Fortify (include "confirmed")
             'password'     => $this->passwordRules(),
+
+            // 🔴 NIENTE più ruoli lato form
+            // 'roles'        => ['required', 'array', 'min:1'],
+            // 'roles.*'      => ['string', 'exists:roles,slug'],
         ])->validate();
 
         $email = strtolower($input['email']); // doppia sicurezza
 
-        return User::create([
+        // Crea utente NON attivo: sarà l'amministratore ad abilitarlo
+        $user = User::create([
             'first_name'   => $input['first_name'],
             'last_name'    => $input['last_name'],
             'organization' => $input['organization'],
@@ -51,6 +56,12 @@ class CreateNewUser implements CreatesNewUsers
             'name'         => trim($input['first_name'] . ' ' . $input['last_name']),
 
             'password'     => Hash::make($input['password']),
+            'is_active'    => false,
         ]);
+
+        // Nessun ruolo assegnato in registrazione:
+        // li imposterai tu successivamente dal pannello amministratore.
+
+        return $user;
     }
 }

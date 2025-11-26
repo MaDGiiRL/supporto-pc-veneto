@@ -17,15 +17,38 @@ class CoordinamentoController extends Controller
     /**
      * Ruoli esposti al client
      */
+    // App/Http/Controllers/Sor/CoordinamentoController.php
+
     public function roles()
     {
         return response()->json([
-            ['slug' => 'coordinamento', 'label' => 'Coordinamento (Admin)', 'can_assign' => true,  'can_close' => true],
-            ['slug' => 'volontariato',  'label' => 'Volontariato',          'can_assign' => false, 'can_close' => true],
-            ['slug' => 'mezzi',         'label' => 'Mezzi e Materiali',     'can_assign' => false, 'can_close' => true],
-            ['slug' => 'prociv',        'label' => 'Protezione Civile',     'can_assign' => false, 'can_close' => true],
+            [
+                'slug'       => 'coordinamento',
+                'label'      => 'Coordinatore SOR',
+                'can_assign' => true,
+                'can_close'  => true,
+            ],
+            [
+                'slug'       => 'volontariato',
+                'label'      => 'Volontariato',
+                'can_assign' => false,
+                'can_close'  => true,
+            ],
+            [
+                'slug'       => 'mezzi',
+                'label'      => 'Mezzi e materiali',
+                'can_assign' => false,
+                'can_close'  => true,
+            ],
+            [
+                'slug'       => 'prociv',
+                'label'      => 'Protezione Civile',
+                'can_assign' => false,
+                'can_close'  => true,
+            ],
         ]);
     }
+
 
     /**
      * Lista segnalazioni generiche (filtri: status, assigned_to)

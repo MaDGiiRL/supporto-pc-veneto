@@ -1,4 +1,4 @@
-<x-layout title="Registrazione" :hide-footer="true">>
+<x-layout title="Registrazione" :hide-footer="true">
     <div class="relative min-h-[100vh] overflow-hidden bg-gradient-to-br from-sky-50 via-white to-cyan-50">
         <div class="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full bg-sky-200/40 blur-3xl"></div>
         <div class="pointer-events-none absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-cyan-200/40 blur-3xl"></div>

@@ -9,40 +9,28 @@ class RoleSeeder extends Seeder
 {
     public function run(): void
     {
-        Role::updateOrCreate(
-            ['slug' => 'coordinamento'],
-            [
-                'label'      => 'Coordinamento (Admin)',
-                'can_assign' => true,
-                'can_close'  => true,
-            ]
-        );
+        $roles = [
+            // slug                  label                    can_assign  can_close
+            ['amministratore',       'Amministratore',         true,       true],
+            ['ufficio-volontariato', 'Ufficio Volontariato',   true,       true],
+            ['comuni',               'Comuni',                 false,      false],
+            ['pianificazione',       'Pianificazione',         true,       false],
+            ['prefetture',           'Prefetture',             true,       true],
+            ['provincie',            'Provincie',              true,       true],
+            ['volontari',            'Volontari',              false,      false],
+            ['sor-coordinatore',     'Coordinatore SOR',       true,       true],
+            ['sor-mezzi-materiali',  'Mezzi e materiali SOR',  false,      true],
+        ];
 
-        Role::updateOrCreate(
-            ['slug' => 'volontariato'],
-            [
-                'label'      => 'Volontariato',
-                'can_assign' => false,
-                'can_close'  => true,
-            ]
-        );
-
-        Role::updateOrCreate(
-            ['slug' => 'mezzi'],
-            [
-                'label'      => 'Mezzi e Materiali',
-                'can_assign' => false,
-                'can_close'  => true,
-            ]
-        );
-
-        Role::updateOrCreate(
-            ['slug' => 'prociv'],
-            [
-                'label'      => 'Protezione Civile',
-                'can_assign' => false,
-                'can_close'  => true,
-            ]
-        );
+        foreach ($roles as [$slug, $label, $canAssign, $canClose]) {
+            Role::updateOrCreate(
+                ['slug' => $slug],
+                [
+                    'label'      => $label,
+                    'can_assign' => $canAssign,
+                    'can_close'  => $canClose,
+                ]
+            );
+        }
     }
 }

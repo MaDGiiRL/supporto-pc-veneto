@@ -12,13 +12,11 @@
     <header class="coord-head">
         <div>
             <h2 class="title">Coordinamento</h2>
+            <p class="muted" id="coord-current-role">
+                Ruolo: <span data-role-label>—</span>
+            </p>
         </div>
-        <div class="role">
-            <label class="lbl lbl--inline">Ruolo</label>
-            <select id="role" class="input">
-                <option>—</option>
-            </select>
-        </div>
+        {{-- ❌ NIENTE SELECT RUOLI --}}
     </header>
 
     <div id="coord-debug" class="debug" hidden>
@@ -56,9 +54,9 @@
     </div>
 </div>
 
-// ?debug_roles=1 per cambiare il ruolo e testare aggiungere all'url
-
 <script type="module">
+    // ?debug_roles=1 → il client aggancia il parametro alle chiamate API (solo per debugging)
+
     /* ===== Helpers & Icons ===== */
     const $  = s => document.querySelector(s);
     const $$ = s => Array.from(document.querySelectorAll(s));
@@ -94,10 +92,9 @@
         timeStyle: 'short'
     }).format(new Date(iso || Date.now()));
 
-    // === DEBUG: abilita switch ruoli via select con ?debug_roles=1 ===
+    // === DEBUG: abilita /?debug_roles=1 per agganciare il parametro alle API ===
     const DEBUG_ROLES = new URLSearchParams(location.search).get('debug_roles') === '1';
 
-    // helper: aggiunge debug_roles=1 a tutte le chiamate API in debug
     function withDebug(path) {
         if (!DEBUG_ROLES) return path;
         const hasQuery = path.includes('?');
@@ -153,7 +150,7 @@
             return ct.includes('application/json') ? res.json() : res;
         },
         async _req(path, opt) {
-            const p = withDebug(path); // <-- qui agganciamo debug_roles=1
+            const p = withDebug(path);
             for (const b of this.bases) {
                 try {
                     return await this._fetch(p, opt, b);
@@ -226,7 +223,7 @@
     const ROLES_FALLBACK = [
         {
             slug: 'coordinamento',
-            label: 'Coordinamento (Admin)',
+            label: 'Coordinatore SOR',
             can_assign: true,
             can_close: true
         },
@@ -238,7 +235,7 @@
         },
         {
             slug: 'mezzi',
-            label: 'Mezzi e Materiali',
+            label: 'Mezzi e materiali',
             can_assign: false,
             can_close: true
         },
@@ -252,7 +249,11 @@
 
     const state = {
         roles: ROLES_FALLBACK,
-        role: 'coordinamento', // default; in produzione viene allineato a /me
+        role: null, // viene impostato da /api/sor/me
+        abilities: {           // <-- NOVO: permessi presi dal backend
+            assign: false,
+            close: false,
+        },
         pages: {
             queue: 1,
             work:  1,
@@ -274,27 +275,17 @@
         }
     };
 
-    const roleSel = $('#role'),
-          tabsBar = $('#coord-tabs'),
-          root    = $('#coord-root');
+    const tabsBar = $('#coord-tabs');
+    const root    = $('#coord-root');
 
-    const roleMap = () => Object.fromEntries(state.roles.map(r => [r.slug, r]));
-    const isCoord = slug => slug === 'coordinamento';
-
-    // In debug tutti possono assegnare/chiudere per testare.
-    const canAssign = slug => {
-        if (DEBUG_ROLES) return true;
-        if (isCoord(slug)) return true;
-        return !!roleMap()[slug]?.can_assign;
-    };
-    const canClose = slug => {
-        if (DEBUG_ROLES) return true;
-        if (isCoord(slug)) return true;
-        return !!roleMap()[slug]?.can_close;
-    };
-
-    const labelRole      = slug => roleMap()[slug]?.label || slug;
+    const roleMap     = () => Object.fromEntries(state.roles.map(r => [r.slug, r]));
+    const isCoord     = slug => slug === 'coordinamento';
+    const labelRole   = slug => roleMap()[slug]?.label || slug || '—';
     const assignableRoles = () => state.roles.filter(r => !isCoord(r.slug));
+
+    // ⬇️ Cambiato: i permessi vengono dalla risposta /api/sor/me
+    const canAssign = () => !!state.abilities.assign;
+    const canClose  = () => !!state.abilities.close;
 
     /* ===== Legend & Tabs ===== */
     function renderLegend() {
@@ -309,13 +300,17 @@
 
     function bindTabs() {
         const c    = state.counts;
-        const role = state.role;
+        const role = state.role || 'prociv';
 
         const tabs = [
             { key: 'queue',  label: `${icon('inbox')} Aperte`,          count: c.queue },
             { key: 'work',   label: `${icon('clock')} In lavorazione`,  count: c.work },
             { key: 'closed', label: `${icon('check')} Chiuse`,          count: c.closed },
         ].filter(t => role === 'coordinamento' || t.key !== 'queue');
+
+        if (role !== 'coordinamento' && state.activeTab === 'queue') {
+            state.activeTab = 'work';
+        }
 
         tabsBar.innerHTML = tabs.map(t => `
             <button class="tab" role="tab" aria-selected="${t.key===state.activeTab}" data-tab="${t.key}">
@@ -406,7 +401,7 @@
     function footerActions(role, status, id, assignedTo) {
         const noteButtons = ``;
         if (status === 'queue') {
-            if (!canAssign(role)) return `<span class="muted">In attesa di smistamento…</span>${noteButtons}`;
+            if (!canAssign()) return `<span class="muted">In attesa di smistamento…</span>${noteButtons}`;  // <-- usa permesso reale
             return assignableRoles().map(rr => `
                 <button class="btn" data-act="assign" data-to="${rr.slug}" data-id="${id}">
                     ${icon('docArrow')} ${rr.label}
@@ -414,7 +409,7 @@
             `).join('') + noteButtons;
         }
         if (status === 'assigned') {
-            const canManage = (role === assignedTo) || canClose(role) || isCoord(role);
+            const canManage = (role === assignedTo) || canClose() || isCoord(role); // <-- usa permesso reale
             return `${noteButtons}<span class="k-sep"></span>${
                 canManage
                     ? `<button class="btn btn-primary" data-act="close" data-id="${id}">${icon('check')} Chiudi</button>`
@@ -436,11 +431,11 @@
         const sec = document.createElement('section');
         sec.className = `sec sec--${kind}`;
 
-        const dropRow = (canAssign(state.role) && kind === 'queue') ?
+        const dropRow = (canAssign() && kind === 'queue') ?
             `<div class="droprow">${assignableRoles().map(rr =>
                 `<span class="drop" data-target="${rr.slug}">${icon('docArrow')} ${rr.label}</span>`
-              ).join('')}</div>` :
-            (kind === 'work' && canClose(state.role) ?
+            ).join('')}</div>` :
+            (kind === 'work' && canClose() ?
                 `<div class="droprow"><span class="drop" data-target="close">${icon('check')} Chiudi</span></div>` :
                 '');
 
@@ -500,6 +495,12 @@
         });
     }
 
+    function renderRoleLabel() {
+        const span = document.querySelector('[data-role-label]');
+        if (!span) return;
+        span.textContent = labelRole(state.role);
+    }
+
     function render() {
         renderLegend();
         state.counts = {
@@ -507,6 +508,7 @@
             work:   state.lists.work.meta?.total   ?? state.lists.work.rows.length,
             closed: state.lists.closed.meta?.total ?? state.lists.closed.rows.length,
         };
+        renderRoleLabel();
         bindTabs();
         root.replaceChildren();
 
@@ -650,7 +652,7 @@
     /* ===== Drag&Drop, handler vari ===== */
     async function handleDropAction(id, srcStatus, target) {
         try {
-            if (srcStatus === 'queue' && assignableRoles().some(r => r.slug === target)) {
+            if (srcStatus === 'queue' && assignableRoles().some(r => r.slug === target) && canAssign()) {
                 const { confirmed, text } = await promptInstructions();
                 if (!confirmed) return;
                 await API.assign(id, target, text || null);
@@ -658,7 +660,7 @@
                 await Promise.all([reloadData('queue'), reloadData('work')]);
                 return;
             }
-            if (srcStatus === 'assigned' && target === 'close' && canClose(state.role)) {
+            if (srcStatus === 'assigned' && target === 'close' && canClose()) {
                 await API.close(id);
                 toastOK('Segnalazione chiusa');
                 await Promise.all([reloadData('work'), reloadData('closed')]);
@@ -692,6 +694,10 @@
     function bindHandlers() {
         root.querySelectorAll('[data-act="assign"]').forEach(b => {
             b.addEventListener('click', async () => {
+                if (!canAssign()) {
+                    toastInfo('Non hai i permessi per smistare.');
+                    return;
+                }
                 const id = +b.dataset.id,
                       to = b.dataset.to;
                 const { confirmed, text } = await promptInstructions();
@@ -706,6 +712,10 @@
         });
         root.querySelectorAll('[data-act="close"]').forEach(b => {
             b.addEventListener('click', async () => {
+                if (!canClose()) {
+                    toastInfo('Non hai i permessi per chiudere.');
+                    return;
+                }
                 const id = +b.dataset.id;
                 const c  = await askConfirm('Chiudere la segnalazione?', 'Potrai comunque aggiungere note.');
                 if (!c.isConfirmed) return;
@@ -739,54 +749,27 @@
         } catch {
             // fallback ai ruoli hardcoded
         }
-        roleSel.innerHTML = state.roles
-            .map(r => `<option value="${r.slug}">${r.label}</option>`)
-            .join('');
-        if (!state.roles.some(r => r.slug === state.role)) {
-            state.role = state.roles[0]?.slug || 'coordinamento';
-        }
-        roleSel.value = state.role;
-
-        roleSel.addEventListener('change', async () => {
-            state.role = roleSel.value;
-            if (state.role !== 'coordinamento' && state.activeTab === 'queue') state.activeTab = 'work';
-            state.pages.queue  =
-            state.pages.work   =
-            state.pages.closed = 1;
-            await loadData();
-            render();
-        });
     }
 
-    // In DEBUG non uso /me: lascio il ruolo libero per i test
     async function loadMe() {
-        if (DEBUG_ROLES) {
-            if (!state.roles.some(r => r.slug === state.role)) {
-                state.role = state.roles[0]?.slug || 'coordinamento';
-            }
-            roleSel.value    = state.role;
-            roleSel.disabled = false;
-            return;
-        }
-
-        // Produzione: allineo il ruolo a /me
+        // In produzione: allineo il ruolo a /api/sor/me
         try {
             const me = await API.me();
-            if (me && me.role) {
-                if (state.roles.some(r => r.slug === me.role)) {
-                    state.role = me.role;
+            if (me) {
+                if (me.role) {
+                    state.role = me.role; // coordinamento / mezzi / volontariato / prociv
                 }
+                state.abilities.assign = !!me.can_assign; // <-- permessi dal backend
+                state.abilities.close  = !!me.can_close;
             }
         } catch {
-            // se /me non risponde, resto con coordinamento o fallback
+            // se /me non risponde, resto con default di fallback
         }
 
-        if (!state.roles.some(r => r.slug === state.role)) {
-            state.role = state.roles[0]?.slug || 'coordinamento';
+        if (!state.role) {
+            // se proprio non arriva niente: consideralo "prociv"
+            state.role = 'prociv';
         }
-
-        roleSel.value    = state.role;
-        roleSel.disabled = state.role !== 'coordinamento';
     }
 
     async function loadList(kind) {
@@ -1017,15 +1000,11 @@
     }
 
     /* ===== Boot ===== */
-    function renderLegendInit() {
-        renderLegend();
-    }
-
     async function boot() {
-        renderLegendInit();
-        await loadRoles(); // ruoli da tabella roles (fallback se non risponde)
-        await loadMe();    // ruolo utente loggato da /api/sor/me (ignorato in debug)
-        await loadData();  // segnalazioni per ruolo
+        renderLegend();
+        await loadRoles(); // ruoli logici (coordinamento / mezzi / volontariato / prociv)
+        await loadMe();    // ruolo SOR effettivo + permessi da /api/sor/me
+        await loadData();  // segnalazioni filtrate per ruolo/logica
         render();
     }
 

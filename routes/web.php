@@ -1,11 +1,12 @@
 <?php
 
+use App\Http\Controllers\Admin\UserApprovalController;
 use App\Http\Controllers\ApplicativiController;
+use App\Http\Controllers\Coc\CocController;
 use App\Http\Controllers\SegnalazioniController;
 use App\Http\Controllers\Sor\ComunicazioniController;
 use App\Http\Controllers\Sor\CoordinamentoController;
 use App\Http\Controllers\Sor\EventoController;
-// SOR controllers (pagine / API)
 use App\Http\Controllers\Sor\SegnalazioneController;
 use App\Http\Controllers\SorController;
 use Illuminate\Http\Request;
@@ -36,29 +37,48 @@ Route::middleware('auth')->group(function () {
         ->name('segnalazioni.logs');
 
     // Alias /segnalazioni/logs → redirect a /segnalazioni/log (opzionale)
-    Route::get('/segnalazioni/logs', fn () => redirect()->route('segnalazioni.logs'));
+    Route::get('/segnalazioni/logs', fn() => redirect()->route('segnalazioni.logs'));
 
     /*
     |--------------------------------------------------------------------------
-    | Pagina Apertura/Chiusura SOR
-    |--------------------------------------------------------------------------
-    | NON serve una route dedicata: viene gestita dalla catch-all sotto,
-    | con page = 'apertura-chiusura-sor'.
-    | In sidebar userai route('segnalazioni.section', ['page' => 'apertura-chiusura-sor'])
+    | Segnalazioni: tutte le altre sezioni (dashboard, coordinamento, ecc.)
     |--------------------------------------------------------------------------
     */
-
-    // Catch-all per le altre sezioni (dashboard, coordinamento, ecc.)
     Route::get('/segnalazioni/{page?}', [SegnalazioniController::class, 'show'])
         ->where('page', '[A-Za-z0-9\-\_]+')
         ->name('segnalazioni.section');
 
     /*
     |--------------------------------------------------------------------------
-    | API interne per salvataggio stato SOR (chiamate via fetch dal JS)
+    | API interne per salvataggio stato SOR / COC
     |--------------------------------------------------------------------------
     */
     Route::post('/sor', [SorController::class, 'update'])->name('sor.update');
+
+    // nuova API interna per salvataggio stato COC (usata da Apertura/Chiusura COC)
+    Route::post('/coc', [CocController::class, 'update'])->name('coc.update');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Pannello Amministratore (solo utenti con is_admin = true)
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
+        Route::get('/users', [UserApprovalController::class, 'index'])
+            ->name('users.index');
+
+        Route::get('/users/{user}/edit', [UserApprovalController::class, 'edit'])
+            ->name('users.edit');
+
+        Route::put('/users/{user}', [UserApprovalController::class, 'update'])
+            ->name('users.update');
+
+        Route::post('/users/{user}/approve', [UserApprovalController::class, 'approve'])
+            ->name('users.approve');
+
+        Route::post('/users/{user}/deactivate', [UserApprovalController::class, 'deactivate'])
+            ->name('users.deactivate');
+    });
 });
 
 // Logout
@@ -77,7 +97,7 @@ Route::post('/logout', function (Request $request) {
 })->name('logout');
 
 // Ping pubblico (facoltativo)
-Route::get('/api/ping', fn () => response()->json(['ok' => true]));
+Route::get('/api/ping', fn() => response()->json(['ok' => true]));
 
 /*
 |--------------------------------------------------------------------------
@@ -119,13 +139,31 @@ Route::middleware(['web', 'auth'])->prefix('api/sor')->group(function () {
     Route::get('eventi/{id}/export.csv',          [EventoController::class, 'exportSingle']);
 
     // Coordinamento / Ops (ruoli, assegnazioni, chiusure, note, logs coordinamento)
-    Route::get('roles',                      [CoordinamentoController::class, 'roles']);
-    Route::get('segnalazioni-coord',        [CoordinamentoController::class, 'listSegnalazioni']); // alias
-    Route::patch('segnalazioni/{id}/assign',[CoordinamentoController::class, 'assign']);
-    Route::patch('segnalazioni/{id}/close', [CoordinamentoController::class, 'close']);
-    Route::post('segnalazioni/{id}/notes',  [CoordinamentoController::class, 'addNote']);
-    Route::get('logs',                      [CoordinamentoController::class, 'logs']); // log coordinamento (admin)
+    Route::get('roles',                       [CoordinamentoController::class, 'roles']);
+    Route::get('segnalazioni-coord',         [CoordinamentoController::class, 'listSegnalazioni']); // alias (se mai ti serve distinto)
+    Route::patch('segnalazioni/{id}/assign', [CoordinamentoController::class, 'assign']);
+    Route::patch('segnalazioni/{id}/close',  [CoordinamentoController::class, 'close']);
+    Route::post('segnalazioni/{id}/notes',   [CoordinamentoController::class, 'addNote']);
+    Route::get('logs',                       [CoordinamentoController::class, 'logs']); // log coordinamento (admin)
 
-    // opzionale: chi sono
-    Route::get('me', fn () => auth()->user());
+    // chi sono: restituisce il ruolo SOR effettivo per il JS (usato dal Coordinamento)
+    Route::get('me', function () {
+        /** @var \App\Models\User|null $user */
+        $user = auth()->user();
+
+        if (! $user) {
+            return response()->json(['role' => null], 401);
+        }
+
+        return response()->json([
+            'id'         => $user->id,
+            'name'       => $user->name,
+            'email'      => $user->email,
+            // ruolo logico usato dal frontend coordinamento:
+            // coordinamento | mezzi | volontariato | prociv
+            'role'       => $user->sorCoordRole(),
+            'can_assign' => $user->canAssign(),
+            'can_close'  => $user->canClose(),
+        ]);
+    });
 });

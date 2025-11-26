@@ -1,17 +1,4 @@
-@php
-// --- Mock dati come nel componente React ---
-$stats = ['BL'=>8,'PD'=>36,'RO'=>23,'TV'=>28,'VE'=>27,'VI'=>16,'VR'=>14];
-$totale = array_sum($stats);
-
-$comuni = [
-['prov'=>'BL','comune'=>'Arsiè','categoria'=>'aperta h24','data'=>'16/08/2025 00:00','lat'=>45.953,'lon'=>11.740],
-['prov'=>'BL','comune'=>'Arsiè','categoria'=>'aperta orario diurno','data'=>'16/08/2025 00:00','lat'=>45.953,'lon'=>11.740],
-['prov'=>'RO','comune'=>'Adria','categoria'=>'aperta h24','data'=>'20/08/2025 08:00','lat'=>45.054,'lon'=>12.057],
-];
-$province = array_keys($stats);
-@endphp
-
-<div class="p-6">
+<div class="p-6" id="coc-monitoraggio-root">
     <header class="mb-4">
         <h2 class="text-xl font-semibold">Monitoraggio COC</h2>
     </header>
@@ -26,66 +13,76 @@ $province = array_keys($stats);
             </span>
         </p>
 
-        <div class="grid gap-4 md:grid-cols-4">
+        <form method="GET"
+            action="{{ route('segnalazioni.section', ['page' => 'monitoraggio-coc']) }}"
+            class="grid gap-4 md:grid-cols-4">
+            {{-- Data inizio --}}
             <label class="grid gap-1.5 text-sm">
                 <span class="inline-flex items-center gap-1.5 font-medium text-slate-700">
                     <x-heroicon-o-calendar-days class="h-4 w-4" /> Data inizio
                 </span>
-                <input id="dt-inizio" type="datetime-local" value="2025-08-01T00:00"
+                <input id="dt-inizio" name="data_inizio" type="datetime-local"
+                    value="{{ old('data_inizio', $dataInizio) }}"
                     class="h-10 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm
-                              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500" />
+                           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500" />
             </label>
 
+            {{-- Data fine --}}
             <label class="grid gap-1.5 text-sm">
                 <span class="inline-flex items-center gap-1.5 font-medium text-slate-700">
                     <x-heroicon-o-calendar-days class="h-4 w-4" /> Data fine
                 </span>
-                <input id="dt-fine" type="datetime-local" value="2025-08-31T23:59"
+                <input id="dt-fine" name="data_fine" type="datetime-local"
+                    value="{{ old('data_fine', $dataFine) }}"
                     class="h-10 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm
-                              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500" />
+                           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500" />
             </label>
 
+            {{-- Provincia --}}
             <label class="grid gap-1.5 text-sm">
                 <span class="inline-flex items-center gap-1.5 font-medium text-slate-700">
                     <x-heroicon-o-map-pin class="h-4 w-4" /> Provincia
                 </span>
-                <select id="sel-provincia"
+                <select id="sel-provincia" name="provincia"
                     class="h-10 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm
-                               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
-                    <option value="ALL">Tutte le Province</option>
-                    @foreach ($province as $p) <option value="{{ $p }}">{{ $p }}</option> @endforeach
+                           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
+                    <option value="ALL" @selected($provinciaSelezionata==='ALL' )>Tutte le Province</option>
+                    @foreach ($province as $p)
+                    <option value="{{ $p }}" @selected($provinciaSelezionata===$p)>{{ $p }}</option>
+                    @endforeach
                 </select>
             </label>
 
+            {{-- Bottone cerca --}}
             <div class="flex items-end">
-                <button id="btn-cerca-coc"
+                <button type="submit" id="btn-cerca-coc"
                     class="w-full inline-flex items-center justify-center gap-2 rounded-xl h-10 px-4 text-sm font-medium
-                               bg-brand-600 text-white hover:bg-brand-700
-                               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-500">
+                           bg-brand-600 text-white hover:bg-brand-700
+                           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-500">
                     <x-heroicon-o-magnifying-glass class="h-4 w-4" />
                     Cerca COC
                 </button>
             </div>
-        </div>
+        </form>
     </div>
 
     {{-- Statistiche --}}
-    <div class="mb-6 rounded-2xl border border-slate-200 bg-white shadow-card p-4 sm:p-6">
+    <div class="mb-6 rounded-2xl border border-slate-200 bg-white shadow-card p-4 sm:p-6 coc-print-block">
         <div class="mb-3 flex items-center justify-between">
             <h3 class="inline-flex items-center gap-2 text-base font-semibold text-slate-800">
                 <x-heroicon-o-chart-bar class="h-5 w-5" /> Statistiche per provincia
             </h3>
             <button id="btn-print"
                 class="inline-flex items-center gap-2 rounded-xl h-10 px-4 text-sm font-medium
-                           bg-brand-600 text-white hover:bg-brand-700
-                           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-500">
+                       bg-brand-600 text-white hover:bg-brand-700
+                       focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-500">
                 <x-heroicon-o-printer class="h-4 w-4" />
                 Stampa Report
             </button>
         </div>
 
         <div class="overflow-x-auto">
-            <table class="w-full text-sm">
+            <table class="w-full text-sm coc-stats-table">
                 <thead>
                     <tr class="bg-slate-50">
                         <th class="px-3 py-2 text-left">
@@ -122,7 +119,8 @@ $province = array_keys($stats);
 
     {{-- Comuni + mappa --}}
     <div class="grid gap-6 lg:grid-cols-2">
-        <div class="rounded-2xl border border-slate-200 bg-white shadow-card p-4 sm:p-6">
+        {{-- Tabella comuni --}}
+        <div class="rounded-2xl border border-slate-200 bg-white shadow-card p-4 sm:p-6 coc-print-block">
             <h3 class="mb-3 inline-flex items-center gap-2 text-base font-semibold text-slate-800">
                 <x-heroicon-o-building-office class="h-5 w-5" />
                 Comuni con COC attivati
@@ -131,7 +129,7 @@ $province = array_keys($stats);
                 </span>
             </h3>
             <div class="overflow-x-auto">
-                <table class="w-full text-sm">
+                <table class="w-full text-sm coc-comuni-table">
                     <thead class="bg-slate-50">
                         <tr>
                             <th class="px-3 py-2 text-left">
@@ -157,25 +155,32 @@ $province = array_keys($stats);
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($comuni as $c)
+                        @forelse ($comuniRows as $c)
                         <tr class="border-t border-slate-200">
-                            <td class="px-3 py-2">{{ $c['prov'] }}</td>
-                            <td class="px-3 py-2">{{ $c['comune'] }}</td>
-                            <td class="px-3 py-2">{{ $c['categoria'] }}</td>
-                            <td class="px-3 py-2">{{ $c['data'] }}</td>
+                            <td class="px-3 py-2">{{ $c->prov }}</td>
+                            <td class="px-3 py-2">{{ $c->comune }}</td>
+                            <td class="px-3 py-2">{{ $c->categoria }}</td>
+                            <td class="px-3 py-2">{{ $c->data }}</td>
                         </tr>
-                        @endforeach
+                        @empty
+                        <tr>
+                            <td colspan="4" class="px-3 py-4 text-center text-slate-500">
+                                Nessun COC attivo nel periodo selezionato.
+                            </td>
+                        </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <div class="rounded-2xl border border-slate-200 bg-white shadow-card p-4 sm:p-6">
+        {{-- Mappa --}}
+        <div class="rounded-2xl border border-slate-200 bg-white shadow-card p-4 sm:p-6 coc-map-wrapper">
             <h3 class="mb-3 inline-flex items-center gap-2 text-base font-semibold text-slate-800">
                 <x-heroicon-o-map class="h-5 w-5 text-brand-600" />
                 Mappa situazione COC
             </h3>
-            <div id="map-coc" class="h-[50vh] w-full rounded-lg"></div>
+            <div id="map-coc" class="coc-map h-[50vh] w-full rounded-lg"></div>
         </div>
     </div>
 </div>
@@ -186,57 +191,97 @@ $province = array_keys($stats);
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"></script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // Dataset mock come in React
-        const COMUNI = @json($comuni);
 
-        // UI refs
-        const selProv = document.getElementById('sel-provincia');
-        const btnCerca = document.getElementById('btn-cerca-coc');
-        const btnPrint = document.getElementById('btn-print');
+<style>
+    /* ====== Monitoraggio COC – foglio di stile ====== */
 
-        // Init mappa
-        const map = L.map('map-coc', {
-            center: [45.55, 11.55],
-            zoom: 8
-        });
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors',
-            maxZoom: 19
-        }).addTo(map);
+    /* Contenitore principale (solo se serve differenziarlo) */
+    #coc-monitoraggio-root {
+        /* opzionale */
+    }
 
-        let markersLayer = L.featureGroup().addTo(map);
+    /* Tabelle statistiche e comuni */
+    .coc-stats-table th,
+    .coc-stats-table td,
+    .coc-comuni-table th,
+    .coc-comuni-table td {
+        white-space: nowrap;
+    }
 
-        function drawMarkers(rows) {
-            markersLayer.clearLayers();
-            if (!rows.length) return;
-            rows.forEach(r => {
-                L.marker([r.lat, r.lon]).addTo(markersLayer)
-                    .bindPopup(`<b>${escapeHtml(r.comune)}</b><br/>${escapeHtml(r.categoria)}`);
-            });
-            map.fitBounds(markersLayer.getBounds(), {
-                padding: [20, 20]
-            });
+    .coc-comuni-table td:nth-child(2),
+    .coc-comuni-table td:nth-child(3) {
+        white-space: normal;
+    }
+
+    /* Wrapper mappa */
+    .coc-map-wrapper {
+        position: relative;
+    }
+
+    .coc-map {
+        min-height: 320px;
+        border-radius: 0.75rem;
+        border: 1px solid #e5e7eb;
+        /* slate-200 */
+    }
+
+    /* Leaflet popup / tooltip leggera personalizzazione */
+    .leaflet-container {
+        font-family: inherit;
+    }
+
+    .leaflet-popup-content {
+        margin: 8px 12px;
+        line-height: 1.4;
+    }
+
+    /* Stampa */
+    @media print {
+
+        /* Nascondi il bottone di stampa e i controlli superflui */
+        #btn-print,
+        #btn-cerca-coc,
+        #sel-provincia,
+        #dt-inizio,
+        #dt-fine {
+            display: none !important;
         }
 
-        btnCerca.addEventListener('click', () => {
-            const prov = selProv.value || 'ALL';
-            const filtered = prov === 'ALL' ? COMUNI : COMUNI.filter(c => c.prov === prov);
-            drawMarkers(filtered);
-        });
-
-        btnPrint.addEventListener('click', () => window.print());
-
-        // Helpers
-        function escapeHtml(s) {
-            return (s ?? '').replace(/[&<>"']/g, m => ({
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                '"': '&quot;',
-                '\'': '&#039;'
-            } [m]));
+        /* Rimuovi ombre e bordi per una stampa più pulita */
+        .shadow-card {
+            box-shadow: none !important;
         }
-    });
-</script>
+
+        .coc-map-wrapper {
+            display: none !important;
+            /* se non vuoi stampare la mappa */
+        }
+
+        body {
+            background: white !important;
+            font-size: 11px;
+            line-height: 1.3;
+        }
+
+        .coc-print-block {
+            page-break-inside: avoid;
+        }
+
+        table {
+            border-collapse: collapse !important;
+        }
+
+        .coc-stats-table th,
+        .coc-stats-table td,
+        .coc-comuni-table th,
+        .coc-comuni-table td {
+            border: 1px solid #000 !important;
+            padding: 4px 3px !important;
+        }
+
+        .coc-stats-table thead tr,
+        .coc-comuni-table thead tr {
+            background-color: #f0f0f0 !important;
+        }
+    }
+</style>
