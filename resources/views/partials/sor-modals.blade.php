@@ -191,19 +191,37 @@
         function baseOpenModal(sel) {
             const m = document.querySelector(sel);
             if (!m) return;
+
+            // disattiva lo sfondo
+            document.querySelector('#app')?.setAttribute('inert', 'true');
+
             m.classList.remove("hidden");
             m.classList.add("is-open");
+            m.setAttribute("aria-hidden", "false");
+
             document.body.style.overflow = "hidden";
+
+            const dialog = m.querySelector('[role="dialog"]');
+            if (dialog) {
+                dialog.setAttribute('tabindex', '-1');
+                dialog.focus();
+            }
         }
 
         function baseCloseModal(el) {
             if (!el) return;
+
             el.classList.remove("is-open");
             el.classList.add("hidden");
+            el.setAttribute("aria-hidden", "true");
+
+            // se non ci sono altri modali aperti, riattiva lo sfondo
             if (!document.querySelector(".c-modal.is-open")) {
                 document.body.style.overflow = "";
+                document.querySelector('#app')?.removeAttribute('inert');
             }
         }
+
 
         function topmostOpenModal() {
             const opens = Array.from(document.querySelectorAll(".c-modal.is-open"));
