@@ -25,11 +25,15 @@ class Comunicazione extends Model
         'contenuto',
         'priorita',
         'operatore',
+        'lat',
+        'lng',
     ];
 
     protected $casts = [
-        'aree' => 'array',
+        'aree'          => 'array',
         'comunicata_il' => 'datetime',
+        'lat'           => 'float',
+        'lng'           => 'float',
     ];
 
     public function evento()

@@ -1011,11 +1011,459 @@ tbody tr.prio-row.prio--nessuna {
 .actions {
     display: flex;
     gap: .25rem;
-    justify-content: center;   /* centrati */
+    justify-content: center;
+    /* centrati */
     align-items: center;
 }
 
 /* Assicura che la cella "Azioni" sia centrata in tutte le tabelle SOR */
 table tbody td:last-child {
     text-align: center;
+}
+
+/* =========================
+   THEME PRO (override)
+   incolla in fondo al CSS
+   ========================= */
+
+:root {
+    --bg: #f6f8fb;
+    --card: #ffffff;
+    --ink: #0f172a;
+    --ink-2: #334155;
+    --muted: #64748b;
+    --line: #e2e8f0;
+
+    /* brand */
+    --primary: #2563eb;
+    --primary-600: #1d4ed8;
+    --primary-700: #1e40af;
+    --primary-50: #eff6ff;
+
+    /* accent gradient */
+    --grad-a: #2563eb;
+    --grad-b: #7c3aed;
+
+    /* shadows */
+    --sh-sm: 0 1px 2px rgba(15, 23, 42, .06);
+    --sh-md: 0 10px 30px rgba(15, 23, 42, .10);
+    --sh-lg: 0 18px 60px rgba(15, 23, 42, .16);
+
+    /* radius */
+    --r-sm: .75rem;
+    --r-md: 1rem;
+    --r-lg: 1.25rem;
+
+    /* focus */
+    --ring: 0 0 0 4px color-mix(in oklab, var(--primary) 25%, transparent);
+}
+
+html,
+body {
+    background: radial-gradient(1200px 600px at 15% -5%, rgba(37, 99, 235, .10), transparent 60%),
+        radial-gradient(1200px 600px at 90% 0%, rgba(124, 58, 237, .10), transparent 55%),
+        var(--bg);
+}
+
+/* Layout container */
+#app {
+    max-width: 1180px;
+    margin: 0 auto;
+}
+
+/* Titoli */
+h2,
+h3,
+h4 {
+    letter-spacing: -.015em;
+}
+
+/* =========================
+   CARD / SECTION
+   ========================= */
+
+.shadow-card {
+    box-shadow: var(--sh-sm), 0 20px 50px rgba(15, 23, 42, .06);
+}
+
+.sec {
+    border: 1px solid color-mix(in oklab, var(--line) 85%, white);
+    border-left: 10px solid var(--accent);
+    background: linear-gradient(180deg, rgba(255, 255, 255, .92), rgba(255, 255, 255, 1));
+    border-radius: var(--r-lg);
+    position: relative;
+    overflow: hidden;
+}
+
+.sec::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(600px 220px at 15% 0%, color-mix(in oklab, var(--accent) 18%, transparent), transparent 60%);
+    opacity: .9;
+}
+
+.sec>* {
+    position: relative;
+}
+
+/* header interno sezione (la riga con titolo + bottoni) */
+.sec .flex.items-center.justify-between {
+    padding-bottom: .35rem;
+    border-bottom: 1px dashed color-mix(in oklab, var(--accent) 20%, var(--line));
+}
+
+.sec h3 {
+    display: flex;
+    align-items: center;
+    gap: .55rem;
+    margin: 0;
+    font-weight: 800;
+    color: color-mix(in oklab, var(--accent) 82%, var(--ink));
+}
+
+.sec h3::before {
+    content: "";
+    width: .6rem;
+    height: .6rem;
+    border-radius: 999px;
+    background: var(--accent);
+    box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent) 15%, transparent);
+}
+
+/* Ricerca globale: look premium */
+.rounded-2xl.border.border-slate-200.bg-white {
+    border: 1px solid color-mix(in oklab, var(--line) 80%, white);
+    border-radius: var(--r-lg);
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, .92), rgba(255, 255, 255, 1));
+    position: relative;
+}
+
+.rounded-2xl.border.border-slate-200.bg-white::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background: radial-gradient(700px 260px at 10% 0%, rgba(37, 99, 235, .10), transparent 60%);
+}
+
+/* =========================
+   INPUTS / SELECT / TEXTAREA
+   ========================= */
+
+.label {
+    color: var(--ink-2);
+    font-weight: 650;
+    font-size: .78rem;
+}
+
+.input {
+    border-radius: var(--r-md);
+    border: 1px solid color-mix(in oklab, var(--line) 85%, white);
+    background: rgba(255, 255, 255, .95);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .7);
+    transition: box-shadow .15s ease, border-color .15s ease, transform .05s ease;
+}
+
+.input:hover {
+    border-color: color-mix(in oklab, var(--primary) 25%, var(--line));
+}
+
+.input:focus {
+    outline: none;
+    border-color: color-mix(in oklab, var(--primary) 65%, var(--line));
+    box-shadow: var(--ring), inset 0 1px 0 rgba(255, 255, 255, .75);
+}
+
+textarea.input {
+    border-radius: var(--r-md);
+}
+
+/* radio/checkbox un filo più “UI” */
+input[type="radio"],
+input[type="checkbox"] {
+    accent-color: var(--primary);
+}
+
+/* =========================
+   BUTTONS (btn / btn-xs / btn-primary)
+   ========================= */
+
+.btn,
+.btn-xs,
+.btn-primary {
+    border: 1px solid color-mix(in oklab, var(--line) 80%, white);
+    border-radius: .9rem;
+    background: #fff;
+    color: var(--ink);
+    padding: .55rem .85rem;
+    font-weight: 750;
+    cursor: pointer;
+    box-shadow: var(--sh-sm);
+    transition: transform .06s ease, box-shadow .14s ease, background .14s ease, border-color .14s ease;
+}
+
+.btn:hover,
+.btn-xs:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--sh-md);
+    border-color: color-mix(in oklab, var(--primary) 20%, var(--line));
+    background: color-mix(in oklab, var(--primary) 3%, white);
+}
+
+.btn:active,
+.btn-xs:active {
+    transform: translateY(0px);
+    box-shadow: var(--sh-sm);
+}
+
+.btn-xs {
+    padding: .42rem .65rem;
+    font-size: .78rem;
+    border-radius: .8rem;
+}
+
+/* primary = gradiente pro */
+.btn-primary {
+    border: 1px solid color-mix(in oklab, var(--primary) 55%, #000);
+    color: #fff;
+    background: linear-gradient(135deg, var(--grad-a), var(--grad-b));
+    box-shadow: 0 10px 25px rgba(37, 99, 235, .20), 0 6px 14px rgba(124, 58, 237, .14);
+}
+
+.btn-primary:hover {
+    filter: brightness(1.03);
+    box-shadow: 0 14px 40px rgba(37, 99, 235, .26), 0 10px 24px rgba(124, 58, 237, .18);
+}
+
+.btn-primary:focus {
+    outline: none;
+    box-shadow: var(--ring), 0 14px 40px rgba(37, 99, 235, .26);
+}
+
+/* =========================
+   TABLES
+   ========================= */
+
+table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+thead th {
+    text-align: left;
+    font-size: .78rem;
+    letter-spacing: .02em;
+    text-transform: none;
+    color: color-mix(in oklab, var(--ink) 75%, var(--muted));
+    background:
+        linear-gradient(180deg,
+            color-mix(in oklab, var(--accent) 8%, white),
+            color-mix(in oklab, var(--accent) 4%, white));
+    border-bottom: 1px solid color-mix(in oklab, var(--accent) 20%, var(--line));
+}
+
+tbody tr {
+    transition: background .12s ease, transform .06s ease;
+}
+
+tbody tr:hover {
+    background: color-mix(in oklab, var(--accent) 5%, white);
+}
+
+tbody td {
+    border-bottom: 1px solid color-mix(in oklab, var(--line) 70%, white);
+}
+
+tbody tr:nth-child(even) {
+    background: linear-gradient(180deg, rgba(15, 23, 42, .015), rgba(15, 23, 42, .01));
+}
+
+/* Colonna azioni sempre centrata e “pulita” */
+.actions {
+    gap: .35rem;
+}
+
+.actions .btn-xs {
+    border-radius: .7rem;
+}
+
+/* =========================
+   BADGE / CHIP
+   ========================= */
+
+.badge {
+    border-radius: 999px;
+    font-weight: 800;
+    padding: .22rem .6rem;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6);
+}
+
+.badge--in {
+    background: linear-gradient(180deg, #ecfdf5, #d1fae5);
+    border-color: #86efac;
+    color: #065f46;
+}
+
+.badge--out {
+    background: linear-gradient(180deg, #fff1f2, #ffe4e6);
+    border-color: #fda4af;
+    color: #9f1239;
+}
+
+/* Priorità badge più “premium” */
+.prio-badge {
+    border-radius: 999px;
+    font-weight: 850;
+    padding: .18rem .6rem;
+}
+
+.prio-badge.prio--alta {
+    background: linear-gradient(180deg, #fee2e2, #fecaca);
+    border-color: #fb7185;
+    color: #881337;
+}
+
+.prio-badge.prio--media {
+    background: linear-gradient(180deg, #fff7ed, #ffedd5);
+    border-color: #fdba74;
+    color: #9a3412;
+}
+
+.prio-badge.prio--bassa {
+    background: linear-gradient(180deg, #ecfdf5, #d1fae5);
+    border-color: #6ee7b7;
+    color: #065f46;
+}
+
+.prio-badge.prio--nessuna {
+    background: linear-gradient(180deg, #f1f5f9, #e2e8f0);
+    border-color: #94a3b8;
+    color: #334155;
+}
+
+/* =========================
+   MODALS (premium)
+   ========================= */
+
+.c-modal__backdrop {
+    background:
+        radial-gradient(900px 400px at 15% 0%, rgba(37, 99, 235, .22), transparent 60%),
+        radial-gradient(900px 400px at 90% 0%, rgba(124, 58, 237, .18), transparent 55%),
+        rgba(2, 6, 23, .62);
+    backdrop-filter: blur(6px);
+}
+
+.c-modal__dialog {
+    border-radius: 1.25rem;
+    border: 1px solid color-mix(in oklab, var(--line) 85%, white);
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, .94), rgba(255, 255, 255, 1));
+    box-shadow: var(--sh-lg);
+}
+
+.c-modal__dialog header {
+    padding-bottom: .75rem;
+    border-bottom: 1px solid rgba(226, 232, 240, .9);
+}
+
+.c-modal__close {
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: .8rem;
+    background: rgba(255, 255, 255, .95);
+    border: 1px solid color-mix(in oklab, var(--line) 85%, white);
+    box-shadow: var(--sh-sm);
+    transition: transform .08s ease, box-shadow .14s ease;
+}
+
+.c-modal__close:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--sh-md);
+}
+
+/* =========================
+   EVENT CARDS (già buone, le rifiniamo)
+   ========================= */
+
+.ev-card {
+    border-radius: 1.15rem;
+    box-shadow: var(--sh-sm);
+}
+
+.ev-card:hover {
+    box-shadow: var(--sh-md);
+}
+
+.ev-card__title {
+    letter-spacing: -.01em;
+}
+
+.ev-card__badge {
+    border-radius: 999px;
+    font-weight: 850;
+}
+
+/* Legenda più “chip” */
+.ol-item {
+    border-radius: 999px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .7);
+    transition: transform .06s ease, box-shadow .12s ease;
+}
+
+.ol-item:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--sh-sm);
+}
+
+/* =========================
+   TAGS (aree interessate)
+   ========================= */
+
+.tags .tag,
+#ev-areas .tag {
+    border-radius: 999px;
+    padding: .25rem .65rem;
+    background: linear-gradient(180deg, #f8fafc, #f1f5f9);
+    border: 1px solid color-mix(in oklab, var(--line) 80%, white);
+}
+
+#ev-areas .tag::before {
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 18%, transparent);
+}
+
+/* tag-input wrapper più “input vero” */
+.tag-input--wrap {
+    border-radius: var(--r-md);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .7);
+}
+
+.tag__x {
+    border-radius: 999px;
+    width: 1.1rem;
+    height: 1.1rem;
+}
+
+.tag__x:hover {
+    background: color-mix(in oklab, var(--primary) 5%, white);
+    border-color: color-mix(in oklab, var(--primary) 25%, var(--line));
+}
+
+/* =========================
+   PAGER
+   ========================= */
+
+.pager__label {
+    font-weight: 650;
+    color: color-mix(in oklab, var(--muted) 85%, var(--ink));
+}
+
+/* =========================
+   NICE: riduci “opacity:70%” e rendilo coerente
+   ========================= */
+.opacity-70 {
+    opacity: .78 !important;
 }

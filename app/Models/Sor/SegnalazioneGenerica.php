@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Sor;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Evento;
 
 class SegnalazioneGenerica extends Model
 {
@@ -15,16 +16,16 @@ class SegnalazioneGenerica extends Model
     protected $fillable = [
         // campi base
         'creata_il',
-        'direzione',     // E / U
-        'tipologia',     // sismico, idraulico, ...
+        'direzione',
+        'tipologia',
 
         'aree',
         'sintesi',
         'operatore',
-        'priorita',      // Nessuna, Alta, Media, Bassa
+        'priorita',
         'evento_id',
 
-        // campi di COORDINAMENTO (già esistenti)
+        // coordinamento
         'status',
         'assigned_to',
         'instructions',
@@ -32,8 +33,8 @@ class SegnalazioneGenerica extends Model
         'last_note_by',
         'last_note_at',
 
-        // campi “comunicazione” aggiunti con la tua migration
-        'tipo',          // es: FAX, Email, Telefono, PEC…
+        // comunicazione
+        'tipo',
         'ente',
         'mitt_dest',
         'telefono',
@@ -44,6 +45,10 @@ class SegnalazioneGenerica extends Model
         'oggetto',
         'contenuto',
         'campi_specifici',
+
+        // coordinate
+        'lat',
+        'lng',
     ];
 
     protected $casts = [
@@ -51,6 +56,8 @@ class SegnalazioneGenerica extends Model
         'campi_specifici' => 'array',
         'creata_il'       => 'datetime',
         'last_note_at'    => 'datetime',
+        'lat'             => 'float',
+        'lng'             => 'float',
     ];
 
     public function evento()

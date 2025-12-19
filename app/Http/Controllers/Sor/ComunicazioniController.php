@@ -19,10 +19,10 @@ class ComunicazioniController extends Controller
             $needle = mb_strtolower($r->string('q'));
             $q->where(function ($w) use ($needle) {
                 $w->whereRaw('LOWER(oggetto) LIKE ?', ["%{$needle}%"])
-                  ->orWhereRaw('LOWER(contenuto) LIKE ?', ["%{$needle}%"])
-                  ->orWhereRaw('LOWER(mitt_dest) LIKE ?', ["%{$needle}%"])
-                  ->orWhereRaw('LOWER(tipo) LIKE ?', ["%{$needle}%"])
-                  ->orWhereRaw("
+                    ->orWhereRaw('LOWER(contenuto) LIKE ?', ["%{$needle}%"])
+                    ->orWhereRaw('LOWER(mitt_dest) LIKE ?', ["%{$needle}%"])
+                    ->orWhereRaw('LOWER(tipo) LIKE ?', ["%{$needle}%"])
+                    ->orWhereRaw("
                     EXISTS (
                       SELECT 1
                       FROM jsonb_array_elements_text(COALESCE(aree, '[]'::jsonb)) a
@@ -86,6 +86,8 @@ class ComunicazioniController extends Controller
             'oggetto'       => 'nullable|string|max:240',
             'contenuto'     => 'nullable|string',
             'priorita'      => 'required|in:Nessuna,Alta,Media,Bassa',
+            'lat'           => 'nullable|numeric',
+            'lng'           => 'nullable|numeric',
         ]);
 
         $data['operatore']     = optional($r->user())->name ?? optional($r->user())->email ?? 'sconosciuto';
@@ -100,6 +102,7 @@ class ComunicazioniController extends Controller
 
         return response()->json($com, 201);
     }
+
 
     public function update(Request $r, int $evento, int $id)
     {
@@ -120,6 +123,8 @@ class ComunicazioniController extends Controller
             'oggetto'       => 'nullable|string|max:240',
             'contenuto'     => 'nullable|string',
             'priorita'      => ['nullable', Rule::in(['Nessuna', 'Alta', 'Media', 'Bassa'])],
+            'lat'           => 'nullable|numeric',
+            'lng'           => 'nullable|numeric',
         ]);
 
         $com->fill(array_filter($data, fn($v) => $v !== null));
@@ -130,6 +135,7 @@ class ComunicazioniController extends Controller
 
         return response()->json($com);
     }
+
 
     public function destroy(int $evento, int $id)
     {

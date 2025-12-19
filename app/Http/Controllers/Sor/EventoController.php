@@ -17,8 +17,8 @@ class EventoController extends Controller
             $needle = mb_strtolower($r->string('q'));
             $q->where(function ($w) use ($needle) {
                 $w->whereRaw('LOWER(descrizione) LIKE ?', ["%{$needle}%"])
-                  ->orWhereRaw('LOWER(tipologia) LIKE ?', ["%{$needle}%"])
-                  ->orWhereRaw("
+                    ->orWhereRaw('LOWER(tipologia) LIKE ?', ["%{$needle}%"])
+                    ->orWhereRaw("
                     EXISTS (
                       SELECT 1
                       FROM jsonb_array_elements_text(COALESCE(aree, '[]'::jsonb)) a
@@ -73,6 +73,8 @@ class EventoController extends Controller
             'descrizione' => 'nullable|string',
             'aree'        => 'array',
             'aperto'      => 'boolean',
+            'lat'         => 'nullable|numeric',
+            'lng'         => 'nullable|numeric',
         ]);
 
         $data['aggiornato_il'] = now();
@@ -82,6 +84,7 @@ class EventoController extends Controller
 
         return response()->json($ev, 201);
     }
+
 
     public function toggle(int $id)
     {
@@ -132,7 +135,7 @@ class EventoController extends Controller
 
         $headers = [
             'Content-Type'        => 'text/csv; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="evento_'.$id.'_comunicazioni.csv"',
+            'Content-Disposition' => 'attachment; filename="evento_' . $id . '_comunicazioni.csv"',
         ];
 
         return response()->stream(function () use ($rows) {

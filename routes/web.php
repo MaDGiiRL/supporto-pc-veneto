@@ -31,6 +31,12 @@ Route::middleware('auth')->group(function () {
     // Segnalazioni (pagine Blade)
     Route::redirect('/segnalazioni', '/segnalazioni/dashboard')->name('segnalazioni.index');
 
+    // Pagina mappa segnalazioni SOR (solo mappa, dati dalla dashboard)
+    Route::get('/segnalazioni/mappa', function () {
+        return view('segnalazioni.mappa');
+    })->name('segnalazioni.mappa');
+
+
     // Pagina LOG dentro lo stesso layout Segnalazioni
     Route::get('/segnalazioni/log', [SegnalazioniController::class, 'show'])
         ->defaults('page', 'log')

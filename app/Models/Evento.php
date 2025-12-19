@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Comunicazione;
+use App\Models\Sor\SegnalazioneGenerica;
 
 class Evento extends Model
 {
@@ -16,21 +18,29 @@ class Evento extends Model
         'aperto',
         'aggiornato_il',
         'operatore',
+        'lat',
+        'lng',
     ];
 
     protected $casts = [
-        'aree' => 'array',
-        'aperto' => 'boolean',
+        'aree'          => 'array',
+        'aperto'        => 'boolean',
         'aggiornato_il' => 'datetime',
+        'lat'           => 'float',
+        'lng'           => 'float',
     ];
 
     public function comunicazioni()
     {
-        return $this->hasMany(Comunicazione::class, 'evento_id')->orderByDesc('comunicata_il')->orderByDesc('id');
+        return $this->hasMany(Comunicazione::class, 'evento_id')
+            ->orderByDesc('comunicata_il')
+            ->orderByDesc('id');
     }
 
     public function segnalazioni()
     {
-        return $this->hasMany(SegnalazioneGenerica::class, 'evento_id')->orderByDesc('creata_il')->orderByDesc('id');
+        return $this->hasMany(SegnalazioneGenerica::class, 'evento_id')
+            ->orderByDesc('creata_il')
+            ->orderByDesc('id');
     }
 }

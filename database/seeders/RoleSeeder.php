@@ -20,6 +20,9 @@ class RoleSeeder extends Seeder
             ['volontari',            'Volontari',              false,      false],
             ['sor-coordinatore',     'Coordinatore SOR',       true,       true],
             ['sor-mezzi-materiali',  'Mezzi e materiali SOR',  false,      true],
+            ['ssv',  'SOR FVS',  false,      true],
+            ['segreteria-operativa',  'Segreteria Operativa',  false,      true],
+            
         ];
 
         foreach ($roles as [$slug, $label, $canAssign, $canClose]) {

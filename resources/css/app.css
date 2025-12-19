@@ -4,6 +4,17 @@
 @import './applicativi_informatici/segnalazioni/coordinamento.css';
 @import './applicativi_informatici/segnalazioni/log.css';
 
+@import "@fontsource/inter/300.css";
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
+
+/* Se vuoi forzare Inter come default */
+html, body {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+}
+
 
 @tailwind base;
 @tailwind components;
