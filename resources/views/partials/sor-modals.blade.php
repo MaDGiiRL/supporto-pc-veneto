@@ -403,67 +403,38 @@
                 else app.removeAttribute("inert");
             };
 
-            function applyFullscreen(modalEl, full) {
-                const dlg = modalEl?.querySelector(".c-modal__dialog");
-                if (!dlg) return;
+        const makeDirBadge =
+            window.makeDirBadge ||
+            function(val) {
+                const v = (val || "").toString().trim().toUpperCase();
+                const isIn = v === "E" || v === "ENTRATA";
+                const s = document.createElement("span");
+                s.className = "badge";
+                s.textContent = isIn ? "E" : "U";
+                s.title = isIn ? "Entrata" : "Uscita";
+                return s;
+            };
 
-                if (full) {
-                    modalEl.classList.add("is-full");
-                    dlg.style.width = "min(98vw, 96rem)";
-                    dlg.style.maxWidth = "98vw";
-                    dlg.style.height = "94vh";
-                    dlg.style.maxHeight = "94vh";
-                    dlg.style.margin = "2vh auto";
-                } else {
-                    modalEl.classList.remove("is-full");
-                    dlg.style.width = "";
-                    dlg.style.maxWidth = "";
-                    dlg.style.height = "";
-                    dlg.style.maxHeight = "";
-                    dlg.style.margin = "";
-                }
+        const toast =
+            window.toast ||
+            function() {};
+
+        function baseOpenModal(sel) {
+            const m = document.querySelector(sel);
+            if (!m) return;
+            m.classList.remove("hidden");
+            m.classList.add("is-open");
+            document.body.style.overflow = "hidden";
+        }
+
+        function baseCloseModal(el) {
+            if (!el) return;
+            el.classList.remove("is-open");
+            el.classList.add("hidden");
+            if (!document.querySelector(".c-modal.is-open")) {
+                document.body.style.overflow = "";
             }
-
-            function applyStackZ() {
-                const normals = modalStack.filter(m => !isTopModal(m));
-                const tops = modalStack.filter(m => isTopModal(m));
-
-                normals.forEach((m, i) => {
-                    m.style.zIndex = String(baseZNormal + i * 20);
-                });
-                tops.forEach((m, i) => {
-                    m.style.zIndex = String(baseZTop + i * 20);
-                });
-            }
-
-            function openModal(selOrEl, openerEl = null, {
-                full = true
-            } = {}) {
-                const m = typeof selOrEl === "string" ? document.querySelector(selOrEl) : selOrEl;
-                if (!m) return;
-
-                focusRestore.set(m, openerEl || document.activeElement);
-
-                m.classList.remove("hidden");
-                m.classList.add("is-open");
-                m.setAttribute("aria-hidden", "false");
-
-                applyFullscreen(m, full);
-
-                // sposta in cima
-                const idx = modalStack.indexOf(m);
-                if (idx >= 0) modalStack.splice(idx, 1);
-                modalStack.push(m);
-
-                applyStackZ();
-
-                document.body.style.overflow = "hidden";
-                setInert(true);
-
-                const focusables = getFocusable(m);
-                (focusables[0] || m.querySelector(".c-modal__dialog") || m).focus?.({
-                    preventScroll: true
-                });
+        }
 
                 document.dispatchEvent(new CustomEvent("modal:open", {
                     detail: {
