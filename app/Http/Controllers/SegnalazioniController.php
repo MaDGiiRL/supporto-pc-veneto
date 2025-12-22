@@ -93,16 +93,24 @@ class SegnalazioniController extends Controller
             'rectangle-group',
             'rectangle-stack',
             'clipboard-document-check',
+            'clipboard-document-list', // ✅ era usata ma non era permessa
             'map-pin',
             'users',
             'chart-pie',
         ];
 
         foreach ($pages as $k => $cfg) {
+            // ✅ valida icona
             $icon = $cfg['icon'] ?? 'document-text';
-            if (! in_array($icon, $allowed, true)) {
+            if (!in_array($icon, $allowed, true)) {
                 $pages[$k]['icon'] = 'document-text';
             }
+
+            // ✅ titolo tab (se usi $current['title'] nel layout)
+            $pages[$k]['title'] = $cfg['label'] ?? $k;
+
+            // ✅ href sidebar coerente con la tua rotta reale /segnalazioni/{page?}
+            $pages[$k]['href'] = route('segnalazioni.section', ['page' => $k]);
         }
 
         return $pages;
@@ -114,7 +122,7 @@ class SegnalazioniController extends Controller
         $entry = $pages[$key];
 
         $view = $entry['view'] ?? 'placeholder';
-        if (! view()->exists("applicativi.segnalazioni.sections.$view")) {
+        if (!view()->exists("applicativi.segnalazioni.sections.$view")) {
             $entry['view'] = 'placeholder';
         }
 
@@ -152,8 +160,8 @@ class SegnalazioniController extends Controller
                 ->orderBy('s.segnalazione', 'desc')
                 ->first();
 
-            if (! $statoAttuale) {
-                $statoAttuale = (object) [
+            if (!$statoAttuale) {
+                $statoAttuale = (object)[
                     'stato_sala_op'  => 0,
                     'data_ora'       => now(),
                     'nota_stato_sala_op' => '',
@@ -225,7 +233,7 @@ class SegnalazioniController extends Controller
                 ->orderByDesc('id')
                 ->first();
 
-            if (! $statoCoc) {
+            if (!$statoCoc) {
                 $statoCoc = new CocStato([
                     'codistat'       => $codistat,
                     'stato_coc'      => 0,

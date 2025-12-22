@@ -1,5 +1,5 @@
 @props([
-'dataLimite' => '01/01/2026', // data predefinita modificabile
+'dataLimite' => '01/01/2026',
 ])
 
 <div id="banner-avviso"
@@ -29,22 +29,43 @@
     </div>
 </div>
 
-{{-- Spazio compensativo, rimosso automaticamente al close --}}
-<div id="banner-spacer" class="h-[46px] sm:h-[48px] transition-all duration-500 ease-in-out"></div>
+{{-- Spacer che spinge giù il contenuto --}}
+<div id="banner-spacer" class="transition-all duration-500 ease-in-out"></div>
 
 <script>
-    function chiudiBannerAvviso() {
+    (function() {
         const banner = document.getElementById('banner-avviso');
         const spacer = document.getElementById('banner-spacer');
 
-        if (banner) {
-            banner.classList.add('opacity-0', '-translate-y-full');
-            setTimeout(() => banner.remove(), 400);
+        function setBannerHeight(px) {
+            document.documentElement.style.setProperty('--banner-h', px + 'px');
         }
 
-        if (spacer) {
-            spacer.classList.add('opacity-0', 'h-0');
-            setTimeout(() => spacer.remove(), 400);
+        function sync() {
+            if (!banner || !spacer) return;
+            const h = banner.getBoundingClientRect().height || 0;
+            spacer.style.height = h + 'px';
+            setBannerHeight(h);
         }
-    }
+
+        // Sync iniziale + al resize (perché su sm cambia altezza)
+        window.addEventListener('DOMContentLoaded', sync);
+        window.addEventListener('resize', sync);
+
+        // Espongo funzioni globali (chiamate dal button)
+        window.chiudiBannerAvviso = function() {
+            if (banner) {
+                banner.classList.add('opacity-0', '-translate-y-full');
+                setTimeout(() => banner.remove(), 400);
+            }
+            if (spacer) {
+                spacer.classList.add('opacity-0');
+                spacer.style.height = '0px';
+                setTimeout(() => spacer.remove(), 400);
+            }
+
+            // IMPORTANTE: sposta navbar e sticky a top=0
+            setBannerHeight(0);
+        };
+    })();
 </script>
