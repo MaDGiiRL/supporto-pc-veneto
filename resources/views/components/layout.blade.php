@@ -24,6 +24,8 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('head')
+    @stack('styles')
+
 </head>
 
 <body class="h-full antialiased font-[Inter] bg-white text-slate-900">
@@ -113,7 +115,9 @@
     </script>
     @endif
 
+    @yield('content')
     @stack('scripts')
+
 </body>
 
 </html>

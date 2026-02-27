@@ -1,0 +1,1 @@
+@include('applicativi.formazione.sections.corsi', ['canManageCourses' => $canManageCourses])
